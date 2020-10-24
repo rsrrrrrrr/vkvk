@@ -4,6 +4,7 @@
 (defctype vk-bool-32 :uint32)
 (defctype vk-flags :uint32)
 (defctype vk-vpointer (:pointer :void))
+(defctype vk-p-allocator (:pointer (:struct vk-allocation-callback)))
 
 (defctype vk-handle :pointer)
 #.(if (= 8 (foreign-type-size :pointer))
@@ -72,6 +73,12 @@
   (fn-free vk-free-function)
   (fn-internal-allocation vk-internal-allocation-notification)
   (fn-internal-free vk-internal-free-notification))
+
+(defcstruct vk-layer-properties
+  (layer-name :char :count 255)
+  (spec-version :uint32)
+  (implementation-version :uint32)
+  (description :char :count 255))
 
 (defcstruct vk-application-info
   (type VkStructureType)

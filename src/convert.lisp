@@ -1,8 +1,34 @@
 (in-package :vkvk)
 
-(defun parse-foreign-type (lst)
+(defun to-array-type (lst)
   (declare (optimize (speed 3)))
   (coerce lst 'vector))
+
+(defun c-array->string (point)
+  "conver the char[] to lisp string"
+  (loop for i upto 255
+	for c = (code-char (mem-aref point :char i))
+	until (not (or (alpha-char-p c) (char= #\Space c) (char= #\_ c)))
+	collect c into lstr
+	finally
+	   (return  (concatenate 'string lstr))))
+
+(define-foreign-type layer-properties-info ()
+  ()
+  (:actual-type :struct vk-layer-properties)
+  (:simple-parser layer-properties))
+
+(defmethod translate-from-foreign (ptr (type layer-properties-info))
+  (with-foreign-slots ((layer-name
+			spec-version
+			implementation-version
+			description)
+		       ptr
+		       (:struct vk-layer-properties))
+    (list :layer (c-array->string layer-name)
+	  :version spec-version
+	  :implementation-version implementation-version
+	  :dsc (c-array->string description))))
 
 (define-foreign-type application-info-type ()
   ()
@@ -69,8 +95,8 @@
 	  enable-layer-count
 	  enable-extension-names
 	  enable-layer-count)))
-#|
-(defmethod transloat-into-foreign-memory (value (type instance-info-type))
+
+(defmethod translate-into-foreign-memory (value (type instance-info-type) ptr)
   (with-foreign-slots ((type
 			next
 			flags
@@ -81,12 +107,25 @@
 			enable-extension-names)
 		       ptr
 		       (:struct vk-instance-create-info))
-    (setf type :structure-type-instance-create-info
-	  next (aref value 0)
-	  flags (aref value 1)
-	  application-info (aref value 2)  ;;pointer
-	  enable-layer-count ()
-	  enable-layer-names
-	  enable-extension-count
-	  enable-extension-names)))
-|#
+    (let* ((usable-extensions (select-usable (aref value 3)
+					     (get-instance-extensions)))
+	   (usable-layers (select-usable (aref value 4)
+					 (get-instance-layers)))
+	   (ext-count (length usable-layers))
+	   (lay-count (length usable-extensions)))
+      (with-foreign-objects ((layers :string lay-count)
+			     (extensions :string ext-count))
+	(loop for i upto (1- lay-count)
+	      do (setf (mem-aref layers :string i)
+		       (elt usable-layers i)))
+	(loop for i upto (1- ext-count)
+	      do (setf (mem-aref extensions :string i)
+		       (elt usable-extensions i)))
+	(setf type :structure-type-instance-create-info
+	      next (aref value 0)
+	      flags (aref value 1)
+	      application-info (aref value 2)  ;;pointer
+	      enable-layer-count lay-count
+	      enable-layer-names layers
+	      enable-extension-count ext-count
+	      enable-extension-names extensions)))))

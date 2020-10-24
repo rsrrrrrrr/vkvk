@@ -22,4 +22,15 @@
   (allocator (:pointer (:struct vk-allocation-callback)))
   (surface vk-surface-khr))
 
+(defcfun ("vkEnumerateInstanceLayerProperties" vkEnumerateInstanceLayerProperties) vkresult
+  (count (:pointer :uint32))
+  (properties (:pointer (:struct vk-layer-properties))))
 
+(defcfun ("vkCreateInstance" vkCreateInstance) vkresult
+  (info (:pointer (:struct vk-instance-create-info)))
+  (allocator vk-p-allocator)
+  (instance vk-instance))
+
+(defcfun ("vkDestroyInstance" vkDestroyInstance) :void
+  (instance vk-instance)
+  (allocator vk-p-allocator))

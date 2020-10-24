@@ -38,6 +38,21 @@
   (setf *window-size* (list w h))
   (update-window-title window))
 
+(defparameter *vulkan-handle* nil)
+
+(defun insert-to-handle (key val)
+  (setf (getf *vulkan-handle* key) val))
+
+(defun get-handle (key)
+  (getf *vulkan-handle* key))
+
+(defun setup-vulkan ()
+  (insert-to-handle :instance (create-instance :info-lays (get-instance-layers)
+					       :info-exts (get-instance-extensions))))
+
+(defun clean-up ()
+  (destroy-instance (get-handle :instance)))
+
 (defun events-example ()
   ;; Graphics calls on OS X must occur in the main thread
   (with-init-window (:title "" :width 400 :height 400 :resizable t :client-api :no-gl-api)
@@ -46,5 +61,6 @@
     (set-window-size-callback 'window-size-callback)
     (setf *window-size* (get-window-size))
     (update-window-title *window*)
-    (format t "~a" (get-instance-extensions))
-    (loop until (window-should-close-p) do (wait-events))))
+    (setup-vulkan)
+    (loop until (window-should-close-p) do (wait-events))
+    (clean-up)))
