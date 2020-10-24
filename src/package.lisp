@@ -1,5 +1,5 @@
 (defpackage :vkvk
-  (:use :cl :cffi))
+  (:use :cl :cffi :cl-glfw3))
 
 (in-package :vkvk)
 

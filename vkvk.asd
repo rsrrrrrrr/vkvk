@@ -2,10 +2,15 @@
   :version "0.1.0"
   :author ""
   :license ""
-  :depends-on ()
+  :depends-on (:cffi :cl-glfw3)
   :components ((:module "src"
                 :components
-                ((:file "main"))))
+                ((:file "package")
+		 (:file "c-enums")		 
+		 (:file "c-struct")
+		 (:file "convert")		 
+		 (:file "c-function")
+		 (:file "wrapps"))))
   :description ""
   :in-order-to ((test-op (test-op "vkvk/tests"))))
 
