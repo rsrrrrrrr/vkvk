@@ -35,6 +35,28 @@
 	  :implementation-version implementation-version
 	  :dsc (c-array->string description))))
 
+(define-foreign-type debug-report-callback-create-info ()
+  ()
+  (:actual-type :struct vk-debug-report-callback-create-info-ext)
+  (:simple-parser dbg-report-callback))
+
+(defmethod translate-into-foreign-memory (val (type debug-report-callback-create-info) ptr)
+  (with-foreign-slots ((type
+			next
+			flags
+			pfn-callback
+			user-data)
+		       ptr
+		       (:struct vk-debug-report-callback-create-info-ext))
+    (setf type :structure-type-debug-report-callback-create-info-ext
+	  next *vk-nullptr*
+	  flags (logior (foreign-enum-value 'VkDebugReportFlagBitsEXT :debug-report-warning-bit-ext )
+			(foreign-enum-value 'VkDebugReportFlagBitsEXT :debug-report-performance-warning-bit-ext)
+			(foreign-enum-value 'VkDebugReportFlagBitsEXT :debug-report-error-bit-ext)
+			(foreign-enum-value 'VkDebugReportFlagBitsEXT :debug-report-debug-bit-ext))
+	  pfn-callback val
+	  user-data *vk-nullptr*)))
+
 (define-foreign-type application-info-type ()
   ()
   (:actual-type :struct vk-application-info)
@@ -116,24 +138,30 @@
 					     (get-instance-extensions)))
 	   (usable-layers (select-usable (aref value 4)
 					 (get-instance-layers)))
-	   (ext-count (length usable-layers))
-	   (lay-count (length usable-extensions)))
-      (with-foreign-objects ((layers :string lay-count)
-			     (extensions :string ext-count))
-	(loop for i upto (1- lay-count)
-	      do (setf (mem-aref layers :string i)
-		       (elt usable-layers i)))
-	(loop for i upto (1- ext-count)
-	      do (setf (mem-aref extensions :string i)
-		       (elt usable-extensions i)))
+	   (ext-count (length usable-extensions))
+	   (lay-count (length usable-layers)))
+      (when *debug-status*
+	(push "VK_EXT_debug_report" usable-extensions)
+	(setf ext-count (1+ ext-count)))
+      (with-foreign-objects ((lays :string lay-count)
+			     (exts :string ext-count))
+	;;not ready
+	(do ((i 0 (1+ i)))
+	    ((>= i lay-count))
+	  (setf (mem-aref lays :string i)
+		(convert-to-foreign (nth i usable-layers) :string)))
+	(do ((i 0 (1+ i)))
+	    ((>= i ext-count))
+	  (setf (mem-aref exts :string i)
+		(convert-to-foreign (nth i usable-extensions) :string)))
 	(setf type :structure-type-instance-create-info
 	      next (aref value 0)
 	      flags (aref value 1)
 	      application-info (aref value 2)  ;;pointer
 	      enable-layer-count lay-count
-	      enable-layer-names layers
+	      enable-layer-names (mem-aptr lays :string)
 	      enable-extension-count ext-count
-	      enable-extension-names extensions)))))
+	      enable-extension-names (mem-aptr exts :string))))))
 
 (define-foreign-type queue-family-property-info ()
   ()

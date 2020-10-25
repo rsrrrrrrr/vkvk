@@ -12,7 +12,12 @@
 	  get-physical-device-memory-properties))
 
 (defparameter *vk-nullptr* (null-pointer))
+(defparameter *instance-dbg-create-info* *vk-nullptr*)
+(defparameter *instance-dbg-callback-handle* nil)
+(defparameter *debug-status* nil)
 
+(defconstant +vk-false+ 0)
+(defconstant +vk-true+ 0)
 ;;no need export
 (defun select-usable (need-use can-use)
   (intersection need-use can-use :test #'string=))
@@ -20,6 +25,51 @@
 (defun check-result (ret-val)
   (when (not (eql ret-val :success))
     (error ret-val)))
+
+(defcallback debug-message vk-bool-32
+    ((flags vk-flags)
+     (obj-type VkDebugReportObjectTypeExt)
+     (src-obj :uint64)
+     (location :unsigned-int)
+     (msg-code :int32)
+     (layer-prefix :string)
+     (msg :string)
+     (user-data (:pointer :void)))
+  (declare (ignore obj-type src-obj location user-data))
+  (format t "layer-prefix:~a                                   msg-code: ~a~%" layer-prefix msg-code)
+  (cond ((not (zerop (logand flags (foreign-enum-value 'VkDebugReportFlagBitsEXT :debug-report-error-bit-ext))))
+	 (format t "[debug error] -> message: ~a~%" msg)
+	 (not (zerop (logand flags (foreign-enum-value 'VkDebugReportFlagBitsEXT :debug-report-warning-bit-ext))))
+	 (format t "[debug waring] -> message: ~a~%" msg)	 
+	 (not (zerop (logand flags (foreign-enum-value 'VkDebugReportFlagBitsEXT :debug-report-information-bit-ext))))
+	 (format t "[debug information] -> message: ~a~%" msg)
+	 (not (zerop (logand flags (foreign-enum-value 'VkDebugReportFlagBitsEXT :debug-report-performance-warning-bit-ext))))
+	 (format t "[debug performance waring] -> message: ~a~%" msg)
+	 (not (zerop (logand flags (foreign-enum-value 'VkDebugReportFlagBitsEXT :debug-report-debug-bit-ext))))
+	 (format t "[debug] -> message: ~a~%" msg)
+	 t +vk-false+)))
+
+(defun create-debug-callback (instance &optional (allocator *vk-nullptr*))
+  (setf *instance-dbg-callback-handle* (foreign-alloc 'vk-debug-utils-messenger-ext))
+  (with-foreign-object (create-fun :pointer)
+    (setf (mem-ref create-fun :pointer) (get-instance-proc-addr instance "vkCreateDebugReportCallbackEXT"))
+    (unless (null-pointer-p create-fun)
+      (check-result (foreign-funcall-pointer (mem-ref create-fun :pointer) ()
+					     vk-instance instance
+					     (:pointer (:struct vk-debug-report-callback-create-info-ext)) *instance-dbg-create-info*
+					     (:pointer (:struct vk-allocation-callback)) allocator 
+					     vk-debug-utils-messenger-ext *instance-dbg-callback-handle*
+					     VkResult)))))
+
+(defun destroy-debug-callback (instance &optional (allocator *vk-nullptr*))
+  (with-foreign-object (destroy-fun :pointer)
+    (setf (mem-ref destroy-fun :pointer) (get-instance-proc-addr instance "vkDestroyDebugReportCallbackEXT"))
+    (unless (null-pointer-p destroy-fun)
+      (foreign-funcall-pointer (mem-ref destroy-fun :pointer) ()
+			       vk-instance instance
+			       vk-debug-utils-messenger-ext (mem-ref *instance-dbg-callback-handle* :pointer)
+			       (:pointer (:struct vk-allocation-callback)) allocator))))
+
 ;;export
 (defun make-vulkan-version (&optional (major 1) (minor 2) (patch 0))
   (logior (ash major 22)
@@ -52,10 +102,16 @@
 			  (info-flags 0)
 			  (info-lays *vk-nullptr*)
 			  (info-exts *vk-nullptr*)
-			  (allocator *vk-nullptr*))
+			  (allocator *vk-nullptr*)
+			  (dbg nil))
   (with-foreign-objects ((info '(:struct vk-instance-create-info))
 			 (app-info '(:struct vk-application-info))
 			 (instance 'vk-instance))
+    (when dbg
+      (setf *instance-dbg-create-info* (foreign-alloc '(:struct vk-debug-report-callback-create-info-ext))
+	    *debug-status* t
+	    (mem-ref *instance-dbg-create-info* 'dbg-report-callback) (callback debug-message)	    
+	    info-next *instance-dbg-create-info*))
     (setf (mem-ref app-info 'app-info)
 	  (to-array-type
 	   (list app-next
@@ -69,12 +125,19 @@
 	   (list info-next
 		 info-flags
 		 app-info
-		 info-lays
-		 info-exts)))
+		 info-exts
+		 info-lays)))
     (check-result (vkcreateinstance info allocator instance))
-    (mem-ref instance 'vk-instance)))
+    (let ((ret-instance (mem-ref instance 'vk-instance)))
+      (when dbg
+	(create-debug-callback ret-instance)
+	(foreign-free *instance-dbg-create-info*))
+      ret-instance)))
 
 (defun destroy-instance (instance &optional (allocator *vk-nullptr*))
+  (when *debug-status*
+    (destroy-debug-callback instance)
+    (setf *debug-status* nil))
   (vkdestroyinstance instance allocator))
 
 (defun enumerate-physical-device (instance)

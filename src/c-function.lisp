@@ -12,6 +12,14 @@
   (physical-device vk-handle)
   (index :uint32))
 
+(defcfun ("vkGetDeviceProcAddr" get-device-proc-addr) :pointer
+  (device vk-device)
+  (name :string))
+
+(defcfun ("vkGetInstanceProcAddr" get-instance-proc-addr) :pointer
+  (instance vk-instance)
+  (name :string))
+
 ;;need wrapp
 (defcfun ("glfwGetRequiredInstanceExtensions" glfwGetRequiredInstanceExtensions) (:pointer :string)
   (count (:pointer :uint32)))

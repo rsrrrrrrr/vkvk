@@ -47,8 +47,10 @@
   (getf *vulkan-handle* key))
 
 (defun setup-vulkan ()
-  (insert-to-handle :instance (create-instance :info-lays (get-instance-layers)
-					       :info-exts (get-instance-extensions)))
+  (format t "~a ~%" (get-instance-layers))
+  (insert-to-handle :instance (create-instance :info-lays '("VK_LAYER_NV_optimus")
+					       :info-exts (get-instance-extensions)
+					       ))
   (insert-to-handle :gpus (enumerate-physical-device (get-handle :instance)))
   (insert-to-handle :gpu (first (get-handle :gpus)))
   (insert-to-handle :gpu-properties (get-physical-device-properties (get-handle :gpu)))

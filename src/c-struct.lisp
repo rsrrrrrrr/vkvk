@@ -76,6 +76,13 @@
 
 (defctype vk-p-allocator (:pointer (:struct vk-allocation-callback)))
 
+(defcstruct vk-debug-report-callback-create-info-ext
+  (type VkStructureType)
+  (next vk-vpointer)
+  (flags vk-flags)
+  (pfn-callback pfn-vk-debug-report-callback-ext)
+  (user-data vk-vpointer))
+
 (defcstruct vk-offset-2d
   (x :uint32)
   (y :uint32))
@@ -119,9 +126,9 @@
   (flags vk-flags)
   (application-info (:pointer (:struct vk-application-info)))
   (enable-layer-count :uint32)
-  (enable-layer-names (:pointer :string))
+  (enable-layer-names (:pointer (:pointer :char)))
   (enable-extension-count :uint32)
-  (enable-extension-names (:pointer :string)))
+  (enable-extension-names (:pointer (:pointer :char))))
 
 ;;get struct
 (defcstruct vk-physical-device-limits
