@@ -13,6 +13,11 @@
 	finally
 	   (return  (concatenate 'string lstr))))
 
+(defun obj->list (obj type count)
+  (let ((num (1- count)))
+    (loop for i upto num
+	  collect (mem-aref obj type i))))
+
 (define-foreign-type layer-properties-info ()
   ()
   (:actual-type :struct vk-layer-properties)
@@ -129,3 +134,39 @@
 	      enable-layer-names layers
 	      enable-extension-count ext-count
 	      enable-extension-names extensions)))))
+
+(define-foreign-type queue-family-property-info ()
+  ()
+  (:actual-type :struct vk-queue-family-properties)
+  (:simple-parser queue-family-property))
+
+(defmethod translate-from-foreign (ptr (type queue-family-property-info))
+  (with-foreign-slots ((queue-flags
+			queue-count
+			timestamp-valid-bits
+			min-image-transfer-granularity)
+		       ptr
+		       (:struct vk-queue-family-properties))
+    (list :flags queue-flags
+	  :count queue-count
+	  :timestap timestamp-valid-bits
+	  :granularity min-image-transfer-granularity)))
+
+(define-foreign-type physical-device-memory-property-info ()
+  ()
+  (:actual-type :struct vk-physical-device-memory-properties)
+  (:simple-parser physical-device-memory-property))
+
+(defmethod translate-from-foreign (ptr (type physical-device-memory-property-info))
+  (let ((type-count (foreign-slot-value ptr '(:struct vk-physical-device-memory-properties) 'memory-type-count))
+	(types (foreign-slot-pointer ptr '(:struct vk-physical-device-memory-properties) 'memory-types))
+	(heap-count (foreign-slot-value ptr '(:struct vk-physical-device-memory-properties) 'memory-heap-count))
+	(heaps (foreign-slot-pointer ptr '(:struct vk-physical-device-memory-properties) 'memory-heaps))
+	(properties nil))
+    (setf (getf properties :types)
+	    (loop for i upto (1- type-count)
+		  collect (mem-aref types '(:struct vk-memory-type) i))
+	    (getf properties :heaps)
+	    (loop for i upto (1- heap-count)
+		  collect (mem-aref heaps '(:struct vk-memory-heap) i)))
+    properties))

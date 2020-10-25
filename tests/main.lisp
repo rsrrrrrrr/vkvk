@@ -48,7 +48,13 @@
 
 (defun setup-vulkan ()
   (insert-to-handle :instance (create-instance :info-lays (get-instance-layers)
-					       :info-exts (get-instance-extensions))))
+					       :info-exts (get-instance-extensions)))
+  (insert-to-handle :gpus (enumerate-physical-device (get-handle :instance)))
+  (insert-to-handle :gpu (first (get-handle :gpus)))
+  (insert-to-handle :gpu-properties (get-physical-device-properties (get-handle :gpu)))
+  (insert-to-handle :queue-properties (get-physical-device-queue-family-properties (get-handle :gpu)))
+  (insert-to-handle :memory-properties (get-physical-device-memory-properties (get-handle :gpu)))
+  (format t "~a~%" (get-handle :memory-properties)))
 
 (defun clean-up ()
   (destroy-instance (get-handle :instance)))

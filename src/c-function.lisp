@@ -34,3 +34,22 @@
 (defcfun ("vkDestroyInstance" vkDestroyInstance) :void
   (instance vk-instance)
   (allocator vk-p-allocator))
+
+;;get function
+(defcfun ("vkEnumeratePhysicalDevices" vkEnumeratePhysicalDevices) VkResult
+  (instance vk-instance)
+  (count (:pointer :uint32))
+  (physical-devices (:pointer vk-physical-device)))
+
+(defcfun ("vkGetPhysicalDeviceProperties" vkGetPhysicalDeviceProperties) :void
+  (physical-device vk-physical-device)
+  (properties (:pointer (:struct vk-physical-device-properties))))
+
+(defcfun ("vkGetPhysicalDeviceQueueFamilyProperties" vkGetPhysicalDeviceQueueFamilyProperties) :void
+  (physical-device vk-physical-device)
+  (count (:pointer :uint32))
+  (properties (:pointer (:struct vk-queue-family-properties))))
+
+(defcfun ("vkGetPhysicalDeviceMemoryProperties" vkGetPhysicalDeviceMemoryProperties) :void
+  (physical-device vk-physical-device)
+  (properties (:pointer (:struct vk-physical-device-memory-properties))))

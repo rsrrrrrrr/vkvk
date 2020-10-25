@@ -4,16 +4,16 @@
 	  get-instance-extensions
 	  get-instance-layers
 	  create-instance
-	  destroy-instance))
+	  destroy-instance
+
+	  enumerate-physical-device
+	  get-physical-device-properties
+	  get-physical-device-queue-family-properties
+	  get-physical-device-memory-properties))
 
 (defparameter *vk-nullptr* (null-pointer))
 
 ;;no need export
-(defun obj->list (objs num)
-  (let ((count (1- (mem-ref num :uint32))))
-    (loop for i upto count
-	  collect (mem-aref objs :string i))))
-
 (defun select-usable (need-use can-use)
   (intersection need-use can-use :test #'string=))
 
@@ -29,7 +29,7 @@
 (defun get-instance-extensions ()
   (with-foreign-object (count :uint32)
     (let ((exts (glfwGetRequiredInstanceExtensions count)))
-      (obj->list exts count))))
+      (obj->list exts :string (mem-ref count :uint32)))))
 
 (defun get-instance-layers ()
   (with-foreign-objects ((count :uint32)
@@ -76,3 +76,29 @@
 
 (defun destroy-instance (instance &optional (allocator *vk-nullptr*))
   (vkdestroyinstance instance allocator))
+
+(defun enumerate-physical-device (instance)
+  (with-foreign-object (count :uint32)
+    (check-result (vkEnumeratePhysicalDevices instance count *vk-nullptr*))
+    (let ((num (mem-ref count :uint32)))
+      (with-foreign-object (physical-devices 'vk-physical-device num)
+	(check-result (vkEnumeratePhysicalDevices instance count physical-devices))
+	(obj->list physical-devices 'vk-physical-device num)))))
+
+(defun get-physical-device-properties (physical-device)
+  (with-foreign-object (properties '(:struct vk-physical-device-properties))
+    (vkGetPhysicalDeviceProperties physical-device properties)
+    (mem-ref properties '(:struct vk-physical-device-properties))))
+
+(defun get-physical-device-queue-family-properties (physical-device)
+  (with-foreign-object (count :uint32)
+    (vkGetPhysicalDeviceQueueFamilyProperties physical-device count *vk-nullptr*)
+    (let ((num (mem-ref count :uint32)))
+      (with-foreign-object (properties '(:struct vk-queue-family-properties) num)
+	(vkGetPhysicalDeviceQueueFamilyProperties physical-device count properties)
+	(obj->list properties 'queue-family-property num)))))
+
+(defun get-physical-device-memory-properties (physical-device)
+  (with-foreign-object (properties '(:struct vk-physical-device-memory-properties))
+    (vkGetPhysicalDeviceMemoryProperties physical-device properties)
+    (mem-ref properties 'physical-device-memory-property)))
