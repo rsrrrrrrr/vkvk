@@ -10,7 +10,7 @@
 	  get-physical-device-properties
 	  get-physical-device-queue-family-properties
 	  get-physical-device-memory-properties))
-
+#|
 (defparameter *vk-nullptr* (null-pointer))
 (defparameter *instance-dbg-create-info* *vk-nullptr*)
 (defparameter *instance-dbg-callback-handle* nil)
@@ -165,3 +165,6 @@
   (with-foreign-object (properties '(:struct vk-physical-device-memory-properties))
     (vkGetPhysicalDeviceMemoryProperties physical-device properties)
     (mem-ref properties 'physical-device-memory-property)))
+|#
+
+
