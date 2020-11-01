@@ -30,6 +30,8 @@
 
 (defmacro def-struct-translator (struct-name (type-name parse-name) &body members)
   `(progn
+     (defcstruct ,struct-name
+       ,@members)
      (define-foreign-type ,type-name ()
        ()
        (:actual-type :struct ,struct-name)
