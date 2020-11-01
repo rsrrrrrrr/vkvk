@@ -10,14 +10,69 @@
 	  get-physical-device-properties
 	  get-physical-device-queue-family-properties
 	  get-physical-device-memory-properties))
-#|
+
 (defparameter *vk-nullptr* (null-pointer))
 (defparameter *instance-dbg-create-info* *vk-nullptr*)
 (defparameter *instance-dbg-callback-handle* nil)
 (defparameter *debug-status* nil)
 
 (defconstant +vk-false+ 0)
-(defconstant +vk-true+ 0)
+(defconstant +vk-true+ 1)
+
+(defun make-vulkan-version (&optional (major 1) (minor 2) (patch 0))
+  (logior (ash major 22)
+	  (ash minor 12)
+	  patch))
+
+(defun check-result (ret-val)
+  (when (not (eql ret-val :success))
+    (error ret-val))
+  (free-strings))
+
+(defun get-instance-extensions ()
+  (with-foreign-object (count :uint32)
+    (let ((exts (glfwGetRequiredInstanceExtensions count)))
+      (obj->list exts :string count))))
+
+(defun create-instance (&key
+			  (app-next nil)
+			  (app-name "vkvk test")
+			  (app-version (make-vulkan-version 0 0 1))
+			  (engine-name "vkvk test")
+			  (engine-version (make-vulkan-version 0 0 1))
+			  (api-version (make-vulkan-version 1 2 0))
+			  (info-next nil)
+			  (info-flags 0)
+			  (info-lays nil)
+			  (info-exts nil)
+			  (allocator *vk-nullptr*))
+  (with-foreign-objects ((info 'instance-create-info)
+			 (app-info 'application-info)
+			 (instance 'vk-instance))
+    (setf (mem-ref app-info 'application-info)
+	  (list :structure-type-application-info
+		app-next
+		app-name
+		app-version
+		engine-name
+		engine-version
+		api-version)
+	  (mem-ref info 'instance-create-info)
+	  (list :structure-type-instance-create-info
+		info-next
+		info-flags
+		app-info
+		(length info-lays)
+		info-lays
+		(length info-exts)
+		info-exts))
+    (check-result (vkcreateinstance info allocator instance))    
+    (mem-ref instance 'vk-instance)))
+
+(defun destroy-instance (instance &optional (allocator *vk-nullptr*))
+  (vkdestroyinstance instance allocator))
+
+#|
 ;;no need export
 (defun select-usable (need-use can-use)
   (intersection need-use can-use :test #'string=))

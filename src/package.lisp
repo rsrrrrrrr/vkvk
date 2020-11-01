@@ -15,12 +15,36 @@
 (use-foreign-library libvulkan)
 (use-foreign-library libglfw3)
 
+(defparameter *allocated-string* nil)
+
+(defun free-strings ()
+  (dolist (obj *allocated-string*)
+    (foreign-string-free obj))
+  (setf *allocated-string* nil))
+
+(defun obj->list (objs type num)
+  (let ((count (1- (mem-ref num :uint32))))
+    (loop for i upto count
+	  collect (mem-aref objs type i))))
+
 (defun fill-closure (struct-name ptr)
   #'(lambda (member val)
       (let ((slot-name (first member))
 	    (type (second member)))
-	(if (eql type :uint32)
-	    (setf (foreign-slot-value ptr struct-name slot-name) val)))))
+	(cond ((equal type '(:pointer :char))
+	       (let ((foreign-string (foreign-string-alloc val)))
+		 (push foreign-string val)
+		 (setf (foreign-slot-value ptr struct-name slot-name) foreign-string)))
+	      ((equal type '(:pointer (:pointer :char)))
+	       (let ((len (length val))
+		     (str-list (foreign-alloc type)))
+		 (loop for i upto (1- len)
+		       do
+			  (progn
+			    (setf (mem-aref str-list type i) (foreign-string-alloc (nth i val)))
+			    (push (mem-aref str-list type i) *allocated-string*)))
+		 (setf (foreign-slot-value ptr struct-name slot-name) str-list)))
+	      (t (setf (foreign-slot-value ptr struct-name slot-name) val))))))
 
 (defun read-closure (struct-name ptr)
   #'(lambda (member)
@@ -30,8 +54,6 @@
 
 (defmacro def-struct-translator (struct-name (type-name parse-name) &body members)
   `(progn
-     (defcstruct ,struct-name
-       ,@members)
      (define-foreign-type ,type-name ()
        ()
        (:actual-type :struct ,struct-name)

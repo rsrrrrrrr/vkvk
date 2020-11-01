@@ -1,72 +1,7 @@
 (in-package :vkvk)
 
-;;basic type
-(defctype vk-bool-32 :uint32)
-(defctype vk-flags :uint32)
-(defctype vk-vpointer (:pointer :void))
-
-
-(defctype vk-handle :pointer)
-#.(if (= 8 (foreign-type-size :pointer))
-      `(defctype vk-non-dispatch-handle :pointer)
-      `(defctype vk-non-dispatch-handle :uint64))
-
-(defctype vk-instance vk-handle)
-(defctype vk-physical-device vk-handle)
-(defctype vk-device vk-handle)
-(defctype vk-queue vk-handle)
-(defctype vk-command-buffer vk-handle)
-
-(defctype vk-command-pool vk-non-dispatch-handle)
-(defctype vk-fence vk-non-dispatch-handle)
-(defctype vk-semaphore vk-non-dispatch-handle)
-(defctype vk-event vk-non-dispatch-handle)
-(defctype vk-render-pass vk-non-dispatch-handle)
-(defctype vk-framebuffer vk-non-dispatch-handle)
-(defctype vk-shader-module vk-non-dispatch-handle)
-(defctype vk-validation-cache-ext vk-non-dispatch-handle)
-(defctype vk-pipeline vk-non-dispatch-handle)
-(defctype vk-pipeline-cache vk-non-dispatch-handle)
-(defctype vk-device-memory vk-non-dispatch-handle)
-(defctype vk-buffer vk-non-dispatch-handle)
-(defctype vk-buffer-view vk-non-dispatch-handle)
-(defctype vk-image vk-non-dispatch-handle)
-(defctype vk-image-view vk-non-dispatch-handle)
-(defctype vk-acceleration-structure-khr vk-non-dispatch-handle)
-(defctype vk-sampler vk-non-dispatch-handle)
-(defctype vk-sampler-ycbcr-conversion vk-non-dispatch-handle)
-(defctype vk-descriptor-set-layout vk-non-dispatch-handle)
-(defctype vk-pipeline-layout vk-non-dispatch-handle)
-(defctype vk-descriptor-pool vk-non-dispatch-handle)
-(defctype vk-descriptor-set vk-non-dispatch-handle)
-(defctype vk-descriptor-update-template vk-non-dispatch-handle)
-(defctype vk-query-pool vk-non-dispatch-handle)
-(defctype vk-performance-configuration-intel vk-non-dispatch-handle)
-(defctype vk-indirect-commands-layout-nv vk-non-dispatch-handle)
-(defctype vk-surface-khr vk-non-dispatch-handle)
-(defctype vk-display-khr vk-non-dispatch-handle)
-(defctype vk-display-mode-khr vk-non-dispatch-handle)
-(defctype vk-swapchain-khr vk-non-dispatch-handle)
-(defctype vk-deferred-operation-khr vk-non-dispatch-handle)
-(defctype vk-private-date-slot-ext vk-non-dispatch-handle)
-(defctype vk-debug-utils-messenger-ext vk-non-dispatch-handle)
-(defctype vk-debug-report-callback-ext vk-non-dispatch-handle)
-
-(defctype vk-device-size :uint64)
-(defctype vk-device-address :uint64)
-(defctype vk-sample-mask :uint32)
-
-(defctype vk-void-function :pointer)
-(defctype vk-allocation-function :pointer)
-(defctype vk-reallocation-function :pointer)
-(defctype vk-free-function :pointer)
-(defctype vk-internal-allocation-notification :pointer)
-(defctype vk-internal-free-notification :pointer)
-(defctype pfn-vk-debug-utils-messenger-callback-ext :pointer)
-(defctype pfn-vk-debug-report-callback-ext :pointer)
-
 ;;struct type
-(defcstruct vk-allocation-callback
+(def-struct-translator vk-allocation-callback
   (user-data vk-vpointer)
   (fn-allocation vk-allocation-function)
   (fn-reallocation vk-reallocation-function)
@@ -76,42 +11,50 @@
 
 (defctype vk-p-allocator (:pointer (:struct vk-allocation-callback)))
 
-(defcstruct vk-debug-report-callback-create-info-ext
+(def-struct-translator vk-debug-report-callback-create-info-ext
+    (s-debug-report-callback-create-info debug-report-callback-create-info)
   (type VkStructureType)
   (next vk-vpointer)
   (flags vk-flags)
   (pfn-callback pfn-vk-debug-report-callback-ext)
   (user-data vk-vpointer))
 
-(defcstruct vk-offset-2d
+(def-struct-translator vk-offset-2d
+    (s-offset-2d offset-2d)
   (x :uint32)
   (y :uint32))
 
-(defcstruct vk-offset-3d
+(def-struct-translator vk-offset-3d
+    (s-offset-3d offset-3d)
   (x :uint32)
   (y :uint32)
   (z :uint32))
 
-(defcstruct vk-extent-2d
+(def-struct-translator vk-extent-2d
+    (s-extent-2d extent-2d)
   (width :uint32)
   (height :uint32))
 
-(defcstruct vk-extent-3d
+(def-struct-translator vk-extent-3d
+    (s-extent-3d extent-3d)
   (width :uint32)
   (height :uint32)
   (depth :uint32))
 
-(defcstruct vk-rect-2d
+(def-struct-translator vk-rect-2d
+    (s-rect-2d rect-2d)
   (offset (:struct vk-offset-2d))
   (extent (:struct vk-extent-2d)))
 
-(defcstruct vk-layer-properties
+(def-struct-translator vk-layer-properties
+    (s-layer-properties layper-properties)
   (layer-name :char :count 255)
   (spec-version :uint32)
   (implementation-version :uint32)
   (description :char :count 255))
 
-(defcstruct vk-application-info
+(def-struct-translator vk-application-info
+    (s-application-info application-info)
   (type VkStructureType)
   (next vk-vpointer)
   (application-name (:pointer :char))
@@ -120,7 +63,8 @@
   (engine-version :uint32)
   (api-version :uint32))
 
-(defcstruct vk-instance-create-info
+(def-struct-translator vk-instance-create-info
+    (s-instance-create-info instance-create-info)
   (type VkStructureType)
   (next vk-vpointer)
   (flags vk-flags)
@@ -131,7 +75,8 @@
   (enable-extension-names (:pointer (:pointer :char))))
 
 ;;get struct
-(defcstruct vk-physical-device-limits
+(def-struct-translator vk-physical-device-limits
+    (s-physical-device-limits physical-device-limits)
   (max-image-dimension1-d :uint32)
   (max-image-dimension2-d :uint32)
   (max-image-dimension3-d :uint32)
@@ -239,14 +184,16 @@
   (optimal-buffer-copy-row-pitch-alignment vk-device-size)
   (non-coherent-atom-size vk-device-size))
 
-(defcstruct vk-physical-device-sparse-properties
+(def-struct-translator vk-physical-device-sparse-properties
+    (s-physical-device-sparse-properties physical-device-sparse-properties)
   (residency-standard2-d-block-shape vk-bool-32)
   (residency-standard2-d-multisample-block-shape vk-bool-32)
   (residency-standard3-d-block-shape vk-bool-32)
   (residency-aligned-mip-size vk-bool-32)
   (residency-non-resident-strict vk-bool-32))
 
-(defcstruct vk-physical-device-properties
+(def-struct-translator vk-physical-device-properties
+    (s-physical-device-properties physical-device-properties)
   (api-version :uint32)
   (driver-version :uint32)
   (vendor-id :uint32)
@@ -257,21 +204,25 @@
   (limits (:struct vk-physical-device-limits))
   (spare-properties (:struct vk-physical-device-sparse-properties)))
 
-(defcstruct vk-queue-family-properties
+(def-struct-translator vk-queue-family-properties
+    (s-queue-family-properties queue-family-properties)
   (queue-flags vk-flags)
   (queue-count :uint32)
   (timestamp-valid-bits  :uint32)
   (min-image-transfer-granularity (:struct vk-extent-3d)))
 
-(defcstruct vk-memory-type
+(def-struct-translator vk-memory-type
+    (s-memory-type memory-type)
   (property-flags vk-flags)
   (hape-index :uint32))
 
-(defcstruct vk-memory-heap
+(def-struct-translator vk-memory-heap
+    (s-memory-heap memory-heap)
   (size vk-device-size)
   (flags vk-flags))
 
-(defcstruct vk-physical-device-memory-properties
+(def-struct-translator vk-physical-device-memory-properties
+    (s-physical-device-memory-properties physical-device-memory-properties)
   (memory-type-count :uint32)
   (memory-types (:struct vk-memory-type) :count 32) 
   (memory-heap-count :uint32)
