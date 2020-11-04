@@ -2,7 +2,8 @@
 
 ;;struct type
 (def-struct-translator vk-allocation-callback
-  (user-data vk-vpointer)
+    (s-allocation-callback allocation-callback)
+  (user-data (:pointer :void))
   (fn-allocation vk-allocation-function)
   (fn-reallocation vk-reallocation-function)
   (fn-free vk-free-function)
@@ -14,10 +15,10 @@
 (def-struct-translator vk-debug-report-callback-create-info-ext
     (s-debug-report-callback-create-info debug-report-callback-create-info)
   (type VkStructureType)
-  (next vk-vpointer)
+  (next (:pointer :void))
   (flags vk-flags)
   (pfn-callback pfn-vk-debug-report-callback-ext)
-  (user-data vk-vpointer))
+  (user-data (:pointer :void)))
 
 (def-struct-translator vk-offset-2d
     (s-offset-2d offset-2d)
@@ -56,7 +57,7 @@
 (def-struct-translator vk-application-info
     (s-application-info application-info)
   (type VkStructureType)
-  (next vk-vpointer)
+  (next (:pointer :void))
   (application-name (:pointer :char))
   (application-version :uint32)
   (engine-name (:pointer :char))
@@ -66,7 +67,7 @@
 (def-struct-translator vk-instance-create-info
     (s-instance-create-info instance-create-info)
   (type VkStructureType)
-  (next vk-vpointer)
+  (next (:pointer :void))
   (flags vk-flags)
   (application-info (:pointer (:struct vk-application-info)))
   (enable-layer-count :uint32)

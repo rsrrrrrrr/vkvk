@@ -47,7 +47,9 @@
   (getf *vulkan-handle* key))
 
 (defun setup-vulkan ()
-  (insert-to-handle :instance (create-instance :info-exts (get-instance-extensions))))
+  (insert-to-handle :instance (create-instance :info-exts (get-instance-extensions)
+					       :info-lays '("VK_LAYER_LUNARG_standard_validation")
+					       :dbg t)))
 
 (defun clean-up ()
   (destroy-instance (get-handle :instance)))

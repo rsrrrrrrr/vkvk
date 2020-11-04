@@ -3,7 +3,6 @@
 ;;basic type
 (defctype vk-bool-32 :uint32)
 (defctype vk-flags :uint32)
-(defctype vk-vpointer (:pointer :void))
 
 
 (defctype vk-handle :pointer)
@@ -67,7 +66,7 @@
 
 ;;struct type
 (defcstruct vk-allocation-callback
-  (user-data vk-vpointer)
+  (user-data (:pointer :void))
   (fn-allocation vk-allocation-function)
   (fn-reallocation vk-reallocation-function)
   (fn-free vk-free-function)
@@ -78,10 +77,10 @@
 
 (defcstruct vk-debug-report-callback-create-info-ext
   (type VkStructureType)
-  (next vk-vpointer)
+  (next (:pointer :void))
   (flags vk-flags)
   (pfn-callback pfn-vk-debug-report-callback-ext)
-  (user-data vk-vpointer))
+  (user-data (:pointer :void)))
 
 (defcstruct vk-offset-2d
   (x :uint32)
@@ -113,7 +112,7 @@
 
 (defcstruct vk-application-info
   (type VkStructureType)
-  (next vk-vpointer)
+  (next (:pointer :void))
   (application-name (:pointer :char))
   (application-version :uint32)
   (engine-name (:pointer :char))
@@ -122,7 +121,7 @@
 
 (defcstruct vk-instance-create-info
   (type VkStructureType)
-  (next vk-vpointer)
+  (next (:pointer :void))
   (flags vk-flags)
   (application-info (:pointer (:struct vk-application-info)))
   (enable-layer-count :uint32)

@@ -19,68 +19,7 @@
 (defconstant +vk-false+ 0)
 (defconstant +vk-true+ 1)
 
-(defun make-vulkan-version (&optional (major 1) (minor 2) (patch 0))
-  (logior (ash major 22)
-	  (ash minor 12)
-	  patch))
-
-(defun check-result (ret-val)
-  (when (not (eql ret-val :success))
-    (error ret-val))
-  (free-strings))
-
-(defun get-instance-extensions ()
-  (with-foreign-object (count :uint32)
-    (let ((exts (glfwGetRequiredInstanceExtensions count)))
-      (obj->list exts :string count))))
-
-(defun create-instance (&key
-			  (app-next nil)
-			  (app-name "vkvk test")
-			  (app-version (make-vulkan-version 0 0 1))
-			  (engine-name "vkvk test")
-			  (engine-version (make-vulkan-version 0 0 1))
-			  (api-version (make-vulkan-version 1 2 0))
-			  (info-next nil)
-			  (info-flags 0)
-			  (info-lays nil)
-			  (info-exts nil)
-			  (allocator *vk-nullptr*))
-  (with-foreign-objects ((info 'instance-create-info)
-			 (app-info 'application-info)
-			 (instance 'vk-instance))
-    (setf (mem-ref app-info 'application-info)
-	  (list :structure-type-application-info
-		app-next
-		app-name
-		app-version
-		engine-name
-		engine-version
-		api-version)
-	  (mem-ref info 'instance-create-info)
-	  (list :structure-type-instance-create-info
-		info-next
-		info-flags
-		app-info
-		(length info-lays)
-		info-lays
-		(length info-exts)
-		info-exts))
-    (check-result (vkcreateinstance info allocator instance))    
-    (mem-ref instance 'vk-instance)))
-
-(defun destroy-instance (instance &optional (allocator *vk-nullptr*))
-  (vkdestroyinstance instance allocator))
-
-#|
-;;no need export
-(defun select-usable (need-use can-use)
-  (intersection need-use can-use :test #'string=))
-
-(defun check-result (ret-val)
-  (when (not (eql ret-val :success))
-    (error ret-val)))
-
+;;for debug
 (defcallback debug-message vk-bool-32
     ((flags vk-flags)
      (obj-type VkDebugReportObjectTypeExt)
@@ -124,6 +63,121 @@
 			       vk-instance instance
 			       vk-debug-utils-messenger-ext (mem-ref *instance-dbg-callback-handle* :pointer)
 			       (:pointer (:struct vk-allocation-callback)) allocator))))
+
+
+(defun make-vulkan-version (&optional (major 1) (minor 2) (patch 0))
+  (logior (ash major 22)
+	  (ash minor 12)
+	  patch))
+
+(defun check-result (ret-val)
+  (when (not (eql ret-val :success))
+    (error ret-val))
+  (free-strings))
+
+(defun get-instance-extensions ()
+  (with-foreign-object (count :uint32)
+    (let ((exts (glfwGetRequiredInstanceExtensions count)))
+      (obj->list exts :string count))))
+
+(defun get-instance-layers ()
+  (with-foreign-objects ((count :uint32)
+			 (properties 'layper-properties))
+    (check-result (vkEnumerateInstanceLayerProperties count (null-pointer)))
+    (let ((num (mem-ref count :uint32)))
+      (when (funcall (complement #'zerop) num)
+	(check-result (vkEnumerateInstanceLayerProperties count properties))
+	(obj->list properties 'layper-properties count)))))
+
+(defun get-usable-instance-extensions (exts)
+  "return the usable extension list you can use"
+  (intersection exts (get-instance-extensions) :test #'string=))
+
+(defun get-usable-instance-layers (lays)
+  "return the usable layers list you can use"
+  (let* ((usable-layers (get-instance-layers))
+	 (layer-names (loop for layer in usable-layers
+			    collect (second (assoc 'layer-name layer)))))
+    (intersection lays layer-names :test #'string=)))
+
+(defun create-instance (&key
+			  (app-next *vk-nullptr*)
+			  (app-name "vkvk test")
+			  (app-version (make-vulkan-version 0 0 1))
+			  (engine-name "vkvk test")
+			  (engine-version (make-vulkan-version 0 0 1))
+			  (api-version (make-vulkan-version 1 2 0))
+			  (info-next *vk-nullptr*)
+			  (info-flags 0)
+			  (info-lays *vk-nullptr*)
+			  (info-exts *vk-nullptr*)
+			  (allocator *vk-nullptr*)
+			  (dbg nil))
+  (let ((usable-exts (get-usable-instance-extensions info-exts))
+	(usable-lays (get-usable-instance-layers info-lays)))
+    (with-foreign-objects ((info 'instance-create-info)
+			   (app-info 'application-info)
+			   (instance 'vk-instance))
+      (when dbg
+	(push "VK_EXT_debug_report" usable-exts)
+	(setf *instance-dbg-create-info*
+	      (foreign-alloc 'debug-report-callback-create-info)
+	      *debug-status* t
+	      (mem-ref *instance-dbg-create-info* 'debug-report-callback-create-info)
+	      (list :structure-type-debug-report-callback-create-info-ext
+		    *vk-nullptr*
+		    (logior (foreign-enum-value 'VkDebugReportFlagBitsEXT
+						:debug-report-warning-bit-ext )
+			    (foreign-enum-value 'VkDebugReportFlagBitsEXT
+						:debug-report-performance-warning-bit-ext)
+			    (foreign-enum-value 'VkDebugReportFlagBitsEXT
+						:debug-report-error-bit-ext)
+			    (foreign-enum-value 'VkDebugReportFlagBitsEXT
+						:debug-report-debug-bit-ext))
+		    (callback debug-message)
+		    *vk-nullptr*)
+	      info-next *instance-dbg-create-info*))
+      (setf (mem-ref app-info 'application-info)
+	    (list :structure-type-application-info
+		  app-next
+		  app-name
+		  app-version
+		  engine-name
+		  engine-version
+		  api-version)
+	    (mem-ref info 'instance-create-info)
+	    (list :structure-type-instance-create-info
+		  info-next
+		  info-flags
+		  app-info
+		  (length usable-exts)
+		  usable-exts
+		  (length usable-lays)
+		  usable-lays))
+      (check-result (vkcreateinstance info allocator instance))
+      (let ((ist (mem-ref instance 'vk-instance)))
+	(when *debug-status*
+	  (create-debug-callback ist)
+	  (foreign-free *instance-dbg-create-info*))
+	ist))))
+
+(defun destroy-instance (instance &optional (allocator *vk-nullptr*))
+  (when *debug-status*
+    (destroy-debug-callback instance)
+    (setf *debug-status* nil))
+  (vkdestroyinstance instance allocator))
+
+#|
+;;no need export
+(defun select-usable (need-use can-use)
+  (intersection need-use can-use :test #'string=))
+
+(defun check-result (ret-val)
+  (when (not (eql ret-val :success))
+    (error ret-val)))
+
+
+
 
 ;;export
 (defun make-vulkan-version (&optional (major 1) (minor 2) (patch 0))

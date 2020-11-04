@@ -48,9 +48,12 @@
 
 (defun read-closure (struct-name ptr)
   #'(lambda (member)
-      (let ((slot-name (first member)))
-	(list slot-name
-	      (foreign-slot-value ptr struct-name slot-name)))))
+      (let ((slot-name (first member))
+	    (count-p (third member)))
+	(cond (count-p (list slot-name
+			     (foreign-string-to-lisp (foreign-slot-value ptr struct-name slot-name)))) ;;no need to judge the leng
+	      (t (list slot-name
+		       (foreign-slot-value ptr struct-name slot-name)))))))
 
 (defmacro def-struct-translator (struct-name (type-name parse-name) &body members)
   `(progn
@@ -64,3 +67,4 @@
      (defmethod translate-from-foreign (ptr (type ,type-name))
        (let ((fun (read-closure '(:struct ,struct-name) ptr)))
 	 (mapcar fun ',members)))))
+
