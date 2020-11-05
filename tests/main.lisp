@@ -49,6 +49,7 @@
 (defun setup-vulkan ()
   (insert-to-handle :instance (create-instance :info-exts (get-instance-extensions)
 					       :info-lays '("VK_LAYER_LUNARG_standard_validation")
+					       :api-version (make-vulkan-version 1 2 131)
 					       :dbg t)))
 
 (defun clean-up ()
