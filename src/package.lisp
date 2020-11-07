@@ -36,14 +36,16 @@
 		 (push foreign-string val)
 		 (setf (foreign-slot-value ptr struct-name slot-name) foreign-string)))
 	      ((equal type '(:pointer (:pointer :char)))
-	       (let ((len (length val))
-		     (str-list (foreign-alloc type)))
-		 (loop for i upto (1- len)
-		       do
-			  (progn
-			    (setf (mem-aref str-list type i) (foreign-string-alloc (nth i val)))
-			    (push (mem-aref str-list type i) *allocated-string*)))
-		 (setf (foreign-slot-value ptr struct-name slot-name) str-list)))
+	       (unless (null val)
+		 (let ((len (length val))
+		       (str-list (foreign-alloc type)))
+		   (push str-list *allocated-string*)
+		   (loop for i upto (1- len)
+			 do
+			    (progn
+			      (setf (mem-aref str-list type i) (foreign-string-alloc (nth i val)))
+			      (push (mem-aref str-list type i) *allocated-string*)))
+		   (setf (foreign-slot-value ptr struct-name slot-name) str-list))))
 	      (t (setf (foreign-slot-value ptr struct-name slot-name) val))))))
 
 (defun read-closure (struct-name ptr)

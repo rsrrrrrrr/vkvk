@@ -6,9 +6,6 @@
 
 ;; NOTE: To run this test file, execute `(asdf:test-system :vkvk)' in your Lisp.
 
-
-
-
 (defparameter *keys-pressed* nil)
 (defparameter *buttons-pressed* nil)
 (defparameter *window-size* nil)
@@ -48,7 +45,7 @@
 
 (defun setup-vulkan ()
   (insert-to-handle :instance (create-instance :info-exts (get-instance-extensions)
-					       :info-lays '("VK_LAYER_LUNARG_standard_validation")
+					       :info-lays '("VK_LAYER_KHRONOS_validation")
 					       :api-version (make-vulkan-version 1 2 131)
 					       :dbg t)))
 

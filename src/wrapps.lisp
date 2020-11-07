@@ -110,8 +110,8 @@
 			  (api-version (make-vulkan-version 1 2 0))
 			  (info-next *vk-nullptr*)
 			  (info-flags 0)
-			  (info-lays *vk-nullptr*)
-			  (info-exts *vk-nullptr*)
+			  (info-lays nil)
+			  (info-exts nil)
 			  (allocator *vk-nullptr*)
 			  (dbg nil))
   (let ((usable-exts (get-usable-instance-extensions info-exts))
@@ -151,10 +151,10 @@
 		  info-next
 		  info-flags
 		  app-info
-		  (length usable-exts)
-		  usable-exts
 		  (length usable-lays)
-		  usable-lays))
+		  usable-lays
+		  (length usable-exts)
+		  usable-exts))
       (check-result (vkcreateinstance info allocator instance))
       (let ((ist (mem-ref instance 'vk-instance)))
 	(when *debug-status*
