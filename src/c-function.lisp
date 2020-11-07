@@ -34,6 +34,17 @@
   (count (:pointer :uint32))
   (properties (:pointer (:struct vk-layer-properties))))
 
+(defcfun ("vkEnumerateDeviceLayerProperties" vkEnumerateDeviceLayerProperties) VkResult
+  (physical-device vk-physical-device)
+  (count (:pointer :uint32))
+  (properties (:pointer (:struct vk-layer-properties))))
+
+(defcfun ("vkEnumerateDeviceExtensionProperties" vkEnumerateDeviceExtensionProperties) VkResult
+  (physical-device vk-physical-device)
+  (layer-name :string)
+  (count (:pointer :uint32))
+  (properties (:pointer (:struct vk-extension-properties))))
+
 (defcfun ("vkCreateInstance" vkCreateInstance) vkresult
   (info (:pointer (:struct vk-instance-create-info)))
   (allocator vk-p-allocator)
@@ -43,6 +54,15 @@
   (instance vk-instance)
   (allocator vk-p-allocator))
 
+(defcfun ("vkCreateDevice" vkCreateDevice) VkResult
+  (physical-device vk-physical-device)
+  (info (:pointer (:struct vk-device-create-info)))
+  (allocator (:pointer (:struct vk-allocation-callback)))
+  (device (:pointer vk-device)))
+
+(defcfun ("vkDestroyDevice" vkDestroyDevice) :void
+  (device vk-device)
+  (allocator (:pointer (:struct vk-allocation-callback))))
 ;;get function
 (defcfun ("vkEnumeratePhysicalDevices" vkEnumeratePhysicalDevices) VkResult
   (instance vk-instance)

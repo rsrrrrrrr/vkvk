@@ -47,7 +47,9 @@
   (format t "gpu properties: ~%~4t~{~4t~a~%~}~%" (get-handle :gpu-properties))
   (format t "queue family properties: ~%~4t~{~4t~a~%~}~%" (get-handle :queue-family-properties))
   (format t "gpu memory info: ~%~4t~{~4t~a~%~}~%" (get-handle :gpu-memory-info))
-  (format t "gpu r4g4 unorm pack8 format info: ~%~4t~a~%" (get-handle :gpu-format-properties)))
+  (format t "gpu r4g4 unorm pack8 format info: ~%~4t~a~%" (get-handle :gpu-format-properties))
+  (format t "graphics queue famly indexs: ~%~4t~a~%" (get-handle :graphics-queue-index))
+  (format t "present queue famly indexs: ~%~4t~a~%" (get-handle :present-queue-index)))
 
 (defun setup-vulkan ()
   (insert-to-handle :instance (create-instance :info-exts (get-instance-extensions)
@@ -61,9 +63,22 @@
   (insert-to-handle :gpu-features (get-physical-device-features (get-handle :gpu)))
   (insert-to-handle :gpu-format-properties (get-physical-device-format-properties (get-handle :gpu)
 										  :format-r4g4-unorm-pack8))
+  (insert-to-handle :graphics-queue-index (select-queue (get-handle :gpu)
+							:queue-graphics-bit))
+  (insert-to-handle :present-queue-index (get-present-queues (get-handle :instance)
+							     (get-handle :gpu)))
+  (insert-to-handle :use-queue-index (first (intersection (get-handle :graphics-queue-index)
+						      (get-handle :present-queue-index))))
+  (insert-to-handle :device (create-device (get-handle :gpu)
+					   :info-exts '("VK_KHR_swapchain")
+					   :info-queues (list
+							 (create-device-queues :queue-family-index (get-handle :use-queue-index)
+									       :queue-count 1
+									       :queue-properties 1.0))))
   (show-info))
 
 (defun clean-up ()
+  (destroy-device (get-handle :device))
   (destroy-instance (get-handle :instance)))
 
 (defun events-example ()

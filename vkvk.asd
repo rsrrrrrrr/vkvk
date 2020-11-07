@@ -6,11 +6,13 @@
   :components ((:module "src"
                 :components
                 ((:file "package")
+		 (:file "convert-struct")
 		 (:file "c-enums")		 
 		 (:file "c-struct")
 		 (:file "convert")		 
 		 (:file "c-function")
-		 (:file "wrapps"))))
+		 (:file "wrapps")
+		 (:file "assist-fun"))))
   :description ""
   :in-order-to ((test-op (test-op "vkvk/tests"))))
 

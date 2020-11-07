@@ -5,7 +5,9 @@
 	  get-instance-layers
 	  create-instance
 	  destroy-instance
-
+	  create-device
+	  destroy-device
+	  
 	  enumerate-physical-device
 	  get-physical-device-properties
 	  get-physical-device-queue-family-properties
@@ -84,13 +86,31 @@
       (obj->list exts :string count))))
 
 (defun get-instance-layers ()
-  (with-foreign-objects ((count :uint32)
-			 (properties 'layper-properties))
+  (with-foreign-object (count :uint32)
     (check-result (vkEnumerateInstanceLayerProperties count (null-pointer)))
     (let ((num (mem-ref count :uint32)))
-      (when (funcall (complement #'zerop) num)
-	(check-result (vkEnumerateInstanceLayerProperties count properties))
-	(obj->list properties 'layper-properties count)))))
+      (unless (zerop num)
+	(with-foreign-object (properties 'layer-properties num)
+	  (check-result (vkEnumerateInstanceLayerProperties count properties))
+	  (obj->list properties 'layer-properties count))))))
+
+(defun get-device-layers (physical-device)
+  (with-foreign-object (count :uint32)
+    (check-result (vkEnumerateDeviceLayerProperties physical-device count (null-pointer)))
+    (let ((num (mem-ref count :uint32)))
+      (unless (zerop num)
+	(with-foreign-object (properties 'layer-properties num)
+	  (check-result (vkEnumerateDeviceLayerProperties physical-device count properties))
+	  (obj->list properties 'layer-properties count))))))
+
+(defun get-device-extensions (physical-device)
+  (with-foreign-object (count :uint32)
+    (check-result (vkEnumerateDeviceExtensionProperties physical-device *vk-nullptr* count *vk-nullptr*))
+    (let ((num (mem-ref count :uint32)))
+      (unless (zerop num)
+	(with-foreign-object (properties 'extension-properties num)
+	  (check-result (vkEnumerateDeviceExtensionProperties physical-device *vk-nullptr* count properties))
+	  (obj->list properties 'extension-properties count))))))
 
 (defun get-usable-instance-extensions (exts)
   "return the usable extension list you can use"
@@ -102,6 +122,20 @@
 	 (layer-names (loop for layer in usable-layers
 			    collect (second (assoc 'layer-name layer)))))
     (intersection lays layer-names :test #'string=)))
+
+(defun get-usable-device-layers (physical-device lays)
+  (let* ((usable-layers (get-device-layers physical-device))
+	 (layer-names (loop for layer in usable-layers
+			    collect (second (assoc 'layer-name layer)))))
+    (format t "usable-layers ~a~%~%" usable-layers)
+    (intersection lays layer-names :test #'string=)))
+
+(defun get-usable-device-extensions (physical-device exts)
+  (let* ((usable-extensions (get-device-extensions physical-device))
+	 (extension-names (loop for layer in usable-extensions
+				collect (second (assoc 'extension-name layer)))))
+    (format t "usable-layers ~a~%~%" usable-extensions)
+    (intersection exts extension-names :test #'string=)))
 
 (defun create-instance (&key
 			  (app-next *vk-nullptr*)
@@ -170,6 +204,65 @@
     (setf *debug-status* nil))
   (vkdestroyinstance instance allocator))
 
+(defun create-device (physical-device &key
+					(info-next *vk-nullptr*)
+					(info-flags 0)
+					(info-queues nil)
+					(info-lays nil)
+					(info-exts nil)
+					(info-features nil)
+					(allocate *vk-nullptr*))
+  (let ((queue-count (length info-queues))
+	(features (get-physical-device-features physical-device))
+	(usable-layers (get-usable-device-layers physical-device info-lays))
+	(usable-extensions (get-usable-device-extensions physical-device info-exts)))
+    (mapcar #'(lambda (feature)
+		(let ((slot (first feature)))
+		  (setf (second (assoc slot features))  (second feature))))
+	    info-features)
+    (with-foreign-objects ((device 'vk-device)
+			   (queues 'device-queue-create-info queue-count)
+			   (queue-properties :float queue-count)
+			   (p-feature 'physical-device-features)
+			   (create-info 'device-create-info))
+      (setf (mem-ref p-feature 'physical-device-features)
+	    (mapcar #'second features))
+      (unless (zerop queue-count)
+	(loop for i upto (1- queue-count)
+	      for struct = (nth i info-queues)
+	      for queue-property = (mem-aptr queue-properties :float i)
+	      do (progn
+		   (unless (lsp-device-queue-create-info-p struct)
+		     (error "not the queue info struct"))
+		   (setf (mem-ref queue-property :float)
+			 (lsp-device-queue-create-info-queue-properties struct))
+		   (setf (mem-aref queues 'device-queue-create-info i)
+			 (list (lsp-device-queue-create-info-type struct) 
+			       (lsp-device-queue-create-info-next struct) 
+			       (lsp-device-queue-create-info-flag struct) 
+			       (lsp-device-queue-create-info-queue-family-index struct) 
+			       (lsp-device-queue-create-info-queue-count struct) 
+			       queue-property)))))
+      (setf (mem-ref p-feature 'physical-device-features)
+	    (mapcar #'(lambda (lst)
+			(second lst))
+		    features)
+	    (mem-ref create-info 'device-create-info)
+	    (list :structure-type-device-create-info
+		  info-next
+		  info-flags
+		  queue-count
+		  queues
+		  (length usable-layers)
+		  usable-layers
+		  (length usable-extensions)
+		  usable-extensions
+		  p-feature))
+      (check-result (vkCreateDevice physical-device create-info allocate device))
+      (mem-ref device 'vk-device))))
+
+(defun destroy-device (device &optional (allocator *vk-nullptr*))
+  (vkDestroyDevice device allocator))
 ;;function for get
 (defun enumerate-physical-device (instance)
   (with-foreign-object (count :uint32)

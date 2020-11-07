@@ -47,8 +47,13 @@
   (offset (:struct vk-offset-2d))
   (extent (:struct vk-extent-2d)))
 
+(def-struct-translator vk-extension-properties
+    (s-extension-properties extension-properties)
+  (extension-name :char :count 255)
+  (spec-version :uint32))
+
 (def-struct-translator vk-layer-properties
-    (s-layer-properties layper-properties)
+    (s-layer-properties layer-properties)
   (layer-name :char :count 255)
   (spec-version :uint32)
   (implementation-version :uint32)
@@ -74,6 +79,28 @@
   (enable-layer-names (:pointer (:pointer :char)))
   (enable-extension-count :uint32)
   (enable-extension-names (:pointer (:pointer :char))))
+
+(def-struct-translator vk-device-queue-create-info
+    (s-device-queue-create-info device-queue-create-info)
+  (type VkStructureType)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (queue-family-index :uint32)
+  (queue-count :uint32)
+  (queue-properties (:pointer :float)))
+
+(def-struct-translator vk-device-create-info
+    (s-device-create-info device-create-info)
+  (type VkStructureType)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (queue-create-info-count :uint32)
+  (queue-create-infos (:pointer (:struct vk-device-queue-create-info)))
+  (layer-count :uint32)
+  (layers (:pointer (:pointer :char)))
+  (extension-count :uint32)
+  (extensions (:pointer (:pointer :char)))
+  (enable-features (:pointer (:struct vk-physical-device-features))))
 
 ;;get struct
 (def-struct-translator vk-physical-device-limits
