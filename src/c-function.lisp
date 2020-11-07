@@ -61,3 +61,12 @@
 (defcfun ("vkGetPhysicalDeviceMemoryProperties" vkGetPhysicalDeviceMemoryProperties) :void
   (physical-device vk-physical-device)
   (properties (:pointer (:struct vk-physical-device-memory-properties))))
+
+(defcfun ("vkGetPhysicalDeviceFeatures" vkGetPhysicalDeviceFeatures) :void
+  (physical-device vk-physical-device)
+  (features (:pointer (:struct vk-physical-device-features))))
+
+(defcfun ("vkGetPhysicalDeviceFormatProperties" vkGetPhysicalDeviceFormatProperties) :void
+  (physical-device vk-physical-device)
+  (format VkFormat)
+  (properties (:pointer (:struct vk-format-properties))))

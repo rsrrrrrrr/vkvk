@@ -27,6 +27,10 @@
     (loop for i upto count
 	  collect (mem-aref objs type i))))
 
+(defun count->list (objs type num)
+  (loop for i upto num
+	collect (mem-aref objs type i)))
+
 (defun fill-closure (struct-name ptr)
   #'(lambda (member val)
       (let ((slot-name (first member))
@@ -48,12 +52,30 @@
 		   (setf (foreign-slot-value ptr struct-name slot-name) str-list))))
 	      (t (setf (foreign-slot-value ptr struct-name slot-name) val))))))
 
+(defun process-count (type num ptr &optional (bind-p nil))
+  (cond ((eql type :char) (foreign-string-to-lisp ptr))
+	(bind-p (loop for i upto (1- num)
+		 collect (mem-aref ptr type i)))
+	(t (loop for i upto (1- num)
+		 for p = (mem-aptr ptr type i)
+		 until (null-pointer-p p)
+		 collect (mem-ref p type)))))
+
 (defun read-closure (struct-name ptr)
   #'(lambda (member)
       (let ((slot-name (first member))
-	    (count-p (third member)))
-	(cond (count-p (list slot-name
-			     (foreign-string-to-lisp (foreign-slot-value ptr struct-name slot-name)))) ;;no need to judge the leng
+	    (type (second member))
+	    (count (getf member :count))
+	    (bind (getf member :bind)))
+	(cond (bind (list slot-name
+			  (process-count type
+					 (foreign-slot-value ptr struct-name bind)
+					 (foreign-slot-pointer ptr struct-name slot-name)
+					 t)))
+	      (count (list slot-name
+			   (process-count type
+					  count
+					  (foreign-slot-value ptr struct-name slot-name)))) 
 	      (t (list slot-name
 		       (foreign-slot-value ptr struct-name slot-name)))))))
 
