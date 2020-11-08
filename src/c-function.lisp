@@ -213,3 +213,15 @@
   (surface vk-surface-khr)
   (count (:pointer :uint32))
   (format (:pointer (:struct vk-surface-format-khr))))
+
+(defcfun ("vkGetPhysicalDeviceSurfacePresentModesKHR" vkGetPhysicalDeviceSurfacePresentModesKHR) VkResult
+  (physical-device vk-physical-device)
+  (surface vk-surface-khr)
+  (count (:pointer :uint32))
+  (present-mode (:pointer VkPresentModeKHR)))
+
+(defcfun ("vkGetDeviceQueue" vkGetDeviceQueue) :void
+  (device vk-device)
+  (family-index :uint32)
+  (index :uint32)
+  (queue (:pointer vk-queue)))

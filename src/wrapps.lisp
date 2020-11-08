@@ -1,6 +1,7 @@
 (in-package :vkvk)
 
 (export '(make-vulkan-version
+	  vkvk-slot
 	  get-instance-extensions
 	  get-instance-layers
 	  create-instance
@@ -34,8 +35,10 @@
 	  enumerate-instance-version
 	  get-physical-device-image-format-properties
 	  get-device-memory-commitment
-	  get-surface-capabilities
-	  get-surface-format))
+	  get-physical-device-surface-capabilities
+	  get-physical-device-surface-format
+	  get-physical-device-surfaec-present-mode
+	  get-device-queue))
 
 (defparameter *vk-nullptr* (null-pointer))
 (defparameter *instance-dbg-create-info* *vk-nullptr*)
@@ -96,6 +99,11 @@
   (logior (ash major 22)
 	  (ash minor 12)
 	  patch))
+
+(defun vkvk-slot (a-list &rest items)
+  (reduce #'(lambda (lst item)
+	      (second (assoc item lst)))
+	  items :initial-value a-list))
 
 (defun check-result (ret-val)
   (when (not (eql ret-val :success))
@@ -612,12 +620,12 @@
     (vkGetDeviceMemoryCommitment device device-memory size)
     (mem-ref size 'vk-device-size)))
 
-(defun get-surface-capabilities (physical-device surface)
+(defun get-physical-device-surface-capabilities (physical-device surface)
   (with-foreign-object (cap 'surface-capabilities)
     (check-result (vkGetPhysicalDeviceSurfaceCapabilitiesKHR physical-device surface cap))
     (mem-ref cap 'surface-capabilities)))
 
-(defun get-surface-format (physical-device surface)
+(defun get-physical-device-surface-format (physical-device surface)
   (with-foreign-object (count :uint32)
     (check-result (vkGetPhysicalDeviceSurfaceFormatsKHR physical-device
 							surface
@@ -625,9 +633,29 @@
 							*vk-nullptr*))
     (let ((num (mem-ref count :uint32)))
       (unless (zerop num)
-	(with-foreign-object (format 'surface-formt)
+	(with-foreign-object (format 'surface-formt num)
 	  (check-result (vkGetPhysicalDeviceSurfaceFormatsKHR physical-device
 							surface
 							count
 							format))
 	  (obj->list format 'surface-formt count))))))
+
+(defun get-physical-device-surfaec-present-mode (physical-device surface)
+  (with-foreign-object (count :uint32)
+    (check-result (vkGetPhysicalDeviceSurfacePresentModesKHR physical-device
+							     surface
+							     count
+							     *vk-nullptr*))
+    (let ((num (mem-ref count :uint32)))
+      (unless (zerop num)
+	(with-foreign-object (mode 'VkPresentModeKHR num)
+	  (check-result (vkGetPhysicalDeviceSurfacePresentModesKHR physical-device
+							surface
+							count
+							mode))
+	  (obj->list mode 'VkPresentModeKHR count))))))
+
+(defun get-device-queue (device family-index index)
+  (with-foreign-object (queue 'vk-queue)
+    (vkGetDeviceQueue device family-index index queue)
+    (mem-ref queue 'vk-queue)))

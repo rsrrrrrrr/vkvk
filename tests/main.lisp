@@ -1,6 +1,6 @@
 (defpackage vkvk/tests/main
   (:use :cl
-        :vkvk
+   :vkvk
 	:cl-glfw3))
 (in-package :vkvk/tests/main)
 
@@ -22,13 +22,13 @@
   (when (and (eq key :escape) (eq action :press))
     (set-window-should-close))
   (if (eq action :press)
-    (pushnew key *keys-pressed*))
+      (pushnew key *keys-pressed*))
   (update-window-title window))
 
 (def-mouse-button-callback mouse-callback (window button action mod-keys)
   (declare (ignore mod-keys))
   (if (eq action :press)
-    (pushnew button *buttons-pressed*))
+      (pushnew button *buttons-pressed*))
   (update-window-title window))
 
 (def-window-size-callback window-size-callback (window w h)
@@ -43,13 +43,39 @@
 (defun get-handle (key)
   (getf *vulkan-handle* key))
 
+(defun select-format-and-color-space (a-lst)
+  (labels ((select (lst)
+	     (cond ((null lst) nil)
+		   ((and (eql (vkvk-slot lst 'format) :format-b8g8r8a8-srgb)
+			 (eql (vkvk-slot lst 'color-space) :color-space-srgb-nonlinear-khr))
+		    lst)
+		   (t (select (rest lst))))))
+    (let ((result (select a-lst))
+	  (default (first a-lst)))
+      (if (null result)
+	  default
+	  result))))
+
+(defun select-present-mode (lst)
+  (cond ((null lst) :present-mode-fifo-khr)
+	((eql (first lst) :present-mode-mailbox-khr) (first lst))
+	(t (select-present-mode (rest lst)))))
+
 (defun show-info ()
   (format t "gpu properties: ~%~4t~{~4t~a~%~}~%" (get-handle :gpu-properties))
   (format t "queue family properties: ~%~4t~{~4t~a~%~}~%" (get-handle :queue-family-properties))
   (format t "gpu memory info: ~%~4t~{~4t~a~%~}~%" (get-handle :gpu-memory-info))
   (format t "gpu r4g4 unorm pack8 format info: ~%~4t~a~%" (get-handle :gpu-format-properties))
   (format t "surface capabilities: ~%~4t~{~4t~a~%~}" (get-handle :surface-cap))
-  (format t "surface format: ~%~4t~{~4t~a~%~}" (get-handle :surface-format)))
+  (format t "surface format: ~%~4t~{~4t~a~%~}" (get-handle :surface-format))
+  (format t "surface present mode: ~%~4t~{~4t~a~%~}" (get-handle :surface-present-mode))
+  (format t "select format : ~%~4t~a~%" (select-format-and-color-space (get-handle :surface-format)))
+  (format t "select present mode : ~%~4t~a~%" (select-present-mode (get-handle :surface-present-mode)))
+  (format t "select format :~%~4t~a~%" (vkvk-slot (select-format-and-color-space (get-handle :surface-format))
+						  'format))
+  (when (equal (first (second (select-format-and-color-space (get-handle :surface-format))))
+	       'color-space)
+    (format t "select color-space" )))
 
 (defun setup-vulkan ()
   (insert-to-handle :instance (create-instance :info-exts (get-instance-extensions)
@@ -67,20 +93,38 @@
 							:queue-graphics-bit))
   (insert-to-handle :present-queue-index (get-present-queues (get-handle :instance)
 							     (get-handle :gpu)))
-  (insert-to-handle :use-queue-index (first (intersection (get-handle :graphics-queue-index)
-						      (get-handle :present-queue-index))))
+  (let ((queue (intersection (get-handle :graphics-queue-index)
+			     (get-handle :present-queue-index))))
+    (if (null queue)
+	(progn
+	  (insert-to-handle :graphics-queue-index (first (get-handle :graphics-queue-index)))
+	  (insert-to-handle :present-queue-index (first (get-handle :present-queue-index))))
+	(progn
+	  (insert-to-handle :graphics-queue-index (first queue))
+	  (insert-to-handle :present-queue-index (first queue)))))
   (insert-to-handle :device (create-device (get-handle :gpu)
 					   :info-exts '("VK_KHR_swapchain")
 					   :info-queues (list
-							 (create-device-queues :queue-family-index (get-handle :use-queue-index)
+							 (create-device-queues :queue-family-index (get-handle :graphics-queue-index)
+									       :queue-count 1
+									       :queue-properties 1.0)
+							 (create-device-queues :queue-family-index (get-handle :present-queue-index)
 									       :queue-count 1
 									       :queue-properties 1.0))))
   (insert-to-handle :surface (glfw-create-surface (get-handle :instance)
 						  *window*))
-  (insert-to-handle :surface-cap (get-surface-capabilities (get-handle :gpu)
-							   (get-handle :surface)))
-  (insert-to-handle :surface-format (get-surface-format (get-handle :gpu)
-							(get-handle :surface)))
+  (insert-to-handle :surface-cap (get-physical-device-surface-capabilities (get-handle :gpu)
+									   (get-handle :surface)))
+  (insert-to-handle :surface-format (get-physical-device-surface-format (get-handle :gpu)
+									(get-handle :surface)))
+  (insert-to-handle :surface-present-mode (get-physical-device-surfaec-present-mode (get-handle :gpu)
+										    (get-handle :surface)))
+  (insert-to-handle :graphics-queue-index (get-device-queue (get-handle :device)
+							    (get-handle :graphics-queue-index)
+							    0))
+  (insert-to-handle :present-queue-index (get-device-queue (get-handle :device)
+							   (get-handle :present-queue-index)
+							   0))
   (show-info))
 
 (defun clean-up ()
