@@ -75,6 +75,8 @@
 							 (create-device-queues :queue-family-index (get-handle :use-queue-index)
 									       :queue-count 1
 									       :queue-properties 1.0))))
+  (insert-to-handle :surface (glfw-create-surface (get-handle :instance)
+						  *window*))
   (show-info))
 
 (defun clean-up ()

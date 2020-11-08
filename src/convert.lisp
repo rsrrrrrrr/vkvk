@@ -319,3 +319,114 @@
   (linear-tiling-features vk-flags)
   (optimal-tiling-features vk-flags)
   (buffer-features vk-flags))
+
+(def-struct-translator vk-image-format-properties
+    (s-image-format-properties image-format-properties)
+  (max-extent (:struct vk-extent-3d))
+  (max-mip-levels :uint32)
+  (max-array-layers :uint32)
+  (sample-count vk-flags)
+  (max-resource-size vk-device-size))
+
+(def-struct-translator vk-andorid-surface-create-info
+    (s-andorid-surface-create-info andorid-surface-create-info)
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (windows (:pointer android-window)))
+
+(def-struct-translator vk-wayland-surface-create-info
+    (s-wayland-surface-create-info wayland-surface-create-info)
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (display (:pointer (:struct wl-display)))
+  (surface (:pointer (:struct wl-surface))))
+
+(def-struct-translator vk-win32-surface-create-info
+    (s-win32-surface-create-info win32-surface-create-info)
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (hinstance hinstance)
+  (hwnd hwnd))
+
+(def-struct-translator vk-xcb-surface-create-info
+    (s-xcb-surface-create-info xcb-surface-create-info)
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (connection (:pointer xcb-connection))
+  (window xcb-window))
+
+(def-struct-translator vk-xlib-surface-create-info
+    (s-xlib-surface-create-info xlib-surface-create-info)
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (dpy (:pointer xlib-display))
+  (window xlib-window))
+
+(def-struct-translator vk-direct-fb-surface-create-info
+    (s-direct-fb-surface-create-info direct-fb-surface-create-info)
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (dfb (:pointer idirect-fb))
+  (surface (:pointer idirect-fb-surface)))
+
+(def-struct-translator vk-image-pipe-surface-fuchsia-create-info
+    (s-image-pipe-surface-fuchsia-create-info image-pipe-surface-fuchsia-create-info)
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (image-pipe-handle zx-handle))
+
+(def-struct-translator vk-stream-descriptor-surface-create-info
+    (s-stream-descriptor-surface-create-info stream-descriptor-surface-create-info)
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (stream-descriptor gpp-stream-descriptor))
+
+(def-struct-translator vk-ios-surface-create-info
+    (s-ios-surface-create-info ios-surface-create-info)
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (view (:pointer :void)))
+
+(def-struct-translator vk-mac-os-surface-create-info
+    (s-mac-os-surface-create-info mac-os-surface-create-info)
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (view (:pointer :void)))
+
+(def-struct-translator vk-vi-surface-create-info
+    (s-vi-surface-create-info vi-surface-create-info)
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (window (:pointer :void)))
+
+(def-struct-translator vk-metal-surfaec-create-info
+    (s-metal-surfaec-create-info metal-surfaec-create-info)
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (layer (:pointer ca-metal-layer)))
+
+(def-struct-translator vk-display-plane-surface-create-info
+    (s-display-plane-surface-create-info display-plane-surface-create-info)
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (display-mode vk-display-mode-khr)
+  (plane-index :uint32)
+  (plane-stack-index :uint32)
+  (transform VkSurfaceTransformFlagBitsKHR)
+  (global-alpha :float)
+  (alpha-mode VkDisplayPlaneAlphaFlagBitsKHR)
+  (image-extent (:struct vk-extent-2d)))
+

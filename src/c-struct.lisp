@@ -64,6 +64,20 @@
 (defctype pfn-vk-debug-utils-messenger-callback-ext :pointer)
 (defctype pfn-vk-debug-report-callback-ext :pointer)
 
+(defctype android-window :void)
+(defcstruct wl-display) ;;unknow ~.~
+(defcstruct wl-surface) ;;unknow ~.~
+(defctype hinstance (:pointer :void))
+(defctype hwnd (:pointer :void))
+(defctype xcb-connection :void)
+(defctype xcb-window :uint32)
+(defctype xlib-display :void)
+(defctype xlib-window :ulong)
+(defctype idirect-fb :void) ;;unknow
+(defctype idirect-fb-surface :void) ;;unknow
+(defctype zx-handle :uint32) ;;unknow
+(defctype gpp-stream-descriptor :uint32)
+(defctype ca-metal-layer :void) ;;unknow
 ;;struct type
 (defcstruct vk-allocation-callback
   (user-data (:pointer :void))
@@ -356,9 +370,105 @@
   (memory-heap-count :uint32)
   (memory-heaps (:struct vk-memory-heap) :count 16))
 
-
-
 (defcstruct vk-format-properties
   (linear-tiling-features vk-flags)
   (optimal-tiling-features vk-flags)
   (buffer-features vk-flags))
+
+(defcstruct vk-image-format-properties
+  (max-extent (:struct vk-extent-3d))
+  (max-mip-levels :uint32)
+  (max-array-layers :uint32)
+  (sample-count vk-flags)
+  (max-resource-size vk-device-size))
+
+
+;;surface struct
+(defcstruct vk-andorid-surface-create-info
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (windows (:pointer android-window)))
+
+(defcstruct vk-wayland-surface-create-info
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (display (:pointer (:struct wl-display)))
+  (surface (:pointer (:struct wl-surface))))
+
+(defcstruct vk-win32-surface-create-info
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (hinstance hinstance)
+  (hwnd hwnd))
+
+(defcstruct vk-xcb-surface-create-info
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (connection (:pointer xcb-connection))
+  (window xcb-window))
+
+(defcstruct vk-xlib-surface-create-info
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (dpy (:pointer xlib-display))
+  (window xlib-window))
+
+(defcstruct vk-direct-fb-surface-create-info
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (dfb (:pointer idirect-fb))
+  (surface (:pointer idirect-fb-surface)))
+
+(defcstruct vk-image-pipe-surface-fuchsia-create-info
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (image-pipe-handle zx-handle))
+
+(defcstruct vk-stream-descriptor-surface-create-info
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (stream-descriptor gpp-stream-descriptor))
+
+(defcstruct vk-ios-surface-create-info
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (view (:pointer :void)))
+
+(defcstruct vk-mac-os-surface-create-info
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (view (:pointer :void)))
+
+(defcstruct vk-vi-surface-create-info
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (window (:pointer :void)))
+
+(defcstruct vk-metal-surfaec-create-info
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (layer (:pointer ca-metal-layer)))
+
+(defcstruct vk-display-plane-surface-create-info
+  (type vkstructuretype)
+  (next (:pointer :void))
+  (flags vk-flags)
+  (display-mode vk-display-mode-khr)
+  (plane-index :uint32)
+  (plane-stack-index :uint32)
+  (transform VkSurfaceTransformFlagBitsKHR)
+  (global-alpha :float)
+  (alpha-mode VkDisplayPlaneAlphaFlagBitsKHR)
+  (image-extent (:struct vk-extent-2d)))

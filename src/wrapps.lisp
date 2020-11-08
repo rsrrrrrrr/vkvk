@@ -7,13 +7,31 @@
 	  destroy-instance
 	  create-device
 	  destroy-device
+	  glfw-create-surface
+	  create-android-surface
+	  create-wayland-surface
+	  create-win32-surface
+	  create-xcb-surface
+	  create-xlib-surface
+	  create-direct-fb-surface
+	  create-image-pipe-surface
+	  create-stream-descriptor-surface
+	  create-ios-surface
+	  create-macos-surface
+	  create-vi-surface
+	  create-metal-surface
+	  create-display-plane-surface
+	  destroy-surface
 	  
 	  enumerate-physical-device
 	  get-physical-device-properties
 	  get-physical-device-queue-family-properties
 	  get-physical-device-memory-properties
 	  get-physical-device-features
-	  get-physical-device-format-properties))
+	  get-physical-device-format-properties
+	  enumerate-instance-version
+	  get-physical-device-image-format-properties
+	  get-device-memory-commitment))
 
 (defparameter *vk-nullptr* (null-pointer))
 (defparameter *instance-dbg-create-info* *vk-nullptr*)
@@ -263,6 +281,219 @@
 
 (defun destroy-device (device &optional (allocator *vk-nullptr*))
   (vkDestroyDevice device allocator))
+
+(defun glfw-create-surface (instance window &key
+					 (allocator *vk-nullptr*))
+  (with-foreign-object (surface 'vk-surface-khr)
+    (check-result (glfwCreateWindowSurface instance
+					   window
+					   allocator
+					   surface))
+    (mem-ref surface 'vk-surface-khr)))
+
+(defun create-android-surface (instance window &key
+						 (next *vk-nullptr*)
+						 (flags 0)
+						 (allocator *vk-nullptr*))
+  (with-foreign-objects ((info 'andorid-surface-create-info)
+			 (surface 'vk-surface-khr))
+    (setf (mem-ref info 'andorid-surface-create-info)
+	  (list :structure-type-android-surface-create-info-khr
+		next
+		flags
+		window))
+    (check-result (vkCreateAndroidSurfaceKHR instance info allocator surface))
+    (mem-ref surface 'vk-surface-khr)))
+
+(defun create-wayland-surface (instance display way-surface &key
+							  (next *vk-nullptr*)
+							  (flags 0)
+							  (allocator *vk-nullptr*))
+  (with-foreign-objects ((info 'wayland-surface-create-info)
+			 (surface 'vk-surface-khr))
+    (setf (mem-ref info 'wayland-surface-create-info)
+	  (list :structure-type-wayland-surface-create-info-khr
+		next
+		flags
+		display
+		way-surface))
+    (check-result (vkCreateWaylandSurfaceKHR instance info allocator surface))
+    (mem-ref surface 'vk-surface-khr)))
+
+(defun create-win32-surface (instance hinstance hwnd &key
+						       (next *vk-nullptr*)
+						       (flags 0)
+						       (allocator *vk-nullptr*))
+  (with-foreign-objects ((info 'win32-surface-create-info)
+			 (surface 'vk-surface-khr))
+    (setf (mem-ref info 'win32-surface-create-info)
+	  (list :structure-type-win32-surface-create-info-khr
+		next
+		flags
+		hinstance
+		hwnd))
+    (check-result (vkCreateWin32SurfaceKHR instance info allocator surface))
+    (mem-ref surface 'vk-surface-khr)))
+
+(defun create-xcb-surface (instance connection window &key
+				      (next *vk-nullptr*)
+				      (flags 0)
+				      (allocator *vk-nullptr*))
+  (with-foreign-objects ((info 'xcb-surface-create-info)
+			 (surface 'vk-surface-khr))
+    (setf (mem-ref info 'xcb-surface-create-info)
+	  (list :structure-type-xcb-surface-create-info-khr
+		next
+		flags
+		connection
+		window))
+    (check-result (vkCreateXcbSurfaceKHR  instance info allocator surface))
+    (mem-ref surface 'vk-surface-khr)))
+
+(defun create-xlib-surface (instance dpy window &key
+				       (next *vk-nullptr*)
+				       (flags 0)
+				       (allocator *vk-nullptr*))
+  (with-foreign-objects ((info 'xlib-surface-create-info)
+			 (surface 'vk-surface-khr))
+    (setf (mem-ref info 'xlib-surface-create-info)
+	  (list :structure-type-xlib-surface-create-info-khr
+		next
+		flags
+		dpy
+		window))
+    (check-result (vkCreateXlibSurfaceKHR instance info allocator surface))
+    (mem-ref surface 'vk-surface-khr)))
+
+(defun create-direct-fb-surface (instance dfb dfb-surface &key
+					    (next *vk-nullptr*)
+					    (flags 0)
+					    (allocator *vk-nullptr*))
+  (with-foreign-objects ((info 'direct-fb-surface-create-info)
+			 (surface 'vk-surface-khr))
+    (setf (mem-ref info 'direct-fb-surface-create-info)
+	  (list :structure-type-directfb-surface-create-info-ext
+		next
+		flags
+		dfb
+		dfb-surface))
+    (check-result (vkCreateDirectFBSurfaceEXT instance info allocator surface))
+    (mem-ref surface 'vk-surface-khr)))
+
+(defun create-image-pipe-surface (instance image-pipe-handle &key
+					     (next *vk-nullptr*)
+					     (flags 0)
+					     (allocator *vk-nullptr*))
+  (with-foreign-objects ((info 'image-pipe-surface-fuchsia-create-info)
+			 (surface 'vk-surface-khr))
+    (setf (mem-ref info 'image-pipe-surface-fuchsia-create-info)
+	  (list :structure-type-imagepipe-surface-create-info-fuchsia
+		next
+		flags
+		image-pipe-handle))
+    (check-result (vkCreateImagePipeSurfaceFUCHSIA instance info allocator surface))
+    (mem-ref surface 'vk-surface-khr)))
+
+(defun create-stream-descriptor-surface (instance descriptor &key
+						    (next *vk-nullptr*)
+						    (flags 0)
+						    (allocator *vk-nullptr*))
+  (with-foreign-objects ((info 'stream-descriptor-surface-create-info)
+			 (surface 'vk-surface-khr))
+    (setf (mem-ref info 'stream-descriptor-surface-create-info)
+	  (list :structure-type-stream-descriptor-surface-create-info-ggp
+		next
+		flags
+		descriptor))
+    (check-result (vkCreateStreamDescriptorSurfaceGGP instance info allocator surface))
+    (mem-ref surface 'vk-surface-khr)))
+
+(defun create-ios-surface (instance view &key
+				      (next *vk-nullptr*)
+				      (flags 0)
+				      (allocator *vk-nullptr*))
+  (with-foreign-objects ((info 'ios-surface-create-info)
+			 (surface 'vk-surface-khr))
+    (setf (mem-ref info 'ios-surface-create-info)
+	  (list :structure-type-ios-surface-create-info-mvk
+		next
+		flags
+		view))
+    (check-result (vkCreateIOSSurfaceMVK instance info allocator surface))
+    (mem-ref surface 'vk-surface-khr)))
+
+(defun create-macos-surface (instance view &key
+					(next *vk-nullptr*)
+					(flags 0)
+					(allocator *vk-nullptr*))
+  (with-foreign-objects ((info 'mac-os-surface-create-info)
+			 (surface 'vk-surface-khr))
+    (setf (mem-ref info 'mac-os-surface-create-info)
+	  (list :structure-type-macos-surface-create-info-mvk
+		next
+		flags
+		view))
+    (check-result (vkCreateMacOSSurfaceMVK instance info allocator surface))
+    (mem-ref surface 'vk-surface-khr)))
+
+(defun create-vi-surface (instance window &key
+				     (next *vk-nullptr*)
+				     (flags 0)
+				     (allocator *vk-nullptr*))
+  (with-foreign-objects ((info 'vi-surface-create-info)
+			 (surface 'vk-surface-khr))
+    (setf (mem-ref info 'vi-surface-create-info)
+	  (list :structure-type-vi-surface-create-info-nn
+		next
+		flags
+		window))
+    (check-result (vkCreateViSurfaceNN instance info allocator surface))
+    (mem-ref surface 'vk-surface-khr)))
+
+(defun create-metal-surface (instance layer &key
+					(next *vk-nullptr*)
+					(flags 0)
+					(allocator *vk-nullptr*))
+  (with-foreign-objects ((info 'metal-surfaec-create-info)
+			 (surface 'vk-surface-khr))
+    (setf (mem-ref info 'metal-surfaec-create-info)
+	  (list :structure-type-metal-surface-create-info-ext
+		next
+		flags
+		layer))
+    (check-result (vkCreateMetalSurfaceEXT instance info allocator surface))
+    (mem-ref surface 'vk-surface-khr)))
+
+(defun create-display-plane-surface (instance
+				     display-mode
+				     plane-index
+				     plane-stack-index
+				     transform
+				     global-alpha
+				     alpha-mode
+				     extent-2d
+				     &key
+				       (next *vk-nullptr*)
+				       (flags 0)
+				       (allocator *vk-nullptr*))
+  (with-foreign-objects ((info 'display-plane-surface-create-info)
+			 (surface 'vk-surface-khr))
+    (setf (mem-ref info 'display-plane-surface-create-info)
+	  (list :structure-type-display-surface-create-info-khr
+		next
+		flags
+		display-mode
+		plane-index
+		plane-stack-index
+		transform
+		global-alpha
+		alpha-mode
+		extent-2d))
+    (check-result (vkCreateDisplayPlaneSurfaceKHR instance info allocator surface))
+    (mem-ref surface 'vk-surface-khr)))
+
+(defun destroy-surface (instance surface &optional (allocator *vk-nullptr*))
+  (vkDestroySurfaceKHR instance surface allocator))
 ;;function for get
 (defun enumerate-physical-device (instance)
   (with-foreign-object (count :uint32)
@@ -299,3 +530,29 @@
   (with-foreign-object (properties 'format-properties)
     (vkGetPhysicalDeviceFormatProperties physical-device format properties)
     (mem-ref properties 'format-properties)))
+
+(defun enumerate-instance-version ()
+  (with-foreign-object (version :uint32)
+    (check-result (vkEnumerateInstanceVersion version))
+    (mem-ref version :uint32)))
+
+(defun get-physical-device-image-format-properties (physical-device &key
+								      (format :format-undefined)
+								      (type :image-type-2d)
+								      (tiling :image-tiling-linear)
+								      (usage-flag 0)
+								      (create-flag 0))
+  (with-foreign-object (properties 'image-format-properties)
+    (check-result (vkGetPhysicalDeviceImageFormatProperties physical-device
+							    format
+							    type
+							    tiling
+							    usage-flag
+							    create-flag
+							    properties))
+    (mem-ref properties 'image-format-properties)))
+
+(defun get-device-memory-commitment (device device-memory)
+  (with-foreign-object (size 'vk-device-size)
+    (vkGetDeviceMemoryCommitment device device-memory size)
+    (mem-ref size 'vk-device-size)))
