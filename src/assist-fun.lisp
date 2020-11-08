@@ -4,13 +4,12 @@
 	  get-present-queues))
 
 (defun select-queue (physical-device properties)
-  (let* ((queue-families (get-physical-device-queue-family-properties physical-device))
-	 (num (1- (length queue-families)))
+  (let* ((queue-families (first (get-physical-device-queue-family-properties physical-device)))
 	 (flag (foreign-enum-value 'VkQueueFlagBits properties)))
-    (loop for i upto num
-	  for queue-family = (nth i queue-families)
-	  unless (zerop (logand (second (assoc 'queue-flags queue-family))
-				flag)) 
+    (loop for queue-family in queue-families
+	  for i from 0
+	  unless (zerop (logand (getf queue-families :queue-flags)
+				flag))
 	    collect i)))
 
 (defun get-present-queues (instance physical-device)

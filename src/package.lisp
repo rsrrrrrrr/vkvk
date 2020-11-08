@@ -100,5 +100,5 @@
 	 (mapcar fun ',members val)))
      (defmethod translate-from-foreign (ptr (type ,type-name))
        (let ((fun (read-closure '(:struct ,struct-name) ptr)))
-	 (mapcar fun ',members)))))
+	 (apply #'append (mapcar fun ',members))))))
 

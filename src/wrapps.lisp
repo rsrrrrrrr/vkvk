@@ -1,7 +1,6 @@
 (in-package :vkvk)
 
 (export '(make-vulkan-version
-	  vkvk-slot
 	  get-instance-extensions
 	  get-instance-layers
 	  create-instance
@@ -100,11 +99,6 @@
 	  (ash minor 12)
 	  patch))
 
-(defun vkvk-slot (a-list &rest items)
-  (reduce #'(lambda (lst item)
-	      (second (assoc item lst)))
-	  items :initial-value a-list))
-
 (defun check-result (ret-val)
   (when (not (eql ret-val :success))
     (error ret-val))
@@ -149,22 +143,23 @@
 (defun get-usable-instance-layers (lays)
   "return the usable layers list you can use"
   (let* ((usable-layers (get-instance-layers))
-	 (layer-names (loop for layer in usable-layers
-			    collect (second (assoc 'layer-name layer)))))
+	 (layer-names (unless (null usable-layers)
+			(loop for layer in usable-layers
+			      collect (getf layer :layer-name)))))
     (intersection lays layer-names :test #'string=)))
 
 (defun get-usable-device-layers (physical-device lays)
   (let* ((usable-layers (get-device-layers physical-device))
-	 (layer-names (loop for layer in usable-layers
-			    collect (second (assoc 'layer-name layer)))))
-    (format t "usable-layers ~a~%~%" usable-layers)
+	 (layer-names (unless (null usable-layers)
+			(loop for layer in usable-layers
+			      collect (getf layer :layer-name)))))
     (intersection lays layer-names :test #'string=)))
 
 (defun get-usable-device-extensions (physical-device exts)
   (let* ((usable-extensions (get-device-extensions physical-device))
-	 (extension-names (loop for layer in usable-extensions
-				collect (second (assoc 'extension-name layer)))))
-    (format t "usable-layers ~a~%~%" usable-extensions)
+	 (extension-names (unless (null usable-extensions)
+			    (loop for extension in usable-extensions
+				  collect (getf extension :extension-name)))))
     (intersection exts extension-names :test #'string=)))
 
 (defun create-instance (&key
@@ -246,17 +241,23 @@
 	(features (get-physical-device-features physical-device))
 	(usable-layers (get-usable-device-layers physical-device info-lays))
 	(usable-extensions (get-usable-device-extensions physical-device info-exts)))
-    (mapcar #'(lambda (feature)
-		(let ((slot (first feature)))
-		  (setf (second (assoc slot features))  (second feature))))
-	    info-features)
+    (labels ((set-features (lst)
+	       (cond ((null lst) nil)
+		     (t (progn
+			  (setf (getf features (first lst))
+				(second lst))
+			  (set-features (rest (rest lst)))))))
+	     (to-fill-struct (lst)
+	       (cond ((null lst) nil)
+		     (t (cons (second lst)
+			      (to-fill-struct (rest (rest lst))))))))
+      (set-features info-features)
+      (setf features (to-fill-struct features)))
     (with-foreign-objects ((device 'vk-device)
 			   (queues 'device-queue-create-info queue-count)
 			   (queue-properties :float queue-count)
 			   (p-feature 'physical-device-features)
 			   (create-info 'device-create-info))
-      (setf (mem-ref p-feature 'physical-device-features)
-	    (mapcar #'second features))
       (unless (zerop queue-count)
 	(loop for i upto (1- queue-count)
 	      for struct = (nth i info-queues)
@@ -274,9 +275,7 @@
 			       (lsp-device-queue-create-info-queue-count struct) 
 			       queue-property)))))
       (setf (mem-ref p-feature 'physical-device-features)
-	    (mapcar #'(lambda (lst)
-			(second lst))
-		    features)
+	    features
 	    (mem-ref create-info 'device-create-info)
 	    (list :structure-type-device-create-info
 		  info-next
