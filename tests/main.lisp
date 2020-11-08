@@ -48,8 +48,8 @@
   (format t "queue family properties: ~%~4t~{~4t~a~%~}~%" (get-handle :queue-family-properties))
   (format t "gpu memory info: ~%~4t~{~4t~a~%~}~%" (get-handle :gpu-memory-info))
   (format t "gpu r4g4 unorm pack8 format info: ~%~4t~a~%" (get-handle :gpu-format-properties))
-  (format t "graphics queue famly indexs: ~%~4t~a~%" (get-handle :graphics-queue-index))
-  (format t "present queue famly indexs: ~%~4t~a~%" (get-handle :present-queue-index)))
+  (format t "surface capabilities: ~%~4t~{~4t~a~%~}" (get-handle :surface-cap))
+  (format t "surface format: ~%~4t~{~4t~a~%~}" (get-handle :surface-format)))
 
 (defun setup-vulkan ()
   (insert-to-handle :instance (create-instance :info-exts (get-instance-extensions)
@@ -77,6 +77,10 @@
 									       :queue-properties 1.0))))
   (insert-to-handle :surface (glfw-create-surface (get-handle :instance)
 						  *window*))
+  (insert-to-handle :surface-cap (get-surface-capabilities (get-handle :gpu)
+							   (get-handle :surface)))
+  (insert-to-handle :surface-format (get-surface-format (get-handle :gpu)
+							(get-handle :surface)))
   (show-info))
 
 (defun clean-up ()

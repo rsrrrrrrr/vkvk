@@ -21,3 +21,21 @@
 				     :queue-family-index queue-family-index
 				     :queue-count queue-count
 				     :queue-properties queue-properties))
+
+(defstruct lsp-offset-2d
+  (x 0)
+  (y 0))
+
+(defstruct lsp-offset-3d
+  (x 0)
+  (y 0)
+  (z 0))
+
+(defstruct lsp-extent-2d
+  (width 0)
+  (height 0))
+
+(defstruct lsp-extent-3d
+  (width 0)
+  (height 0)
+  (depth 0))

@@ -34,6 +34,7 @@
 (defun fill-closure (struct-name ptr)
   #'(lambda (member val)
       (let ((slot-name (first member))
+	    (parse-by (getf member :parse))
 	    (type (second member)))
 	(cond ((equal type '(:pointer :char))
 	       (let ((foreign-string (foreign-string-alloc val)))
@@ -50,6 +51,11 @@
 			      (setf (mem-aref str-list type i) (foreign-string-alloc (nth i val)))
 			      (push (mem-aref str-list type i) *allocated-string*)))
 		   (setf (foreign-slot-value ptr struct-name slot-name) str-list))))
+	      ((and (consp type)
+		    (eql (first type) :struct)
+		    parse-by)
+	       (setf (mem-ref (foreign-slot-pointer ptr struct-name slot-name) parse-by)
+		     val))
 	      (t (setf (foreign-slot-value ptr struct-name slot-name) val))))))
 
 (defun process-count (type num ptr &optional (bind-p nil))
@@ -66,7 +72,8 @@
       (let ((slot-name (first member))
 	    (type (second member))
 	    (count (getf member :count))
-	    (bind (getf member :bind)))
+	    (bind (getf member :bind))
+	    (parse-by (getf member :parse)))
 	(cond (bind (list slot-name
 			  (process-count type
 					 (foreign-slot-value ptr struct-name bind)
@@ -75,7 +82,10 @@
 	      (count (list slot-name
 			   (process-count type
 					  count
-					  (foreign-slot-value ptr struct-name slot-name)))) 
+					  (foreign-slot-value ptr struct-name slot-name))))
+	      (parse-by (list slot-name
+			      (mem-ref (foreign-slot-pointer ptr struct-name slot-name)
+				       parse-by)))
 	      (t (list slot-name
 		       (foreign-slot-value ptr struct-name slot-name)))))))
 
@@ -91,4 +101,3 @@
      (defmethod translate-from-foreign (ptr (type ,type-name))
        (let ((fun (read-closure '(:struct ,struct-name) ptr)))
 	 (mapcar fun ',members)))))
-

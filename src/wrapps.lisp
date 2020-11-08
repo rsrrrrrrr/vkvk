@@ -22,6 +22,8 @@
 	  create-metal-surface
 	  create-display-plane-surface
 	  destroy-surface
+	  create-swapchain
+	  destroy-swapchain
 	  
 	  enumerate-physical-device
 	  get-physical-device-properties
@@ -31,7 +33,9 @@
 	  get-physical-device-format-properties
 	  enumerate-instance-version
 	  get-physical-device-image-format-properties
-	  get-device-memory-commitment))
+	  get-device-memory-commitment
+	  get-surface-capabilities
+	  get-surface-format))
 
 (defparameter *vk-nullptr* (null-pointer))
 (defparameter *instance-dbg-create-info* *vk-nullptr*)
@@ -494,6 +498,57 @@
 
 (defun destroy-surface (instance surface &optional (allocator *vk-nullptr*))
   (vkDestroySurfaceKHR instance surface allocator))
+
+(defun create-swapchain (device surface &key
+					  (info-next *vk-nullptr*)
+					  (info-flags 0)
+					  (info-min-image-count 0)
+					  (info-image-format :format-r8g8b8-sint)
+					  (info-image-color-space :color-space-srgb-nonlinear-khr)
+					  (info-image-extent (make-lsp-extent-2d :width 600
+										 :height 600))
+					  (info-image-array-layers 1)
+					  (info-image-usage :image-usage-transfer-dst-bit)
+					  (info-image-sharing-mode :sharing-mode-concurrent)
+					  (info-queue-family-indices nil)
+					  (info-pre-transform :surface-transform-identity-bit-khr)
+					  (info-composite-alpha :composite-alpha-inherit-bit-khr)
+					  (info-present-mode :present-mode-fifo-khr)
+					  (info-clipped 0)
+					  (info-old-swapchain *vk-nullptr*)
+					  (allocator *vk-nullptr*))
+  (let ((indices-count (length info-queue-family-indices)))
+    (with-foreign-objects ((info 'swapchain-create-info)
+			   (swapchain 'vk-swapchain-khr)
+			   (indicate :uint32 indices-count))
+      (when info-queue-family-indices
+	(loop for i upto (1- indices-count)
+	      do (setf (mem-ref indicate :uint32 i)
+		       (nth i info-queue-family-indices))))
+      (unless (lsp-extent-2d-p info-image-extent)
+	(error "error type of info image extent is not type of extent 2d"))
+      (set (mem-ref info 'swapchain-create-info)
+	   (list :structure-type-swapchain-create-info-khr
+		 info-next
+		 info-flags
+		 surface
+		 info-min-image-count
+		 info-image-format
+		 info-image-color-space
+		 (list (lsp-extent-2d-width info-image-extent)
+		       (lsp-extent-2d-height info-image-extent))
+		 info-image-array-layers
+		 info-image-usage
+		 info-image-sharing-mode
+		 indices-count
+		 indicate
+		 info-pre-transform
+		 info-composite-alpha
+		 info-present-mode
+		 info-clipped
+		 info-old-swapchain))
+      (check-result (vkCreateSwapchainKHR device info allocator swapchain))
+      (mem-ref swapchain 'vk-swapchain-khr))))
 ;;function for get
 (defun enumerate-physical-device (instance)
   (with-foreign-object (count :uint32)
@@ -556,3 +611,23 @@
   (with-foreign-object (size 'vk-device-size)
     (vkGetDeviceMemoryCommitment device device-memory size)
     (mem-ref size 'vk-device-size)))
+
+(defun get-surface-capabilities (physical-device surface)
+  (with-foreign-object (cap 'surface-capabilities)
+    (check-result (vkGetPhysicalDeviceSurfaceCapabilitiesKHR physical-device surface cap))
+    (mem-ref cap 'surface-capabilities)))
+
+(defun get-surface-format (physical-device surface)
+  (with-foreign-object (count :uint32)
+    (check-result (vkGetPhysicalDeviceSurfaceFormatsKHR physical-device
+							surface
+							count
+							*vk-nullptr*))
+    (let ((num (mem-ref count :uint32)))
+      (unless (zerop num)
+	(with-foreign-object (format 'surface-formt)
+	  (check-result (vkGetPhysicalDeviceSurfaceFormatsKHR physical-device
+							surface
+							count
+							format))
+	  (obj->list format 'surface-formt count))))))

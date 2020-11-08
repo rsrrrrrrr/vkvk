@@ -146,6 +146,18 @@
   (instace vk-instance)
   (surface vk-surface-khr)
   (allocator (:pointer (:struct vk-allocation-callback))))
+
+(defcfun ("vkCreateSwapchainKHR" vkCreateSwapchainKHR) VkResult
+  (device vk-device)
+  (info (:pointer (:struct vk-swapchain-create-info-khr)))
+  (allocator (:pointer (:struct vk-allocation-callback)))
+  (swapchain (:pointer vk-swapchain-khr)))
+
+(defcfun ("vkDestroySwapchainKHR" destroy-swapchain-khr) :void
+  (device vk-device)
+  (swapchain vk-swapchain-khr)
+  (allocator (:pointer (:struct vk-allocation-callback))))
+
 ;;get function
 (defcfun ("vkEnumeratePhysicalDevices" vkEnumeratePhysicalDevices) VkResult
   (instance vk-instance)
@@ -190,3 +202,14 @@
   (device vk-device)
   (memory vk-device-memory)
   (commitment-in-bytes (:pointer vk-device-size)))
+
+(defcfun ("vkGetPhysicalDeviceSurfaceCapabilitiesKHR" vkGetPhysicalDeviceSurfaceCapabilitiesKHR) VkResult
+  (physical-device vk-physical-device)
+  (surface vk-surface-khr)
+  (capabilities (:pointer (:struct vk-surface-capabilities-khr))))
+
+(defcfun ("vkGetPhysicalDeviceSurfaceFormatsKHR" vkGetPhysicalDeviceSurfaceFormatsKHR) VkResult
+  (physical-device vk-physical-device)
+  (surface vk-surface-khr)
+  (count (:pointer :uint32))
+  (format (:pointer (:struct vk-surface-format-khr))))
