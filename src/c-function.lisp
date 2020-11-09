@@ -153,7 +153,7 @@
   (allocator (:pointer (:struct vk-allocation-callback)))
   (swapchain (:pointer vk-swapchain-khr)))
 
-(defcfun ("vkDestroySwapchainKHR" destroy-swapchain-khr) :void
+(defcfun ("vkDestroySwapchainKHR" vkDestroySwapchainKHR) :void
   (device vk-device)
   (swapchain vk-swapchain-khr)
   (allocator (:pointer (:struct vk-allocation-callback))))

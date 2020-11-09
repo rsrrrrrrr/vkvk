@@ -73,7 +73,7 @@
 	    (type (second member))
 	    (count (getf member :count))
 	    (bind (getf member :bind))
-	    (parse-by (getf member :parse)))
+	    (parse-by (getf member :parse)))	
 	(cond (bind (list slot-name
 			  (process-count type
 					 (foreign-slot-value ptr struct-name bind)

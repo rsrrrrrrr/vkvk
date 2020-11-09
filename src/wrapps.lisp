@@ -1,6 +1,8 @@
 (in-package :vkvk)
 
-(export '(make-vulkan-version
+(export '(+vk-true+
+	  +vk-false+
+	  make-vulkan-version
 	  get-instance-extensions
 	  get-instance-layers
 	  create-instance
@@ -510,18 +512,18 @@
 					  (info-next *vk-nullptr*)
 					  (info-flags 0)
 					  (info-min-image-count 0)
-					  (info-image-format :format-r8g8b8-sint)
+					  (info-image-format :format-r8g8b8a8-srgb)
 					  (info-image-color-space :color-space-srgb-nonlinear-khr)
 					  (info-image-extent (make-lsp-extent-2d :width 600
 										 :height 600))
 					  (info-image-array-layers 1)
-					  (info-image-usage :image-usage-transfer-dst-bit)
-					  (info-image-sharing-mode :sharing-mode-concurrent)
+					  (info-image-usage :image-usage-color-attachment-bit)
+					  (info-image-sharing-mode :sharing-mode-exclusive)
 					  (info-queue-family-indices nil)
 					  (info-pre-transform :surface-transform-identity-bit-khr)
-					  (info-composite-alpha :composite-alpha-inherit-bit-khr)
+					  (info-composite-alpha :composite-alpha-opaque-bit-khr)
 					  (info-present-mode :present-mode-fifo-khr)
-					  (info-clipped 0)
+					  (info-clipped +vk-true+)
 					  (info-old-swapchain *vk-nullptr*)
 					  (allocator *vk-nullptr*))
   (let ((indices-count (length info-queue-family-indices)))
@@ -534,28 +536,31 @@
 		       (nth i info-queue-family-indices))))
       (unless (lsp-extent-2d-p info-image-extent)
 	(error "error type of info image extent is not type of extent 2d"))
-      (set (mem-ref info 'swapchain-create-info)
-	   (list :structure-type-swapchain-create-info-khr
-		 info-next
-		 info-flags
-		 surface
-		 info-min-image-count
-		 info-image-format
-		 info-image-color-space
-		 (list (lsp-extent-2d-width info-image-extent)
-		       (lsp-extent-2d-height info-image-extent))
-		 info-image-array-layers
-		 info-image-usage
-		 info-image-sharing-mode
-		 indices-count
-		 indicate
-		 info-pre-transform
-		 info-composite-alpha
-		 info-present-mode
-		 info-clipped
-		 info-old-swapchain))
+      (setf (mem-ref info 'swapchain-create-info)
+	    (list :structure-type-swapchain-create-info-khr 
+		  info-next                                 
+		  info-flags                                
+		  surface                                   
+		  info-min-image-count                      
+		  info-image-format                         
+		  info-image-color-space                    
+		  (list (lsp-extent-2d-width info-image-extent)   
+			(lsp-extent-2d-height info-image-extent))
+		  info-image-array-layers
+		  info-image-usage
+		  info-image-sharing-mode
+		  indices-count
+		  indicate
+		  info-pre-transform
+		  info-composite-alpha
+		  info-present-mode
+		  info-clipped
+		  info-old-swapchain))
       (check-result (vkCreateSwapchainKHR device info allocator swapchain))
       (mem-ref swapchain 'vk-swapchain-khr))))
+
+(defun destroy-swapchain (device swapchain &optional (allocator *vk-nullptr*))
+  (vkDestroySwapchainKHR device swapchain allocator))
 ;;function for get
 (defun enumerate-physical-device (instance)
   (with-foreign-object (count :uint32)
