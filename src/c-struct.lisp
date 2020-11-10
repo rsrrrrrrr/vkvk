@@ -118,6 +118,12 @@
   (:offset (:struct vk-offset-2d))
   (:extent (:struct vk-extent-2d)))
 
+(defcstruct vk-component-mapping
+  (:r VkComponentSwizzle)
+  (:g VkComponentSwizzle)
+  (:b VkComponentSwizzle)
+  (:a VkComponentSwizzle))
+
 (defcstruct vk-extension-properties
   (:extension-name :char :count 255)
   (:spec-version :uint32))
@@ -508,3 +514,20 @@
 (defcstruct vk-surface-format-khr
   (:format VkFormat)
   (:color-space VkColorSpaceKHR))
+
+(defcstruct vk-image-subresource-range
+  (:aspect-mask VkImageAspectFlagBits)
+  (:base-mip-level :uint32)
+  (:level-count :uint32)
+  (:base-array-layer :uint32)
+  (:layer-count :uint32))
+
+(defcstruct vk-image-view-create-info
+  (:type VkStructureType)
+  (:next (:pointer :void))
+  (:flags vk-flags)
+  (:image vk-image)
+  (:view-type VkImageViewtype)
+  (:format VkFormat)
+  (:components (:struct vk-component-mapping))
+  (:subresource-range (:struct vk-image-subresource-range)))

@@ -26,6 +26,8 @@
 	  destroy-surface
 	  create-swapchain
 	  destroy-swapchain
+	  create-image-view
+	  destroy-image-view
 	  
 	  enumerate-physical-device
 	  get-physical-device-properties
@@ -39,7 +41,8 @@
 	  get-physical-device-surface-capabilities
 	  get-physical-device-surface-format
 	  get-physical-device-surfaec-present-mode
-	  get-device-queue))
+	  get-device-queue
+	  get-swapchain-images))
 
 (defparameter *vk-nullptr* (null-pointer))
 (defparameter *instance-dbg-create-info* *vk-nullptr*)
@@ -561,6 +564,40 @@
 
 (defun destroy-swapchain (device swapchain &optional (allocator *vk-nullptr*))
   (vkDestroySwapchainKHR device swapchain allocator))
+
+(defun create-image-view (device image &key
+					 (info-next *vk-nullptr*)
+					 (info-flags 0)
+					 (info-view-type :image-view-type-2d)
+					 (info-format :format-r8g8b8a8-srgb)
+					 (info-components (make-lsp-component-mapping))
+					 (info-subresource-range (make-lsp-image-subresource-range))
+					 (allocator *vk-nullptr*))
+  (with-foreign-objects ((info 'image-view-create-info)
+			 (image-view 'vk-image-view))
+    (when (and (lsp-component-mapping-p info-components)
+	       (lsp-image-subresource-range-p info-subresource-range))
+      (setf (mem-ref info 'image-view-create-info)
+	  (list :structure-type-image-view-create-info
+		info-next
+		info-flags
+		image
+		info-view-type
+		info-format
+		(list (lsp-component-mapping-r info-components)
+		      (lsp-component-mapping-g info-components)
+		      (lsp-component-mapping-b info-components)
+		      (lsp-component-mapping-a info-components))
+		(list (lsp-image-subresource-range-aspect-mask info-subresource-range)
+		      (lsp-image-subresource-range-base-mip-level info-subresource-range)
+		      (lsp-image-subresource-range-level-count info-subresource-range)
+		      (lsp-image-subresource-range-base-array-layer info-subresource-range)
+		      (lsp-image-subresource-range-layer-count info-subresource-range))))
+          (check-result (vkCreateImageView device info allocator image-view))
+	  (mem-ref image-view 'vk-image-view))))
+
+(defun destroy-image-view (device image-view &optional (allocator *vk-nullptr*))
+  (vkDestroyImageView device image-view allocator))
 ;;function for get
 (defun enumerate-physical-device (instance)
   (with-foreign-object (count :uint32)
@@ -663,3 +700,11 @@
   (with-foreign-object (queue 'vk-queue)
     (vkGetDeviceQueue device family-index index queue)
     (mem-ref queue 'vk-queue)))
+
+(defun get-swapchain-images (device swapchain)
+  (with-foreign-object (count :uint32)
+    (check-result (vkGetSwapchainImagesKHR device swapchain count *vk-nullptr*))
+    (let ((num (mem-ref count :uint32)))
+      (with-foreign-object (images 'vk-image num)
+	(check-result (vkGetSwapchainImagesKHR device swapchain count images))
+	(obj->list images 'vk-image count)))))

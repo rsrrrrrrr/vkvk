@@ -39,3 +39,16 @@
   (width 0)
   (height 0)
   (depth 0))
+
+(defstruct lsp-component-mapping
+  (r :component-swizzle-identity)
+  (g :component-swizzle-identity)
+  (b :component-swizzle-identity)
+  (a :component-swizzle-identity))
+
+(defstruct lsp-image-subresource-range
+  (aspect-mask :image-aspect-color-bit)
+  (base-mip-level 0)
+  (level-count 1)
+  (base-array-layer 0)
+  (layer-count 1))

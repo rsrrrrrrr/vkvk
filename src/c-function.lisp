@@ -158,6 +158,16 @@
   (swapchain vk-swapchain-khr)
   (allocator (:pointer (:struct vk-allocation-callback))))
 
+(defcfun ("vkCreateImageView" vkCreateImageView) VkResult
+  (device vk-device)
+  (info (:pointer (:struct vk-image-view-create-info)))
+  (allocator (:pointer (:struct vk-allocation-callback)))
+  (image-view (:pointer vk-image-view)))
+
+(defcfun ("vkDestroyImageView" vkDestroyImageView) :void
+  (device vk-device)
+  (image-view vk-image-view)
+  (allocator (:pointer (:struct vk-allocation-callback))))
 ;;get function
 (defcfun ("vkEnumeratePhysicalDevices" vkEnumeratePhysicalDevices) VkResult
   (instance vk-instance)
@@ -225,3 +235,9 @@
   (family-index :uint32)
   (index :uint32)
   (queue (:pointer vk-queue)))
+
+(defcfun ("vkGetSwapchainImagesKHR" vkGetSwapchainImagesKHR) VkResult
+  (device vk-device)
+  (swapchain vk-swapchain-khr)
+  (count (:pointer :uint32))
+  (swapchain-images (:pointer vk-image)))
