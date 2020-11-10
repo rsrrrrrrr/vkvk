@@ -531,3 +531,10 @@
   (:format VkFormat)
   (:components (:struct vk-component-mapping))
   (:subresource-range (:struct vk-image-subresource-range)))
+
+(defcstruct vk-shader-module-create-info
+  (:type VkStructureType)
+  (:next (:pointer :void))
+  (:flags vk-flags)
+  (:code-size :unsigned-int)
+  (:code (:pointer :uint32)))

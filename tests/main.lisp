@@ -146,6 +146,12 @@
     (insert-to-handle :image-views (loop for obj in (get-handle :swapchain-images)
 					 collect (create-image-view (get-handle :device)
 								    obj)))
+    (insert-to-handle :vert (create-shader-module (get-handle :device)
+						  "~/codes/vkvk/tests/vert.spv"))
+    (insert-to-handle :frag (create-shader-module (get-handle :device)
+						  "~/codes/vkvk/tests/frag.spv"))
+    (destroy-shader-module (get-handle :device) (get-handle :vert))
+    (destroy-shader-module (get-handle :device) (get-handle :frag))
     (show-info)))
 
 (defun clean-up ()

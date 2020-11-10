@@ -168,6 +168,17 @@
   (device vk-device)
   (image-view vk-image-view)
   (allocator (:pointer (:struct vk-allocation-callback))))
+
+(defcfun ("vkCreateShaderModule" vkCreateShaderModule) VkResult
+  (device vk-device)
+  (info (:pointer (:struct vk-shader-module-create-info)))
+  (allocator (:pointer (:struct vk-allocation-callback)))
+  (module (:pointer vk-shader-module)))
+
+(defcfun ("vkDestroyShaderModule" vkDestroyShaderModule) :void
+  (device vk-device)
+  (module vk-shader-module)
+  (allocator (:pointer (:struct vk-allocation-callback))))
 ;;get function
 (defcfun ("vkEnumeratePhysicalDevices" vkEnumeratePhysicalDevices) VkResult
   (instance vk-instance)

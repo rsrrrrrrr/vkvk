@@ -28,6 +28,8 @@
 	  destroy-swapchain
 	  create-image-view
 	  destroy-image-view
+	  create-shader-module
+	  destroy-shader-module
 	  
 	  enumerate-physical-device
 	  get-physical-device-properties
@@ -598,6 +600,30 @@
 
 (defun destroy-image-view (device image-view &optional (allocator *vk-nullptr*))
   (vkDestroyImageView device image-view allocator))
+
+(defun create-shader-module (device file-path &key
+						(info-next *vk-nullptr*)
+						(info-flags 0)
+						(allocator *vk-nullptr*))
+  (with-open-file (in file-path :element-type '(unsigned-byte 8))
+    (let ((size (file-length in)))
+      (with-foreign-pointer (ptr size)
+	(loop for i from 0 below size
+	      do (setf (mem-ref (inc-pointer ptr i) :uint8)
+		       (read-byte in nil)))
+	(with-foreign-objects ((shader-module 'vk-shader-module)
+			       (info 'shader-module-create-info))
+	  (setf (mem-ref info 'shader-module-create-info)
+		(list :structure-type-shader-module-create-info
+		      info-next
+		      info-flags
+		      size
+		      ptr))
+	  (check-result (vkCreateShaderModule device info allocator shader-module))
+	  (mem-ref shader-module 'vk-shader-module))))))
+
+(defun destroy-shader-module (device shader-module &optional (allocator *vk-nullptr*))
+  (vkDestroyShaderModule device shader-module allocator))
 ;;function for get
 (defun enumerate-physical-device (instance)
   (with-foreign-object (count :uint32)

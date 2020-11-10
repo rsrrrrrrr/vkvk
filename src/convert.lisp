@@ -494,3 +494,11 @@
   (:format VkFormat)
   (:components (:struct vk-component-mapping) :parse component-mapping)
   (:subresource-range (:struct vk-image-subresource-range) :parse image-subresource-range))
+
+(def-struct-translator vk-shader-module-create-info
+    (s-shader-module-create-info shader-module-create-info)
+  (:type VkStructureType)
+  (:next (:pointer :void))
+  (:flags vk-flags)
+  (:code-size :unsigned-int)
+  (:code (:pointer :uint32)))
