@@ -179,6 +179,17 @@
   (device vk-device)
   (module vk-shader-module)
   (allocator (:pointer (:struct vk-allocation-callback))))
+
+(defcfun ("vkCreatePipelineLayout" vkCreatePipelineLayout) VkResult
+  (device vk-device)
+  (info (:pointer (:struct vk-pipeline-layout-create-info)))
+  (allocator (:pointer (:struct vk-allocation-callback)))
+  (layout (:pointer vk-pipeline-layout)))
+
+(defcfun ("vkDestroyPipelineLayout" vkDestroyPipelineLayout) :void
+  (device vk-device)
+  (pipeline vk-pipeline)
+  (allocator (:pointer (:struct vk-allocation-callback))))
 ;;get function
 (defcfun ("vkEnumeratePhysicalDevices" vkEnumeratePhysicalDevices) VkResult
   (instance vk-instance)

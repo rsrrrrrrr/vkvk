@@ -30,6 +30,8 @@
 	  destroy-image-view
 	  create-shader-module
 	  destroy-shader-module
+	  create-pipeline-layout
+	  destroy-pipeline-layout
 	  
 	  enumerate-physical-device
 	  get-physical-device-properties
@@ -257,7 +259,13 @@
 	     (to-fill-struct (lst)
 	       (cond ((null lst) nil)
 		     (t (cons (second lst)
-			      (to-fill-struct (rest (rest lst))))))))
+			      (to-fill-struct (rest (rest lst)))))))
+	     (clear-features (lst)
+	       (cond ((null lst) nil)
+		     (t (cons (first lst)
+			      (cons 0
+				    (clear-features (rest (rest lst)))))))))
+      (setf features (clear-features features))
       (set-features info-features)
       (setf features (to-fill-struct features)))
     (with-foreign-objects ((device 'vk-device)
@@ -624,6 +632,47 @@
 
 (defun destroy-shader-module (device shader-module &optional (allocator *vk-nullptr*))
   (vkDestroyShaderModule device shader-module allocator))
+
+(defun create-pipeline-layout (device &key
+					(info-next *vk-nullptr*)
+					(info-flags 0)
+					(info-layouts nil)
+					(info-constant-ranges nil)
+					(allocator *vk-nullptr*))
+  (let ((set-layout-count (length info-layouts))
+	(constant-range-count (length info-constant-ranges)))
+    (with-foreign-objects ((info 'pipeline-layout-create-info)
+			   (set-layouts 'vk-descriptor-set-layout set-layout-count)
+			   (constant-ranges 'push-constant-range constant-range-count)
+			   (layout 'vk-pipeline-layout))
+      (when info-layouts
+	(loop for layout in info-layouts
+	      for i from 0
+	      do (setf (mem-aref set-layouts 'vk-descriptor-set-layout i)
+		       layout)))
+      (when info-constant-ranges
+	(loop for range in info-constant-ranges
+	      for i from 0
+	      for s-obj = (nth i info-constant-ranges)
+	      do (if (lsp-push-constant-range-p s-obj)
+		     (setf (mem-aref set-layouts 'push-constant-range i)
+			   (list (lsp-push-constant-range-stage-flags s-obj)
+				 (lsp-push-constant-range-offset s-obj)
+				 (lsp-push-constant-range-size s-obj)))
+		     (error "type error constant range is not type of lsp-pysg-constant-range"))))
+      (setf (mem-ref info 'pipeline-layout-create-info)
+	    (list :structure-type-pipeline-layout-create-info
+		  info-next
+		  info-flags
+		  set-layout-count
+		  set-layouts
+		  constant-range-count
+		  constant-ranges))
+      (check-result (vkCreatePipelineLayout device info allocator layout))
+      (mem-ref layout 'vk-pipeline-layout))))
+
+(defun destroy-pipeline-layout (device pipeline-layout &optional (allocator *vk-nullptr*))
+  (vkDestroyPipelineLayout device pipeline-layout allocator))
 ;;function for get
 (defun enumerate-physical-device (instance)
   (with-foreign-object (count :uint32)

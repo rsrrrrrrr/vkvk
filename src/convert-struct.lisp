@@ -1,7 +1,15 @@
 (in-package :vkvk)
 
-(export '(create-device-queues))
+(export '(create-device-queues
+	  lsp-offset-2d
+	  lsp-offset-3d
+	  lsp-extent-2d
+	  lsp-extent-3d
+	  lsp-component-mapping
+	  lsp-image-subresource-range
+	  lsp-push-constant-range))
 
+;;special 
 (defstruct lsp-device-queue-create-info
   (type :structure-type-device-queue-create-info)
   (next *vk-nullptr*)
@@ -52,3 +60,8 @@
   (level-count 1)
   (base-array-layer 0)
   (layer-count 1))
+
+(defstruct lsp-push-constant-range
+  (stage-flags 0)
+  (offset 0)
+  (size 0))

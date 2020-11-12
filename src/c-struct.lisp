@@ -10,6 +10,11 @@
       `(defctype vk-non-dispatch-handle :pointer)
       `(defctype vk-non-dispatch-handle :uint64))
 
+#.(if (= 8 (foreign-type-size :pointer))
+      `(defctype size-t :uint64)
+      `(defctype size-t :uint32))
+
+
 (defctype vk-instance vk-handle)
 (defctype vk-physical-device vk-handle)
 (defctype vk-device vk-handle)
@@ -536,5 +541,19 @@
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-flags)
-  (:code-size :unsigned-int)
+  (:code-size size-t)
   (:code (:pointer :uint32)))
+
+(defcstruct vk-push-constant-range
+  (:stage-flags vk-flags)
+  (:offset :uint32)
+  (:size :uint32))
+
+(defcstruct vk-pipeline-layout-create-info
+  (:type VkStructureType)
+  (:next (:pointer :void))
+  (:flags vk-flags)
+  (:set-layout-count :uint32)
+  (:set-layouts (:pointer vk-descriptor-set-layout))
+  (:push-constant-range-count :uint32)
+  (:push-constant-ranges (:pointer (:struct vk-push-constant-range))))

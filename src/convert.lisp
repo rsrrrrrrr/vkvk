@@ -500,5 +500,21 @@
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-flags)
-  (:code-size :unsigned-int)
+  (:code-size size-t)
   (:code (:pointer :uint32)))
+
+(def-struct-translator vk-push-constant-range
+    (s-push-constant-range push-constant-range)
+  (:stage-flags vk-flags)
+  (:offset :uint32)
+  (:size :uint32))
+
+(def-struct-translator vk-pipeline-layout-create-info
+    (s-pipeline-layout-create-info pipeline-layout-create-info)
+  (:type VkStructureType)
+  (:next (:pointer :void))
+  (:flags vk-flags)
+  (:set-layout-count :uint32)
+  (:set-layouts (:pointer vk-descriptor-set-layout) :bind :set-layout-count)
+  (:push-constant-range-count :uint32)
+  (:push-constant-ranges (:pointer (:struct vk-push-constant-range)) :bind :push-constant-range-count))
