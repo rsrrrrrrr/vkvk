@@ -34,6 +34,11 @@
   (count (:pointer :uint32))
   (properties (:pointer (:struct vk-layer-properties))))
 
+(defcfun ("vkEnumerateInstanceExtensionProperties" vkEnumerateInstanceExtensionProperties) VkResult
+  (layer-name :string)
+  (count (:pointer :uint32))
+  (properties (:pointer (:struct vk-extension-properties))))
+
 (defcfun ("vkEnumerateDeviceLayerProperties" vkEnumerateDeviceLayerProperties) VkResult
   (physical-device vk-physical-device)
   (count (:pointer :uint32))

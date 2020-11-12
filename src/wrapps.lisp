@@ -3,8 +3,6 @@
 (export '(+vk-true+
 	  +vk-false+
 	  make-vulkan-version
-	  get-instance-extensions
-	  get-instance-layers
 	  create-instance
 	  destroy-instance
 	  create-device
@@ -34,6 +32,10 @@
 	  destroy-pipeline-layout
 	  
 	  enumerate-physical-device
+	  enumerate-device-extensions
+	  enumerate-device-layers
+	  enumerate-instance-extensions
+	  enumerate-instance-layers
 	  get-physical-device-properties
 	  get-physical-device-queue-family-properties
 	  get-physical-device-memory-properties
@@ -113,12 +115,12 @@
     (error ret-val))
   (free-strings))
 
-(defun get-instance-extensions ()
+(defun enumerate-instance-extensions ()
   (with-foreign-object (count :uint32)
     (let ((exts (glfwGetRequiredInstanceExtensions count)))
       (obj->list exts :string count))))
 
-(defun get-instance-layers ()
+(defun enumerate-instance-layers ()
   (with-foreign-object (count :uint32)
     (check-result (vkEnumerateInstanceLayerProperties count (null-pointer)))
     (let ((num (mem-ref count :uint32)))
@@ -127,7 +129,7 @@
 	  (check-result (vkEnumerateInstanceLayerProperties count properties))
 	  (obj->list properties 'layer-properties count))))))
 
-(defun get-device-layers (physical-device)
+(defun enumerate-device-layers (physical-device)
   (with-foreign-object (count :uint32)
     (check-result (vkEnumerateDeviceLayerProperties physical-device count (null-pointer)))
     (let ((num (mem-ref count :uint32)))
@@ -136,7 +138,7 @@
 	  (check-result (vkEnumerateDeviceLayerProperties physical-device count properties))
 	  (obj->list properties 'layer-properties count))))))
 
-(defun get-device-extensions (physical-device)
+(defun enumerate-device-extensions (physical-device)
   (with-foreign-object (count :uint32)
     (check-result (vkEnumerateDeviceExtensionProperties physical-device *vk-nullptr* count *vk-nullptr*))
     (let ((num (mem-ref count :uint32)))
@@ -144,32 +146,6 @@
 	(with-foreign-object (properties 'extension-properties num)
 	  (check-result (vkEnumerateDeviceExtensionProperties physical-device *vk-nullptr* count properties))
 	  (obj->list properties 'extension-properties count))))))
-
-(defun get-usable-instance-extensions (exts)
-  "return the usable extension list you can use"
-  (intersection exts (get-instance-extensions) :test #'string=))
-
-(defun get-usable-instance-layers (lays)
-  "return the usable layers list you can use"
-  (let* ((usable-layers (get-instance-layers))
-	 (layer-names (unless (null usable-layers)
-			(loop for layer in usable-layers
-			      collect (getf layer :layer-name)))))
-    (intersection lays layer-names :test #'string=)))
-
-(defun get-usable-device-layers (physical-device lays)
-  (let* ((usable-layers (get-device-layers physical-device))
-	 (layer-names (unless (null usable-layers)
-			(loop for layer in usable-layers
-			      collect (getf layer :layer-name)))))
-    (intersection lays layer-names :test #'string=)))
-
-(defun get-usable-device-extensions (physical-device exts)
-  (let* ((usable-extensions (get-device-extensions physical-device))
-	 (extension-names (unless (null usable-extensions)
-			    (loop for extension in usable-extensions
-				  collect (getf extension :extension-name)))))
-    (intersection exts extension-names :test #'string=)))
 
 (defun create-instance (&key
 			  (app-next *vk-nullptr*)

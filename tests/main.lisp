@@ -80,7 +80,7 @@
   (format t "image views : ~%~4t~a~%" (get-handle :image-views)))
 
 (defun setup-vulkan ()
-  (insert-to-handle :instance (create-instance :info-exts (get-instance-extensions)
+  (insert-to-handle :instance (create-instance :info-exts (enumerate-instance-extensions)
 					       :info-lays '("VK_LAYER_KHRONOS_validation")
 					       :dbg t))
   (insert-to-handle :gpus (enumerate-physical-device (get-handle :instance)))
