@@ -129,6 +129,14 @@
   (:b VkComponentSwizzle)
   (:a VkComponentSwizzle))
 
+(defcstruct vk-viewport
+  (:x :float)
+  (:y :float)
+  (:width :float)
+  (:height :float)
+  (:min-depth :float)
+  (:max-depth :float))
+
 (defcstruct vk-extension-properties
   (:extension-name :char :count 255)
   (:spec-version :uint32))
@@ -557,3 +565,56 @@
   (:set-layouts (:pointer vk-descriptor-set-layout))
   (:push-constant-range-count :uint32)
   (:push-constant-ranges (:pointer (:struct vk-push-constant-range))))
+
+(defcstruct vk-specialization-map-entry
+  (:constant-id :uint32)
+  (:offset :uint32)
+  (:size size-t))
+
+(defcstruct vk-specialization-info
+  (:map-entry-count :uint32)
+  (:map-entrys (:pointer (:struct vk-specialization-map-entry)))
+  (:data-size size-t)
+  (:data (:pointer :void)))
+
+(defcstruct vk-pipeline-shader-stage-create-info
+  (:type VkStructureType)
+  (:next (:pointer :void))
+  (:flags vk-flags)
+  (:stage VkShaderStageflagbits)
+  (:module vk-shader-module)
+  (:name (:pointer :char))
+  (:specialization-info (:pointer (:struct vk-specialization-info))))
+
+(defcstruct vk-vertex-input-binding-description
+  (:binding :uint32)
+  (:stride :uint32)
+  (:input-rate VkVertexInputRate))
+
+(defcstruct vk-vertex-input-attribute-description
+  (:location :uint32)
+  (:binding :uint32)
+  (:format VkFormat)
+  (:offset :uint32))
+
+(defcstruct vk-pipeline-vertex-input-state-create-info
+  (:type VkStructureType)
+  (:next (:pointer :void))
+  (:flags vk-flags)
+  (:vertex-binding-description-count :uint32)
+  (:vertex-binding-description (:pointer (:struct vk-vertex-input-binding-description)))
+  (:vertex-attribute-description-count :uint32)
+  (:vertex-attribute-description (:pointer (:struct vk-vertex-input-attribute-description))))
+
+(defcstruct vk-pipeline-input-assembly-state-create-info
+  (:type VkStructureType)
+  (:next (:pointer :void))
+  (:flags vk-flags)
+  (:topology VkPrimitiveTopology)
+  (:primitive-restart-enable vk-bool-32))
+
+(defcstruct vk-pipeline-tessellation-state-create-info
+  (:type VkStructureType)
+  (:next (:pointer :void))
+  (:flags vk-flags)
+  (:patch-control-points :uint32))

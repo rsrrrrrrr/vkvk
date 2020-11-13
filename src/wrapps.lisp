@@ -30,6 +30,8 @@
 	  destroy-shader-module
 	  create-pipeline-layout
 	  destroy-pipeline-layout
+	  create-graphics-pipeline
+	  destroy-graphics-pipeline
 	  
 	  enumerate-physical-device
 	  enumerate-device-extensions
@@ -649,6 +651,9 @@
 
 (defun destroy-pipeline-layout (device pipeline-layout &optional (allocator *vk-nullptr*))
   (vkDestroyPipelineLayout device pipeline-layout allocator))
+
+(defun create-graphics-pipeline (device ))
+(defun destroy-graphics-pipeline (device))
 ;;function for get
 (defun enumerate-physical-device (instance)
   (with-foreign-object (count :uint32)

@@ -54,6 +54,15 @@
   (:b VkComponentSwizzle)
   (:a VkComponentSwizzle))
 
+(def-struct-translator vk-viewport
+    (s-viewport viewport)
+  (:x :float)
+  (:y :float)
+  (:width :float)
+  (:height :float)
+  (:min-depth :float)
+  (:max-depth :float))
+
 (def-struct-translator vk-extension-properties
     (s-extension-properties extension-properties)
   (:extension-name :char :count 255)
@@ -509,6 +518,7 @@
   (:offset :uint32)
   (:size :uint32))
 
+;;pipeline
 (def-struct-translator vk-pipeline-layout-create-info
     (s-pipeline-layout-create-info pipeline-layout-create-info)
   (:type VkStructureType)
@@ -518,3 +528,64 @@
   (:set-layouts (:pointer vk-descriptor-set-layout) :bind :set-layout-count)
   (:push-constant-range-count :uint32)
   (:push-constant-ranges (:pointer (:struct vk-push-constant-range)) :bind :push-constant-range-count))
+
+(def-struct-translator vk-specialization-map-entry
+    (s-specialization-map-entry specialization-map-entry)
+  (:constant-id :uint32)
+  (:offset :uint32)
+  (:size size-t))
+
+(def-struct-translator vk-specialization-info
+    (s-specialization-info specialization-info)
+  (:map-entry-count :uint32)
+  (:map-entrys (:pointer (:struct vk-specialization-map-entry)))
+  (:data-size size-t)
+  (:data (:pointer :void)))
+
+(def-struct-translator vk-pipeline-shader-stage-create-info
+    (s-pipeline-shader-stage-create-info pipeline-shader-stage-create-info)
+  (:type VkStructureType)
+  (:next (:pointer :void))
+  (:flags vk-flags)
+  (:stage VkShaderStageflagbits)
+  (:module vk-shader-module)
+  (:name (:pointer :char))
+  (:specialization-info (:pointer (:struct vk-specialization-info))))
+
+(def-struct-translator vk-vertex-input-binding-description
+    (s-vertex-input-binding-description vertex-input-binding-description)
+  (:binding :uint32)
+  (:stride :uint32)
+  (:input-rate VkVertexInputRate))
+
+(def-struct-translator vk-vertex-input-attribute-description
+    (s-vertex-input-attribute-description vertex-input-attribute-description)
+  (:location :uint32)
+  (:binding :uint32)
+  (:format VkFormat)
+  (:offset :uint32))
+
+(def-struct-translator vk-pipeline-vertex-input-state-create-info
+    (s-pipeline-vertex-input-state-create-info pipeline-vertex-input-state-create-info)
+  (:type VkStructureType)
+  (:next (:pointer :void))
+  (:flags vk-flags)
+  (:vertex-binding-description-count :uint32)
+  (:vertex-binding-description (:pointer (:struct vk-vertex-input-binding-description)) :bind :vertex-binding-description-count)
+  (:vertex-attribute-description-count :uint32)
+  (:vertex-attribute-description (:pointer (:struct vk-vertex-input-attribute-description)) :bind :vertex-attribute-description-count))
+
+(def-struct-translator vk-pipeline-input-assembly-state-create-info
+    (s-pipeline-input-assembly-state-create-info pipeline-input-assembly-state-create-info)
+  (:type VkStructureType)
+  (:next (:pointer :void))
+  (:flags vk-pipeline-input-assembly-state-create-flags)
+  (:topology VkPrimitiveTopology)
+  (:primitive-restart-enable vk-bool-32))
+
+(def-struct-translator vk-pipeline-tessellation-state-create-info
+    (s-pipeline-tessellation-state-create-info pipeline-tessellation-state-create-info)
+  (:type VkStructureType)
+  (:next (:pointer :void))
+  (:flags vk-flags)
+  (:patch-control-points :uint32))
