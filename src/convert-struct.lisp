@@ -1,50 +1,24 @@
 (in-package :vkvk)
 
-(export '(create-device-queues
-	  lsp-offset-2d
-	  lsp-offset-3d
-	  lsp-extent-2d
-	  lsp-extent-3d
-	  lsp-component-mapping
-	  lsp-image-subresource-range
-	  lsp-push-constant-range))
-
-(defun check-foreign-enum-type (type val)
-  (member val (foreign-enum-keyword-list type)))
-
-(deftype foreign-enum-type (type)
-  (let ((check (gensym)))
-    (setf (symbol-function check)
-	  #'(lambda (val)
-	      (check-foreign-enum-type type val)))
-    `(satisfies ,check)))
-
-(defun check-foreign-pointer (val)
-  (pointerp val))
-
-(deftype foreign-pointer ()
-  `(satisfies check-foreign-pointer))
+(export '(make-lsp-device-queue-create-info
+	  make-lsp-offset-2d
+	  make-lsp-offset-3d
+	  make-lsp-extent-2d
+	  make-lsp-extent-3d
+	  make-lsp-image-subresource-range
+	  make-lsp-viewport
+	  make-lsp-push-constant-range
+	  make-lsp-specialization-map-entry
+	  make-lsp-specialization-info))
 
 ;;special 
 (defstruct lsp-device-queue-create-info
-  (type :structure-type-device-queue-create-info)
-  (next *vk-nullptr*)
+  (type :structure-type-device-queue-create-info :type vk-struct-type-enum :read-only t)
+  (next *vk-nullptr* :type foreign-pointer)
   (flag 0 :type integer)
   (queue-family-index 0 :type integer)
   (queue-count 0 :type integer)
-  (queue-properties *vk-nullptr*))
-
-(defun create-device-queues (&key
-			       (flag 0)
-			       (next *vk-nullptr*)
-			       (queue-family-index 0)
-			       (queue-count 0)
-			       (queue-properties *vk-nullptr*))
-  (make-lsp-device-queue-create-info :flag flag
-				     :next next
-				     :queue-family-index queue-family-index
-				     :queue-count queue-count
-				     :queue-properties queue-properties))
+  (queue-properties 1.0 :type float))
 
 (defstruct lsp-offset-2d
   (x 0 :type integer)
@@ -64,11 +38,15 @@
   (height 0 :type integer)
   (depth 0 :type integer))
 
+(defstruct lsp-rect-2d
+  (offset (make-lsp-offset-2d) :type lsp-offset-2d)
+  (extent (make-lsp-extent-2d) :type lsp-extent-2d))
+
 (defstruct lsp-component-mapping
-  (r :component-swizzle-identity)
-  (g :component-swizzle-identity)
-  (b :component-swizzle-identity)
-  (a :component-swizzle-identity))
+  (r :component-swizzle-identity :type vk-componemt-swizzle-enum)
+  (g :component-swizzle-identity :type vk-componemt-swizzle-enum)
+  (b :component-swizzle-identity :type vk-componemt-swizzle-enum)
+  (a :component-swizzle-identity :type vk-componemt-swizzle-enum))
 
 (defstruct lsp-image-subresource-range
   (aspect-mask :image-aspect-color-bit)
@@ -77,7 +55,7 @@
   (base-array-layer 0 :type integer)
   (layer-count 1 :type integer))
 
-(defstruct vk-viewport
+(defstruct lsp-viewport
   (x 0.0 :type float)
   (y 0.0 :type float)
   (width 0.0 :type float)
@@ -97,6 +75,36 @@
 
 (defstruct lsp-specialization-info
   (map-entry-count 0 :type integer)
-  (map-entrys *vk-nullptr*)
+  (map-entrys *vk-nullptr* :type foreign-pointer)
   (data-size 0 :type integer)
-  (data *vk-nullptr*))
+  (data *vk-nullptr* :type foreign-pointer))
+
+(defstruct lsp-stencil-op-state
+  (fail-op :stencil-op-keep :type vk-stencil-op-enum)
+  (pass-op :stencil-op-keep :type vk-stencil-op-enum)
+  (depth-fail-op :stencil-op-keep :type vk-stencil-op-enum)
+  (compare-op :compare-op-always :type vk-compare-op-enum)
+  (compare-mask 0 :type integer)
+  (write-mask 0 :type integer)
+  (references 0 :type integer))
+
+(defstruct lsp-pipeline-color-blend-attachment-state
+  (blend-enable 0 :type vk-bool)
+  (src-color-blend-factor :blend-factor-zero :type vk-blend-factor-enum)
+  (dst-color-blend-factor :blend-factor-zero :type vk-blend-factor-enum)
+  (color-blend-op :blend-op-add :type vk-blend-op-enum)
+  (src-alpha-blend-factor :blend-factor-zero :type vk-blend-factor-enum)
+  (dst-alpha-blend-factor :blend-factor-zero :type vk-blend-factor-enum)
+  (alpha-blend-op :blend-op-add :type vk-blend-op-enum)
+  (color-write-mask 0))
+
+(defstruct lsp-vertex-input-binding-description
+  (binding 0 :type integer)
+  (stride 0 :type integer)
+  (input-rage :vertex-input-rate-instance :type vk-vertex-input-rate-enum))
+
+(defstruct lsp-vertex-input-attribute-description
+  (location 0 :type integer)
+  (binding 0 :type integer)
+  (format :format-r8g8b8a8-srgb :type vk-format-enum)
+  (offset 0 :type integer))

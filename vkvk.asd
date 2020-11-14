@@ -6,10 +6,11 @@
   :components ((:module "src"
                 :components
                 ((:file "package")
-		 (:file "convert-struct")
 		 (:file "c-enums")		 
 		 (:file "c-struct")
-		 (:file "convert")		 
+		 (:file "convert")
+		 (:file "foreign-type-check")
+		 (:file "convert-struct")
 		 (:file "c-function")
 		 (:file "wrapps")
 		 (:file "assist-fun"))))

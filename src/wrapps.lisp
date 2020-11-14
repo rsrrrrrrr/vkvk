@@ -652,7 +652,126 @@
 (defun destroy-pipeline-layout (device pipeline-layout &optional (allocator *vk-nullptr*))
   (vkDestroyPipelineLayout device pipeline-layout allocator))
 
-(defun create-graphics-pipeline (device ))
+(defparameter *graphics-alloced-obj* nil)
+
+(defun fill-specialization (obj info)
+  (let* ((entry-count (getf info :entry-count))
+	 (entries (getf info :entries))
+	 (p-entries (foreign-alloc 'specialization-map-entry :count entry-count)))
+    (push p-entries *graphics-alloced-obj*)
+    (loop for info in entries
+	  for i from 0
+	  unless (lsp-specialization-map-entry-p info)
+	    do (error "info type is npt specialization map entry")
+	  do (setf (mem-aref p-entries 'specialization-map-entry i)
+		   (list (lsp-specialization-map-entry-constant-id info)
+			 (lsp-specialization-map-entry-offset info)
+			 (lsp-specialization-map-entry-size info))))
+    (setf (mem-ref obj 'specialization-info)
+	  (list entry-count
+		p-entries
+		(getf info :data-size)
+		(getf info :data)))))
+
+(defun fill-stage-stage (obj info)
+  (let* ((specialization-info (getf info :specialization-info))
+	 (p-specialization-obj (foreign-alloc 'specialization-info)))
+    (push p-specialization-obj *graphics-alloced-obj*)
+    (fill-specialization p-specialization-obj specialization-info)
+    (setf (mem-ref obj 'pipeline-shader-stage-create-info)
+	  (list (getf info :type)             ;;type 
+		(getf info :next)             ;;next
+		(getf info :flags)            ;;flags
+		(getf info :stage)            ;;stage
+		(getf info :module)           ;;module
+		(getf info :name)             ;;name
+		p-specialization-obj))))      ;;specialization-info
+
+(defun fill-graphics-pipeline (obj info)
+  (let* ((alloc-list nil)
+	 (stage-count (getf info :stage-count))
+	 (stage-infos (getf info :stage))
+	 (vertex-input-state (getf info :vertex-input-state))
+	 (input-assembly-state (getf info :input-assembly-state))
+	 (tessellation-state (getf info :tessellation-state))
+	 (viewport-state (getf info :viewport-state))
+	 (rasterization-state (getf info :rasterization-state))
+	 (multisample-state (getf info :multisample-state))
+	 (depth-stencil-state (getf info :depth-stencil-state))
+	 (color-blend-state (getf info :color-blend-state))
+	 (dynamic-state (getf info :dynamic-state))
+
+	 (p-stage-infos (foreign-alloc 'pipeline-shader-stage-create-info :count stage-count))
+	 (p-vertex-input-state (foreign-alloc 'pipeline-vertex-input-state-create-info))
+	 
+	 (p-assembly-state (foreign-alloc 'pipeline-input-assembly-state-create-info)) 
+	 (p-tessellation-state (foreign-alloc 'pipeline-tessellation-state-create-info))
+	 (p-viewport-state (foreign-alloc 'pipeline-viewport-state-create-info))
+	 (p-rasterization-state (foreign-alloc 'pipeline-rasterization-state-create-info))
+	 (p-multisample-state (foreign-alloc 'pipeline-multisample-state-create-info))
+	 (p-stencil-state (foreign-alloc 'pipeline-depth-stencil-state-create-info))
+	 (p-color-blend-state (foreign-alloc 'pipeline-color-blend-state-create-info))
+	 (p-dynamic-state (foreign-alloc 'pipeline-dynamic-state-create-info)))
+    ;;free after use
+    (push p-stage-infos *graphics-alloced-obj*)
+    (push p-vertex-input-state *graphics-alloced-obj*)
+    
+    (push p-assembly-state *graphics-alloced-obj*)
+    (push p-tessellation-state *graphics-alloced-obj*)
+    (push p-viewport-state *graphics-alloced-obj*)
+    (push p-rasterization-state *graphics-alloced-obj*)
+    (push p-multisample-state *graphics-alloced-obj*)
+    (push p-stencil-state *graphics-alloced-obj*)
+    (push p-color-blend-state *graphics-alloced-obj*)
+    (push p-dynamic-state *graphics-alloced-obj*)
+
+    ;;set shader stage
+    (loop for info in stage-infos
+	  for i from 0
+	  do (fill-stage-stage (mem-aptr p-stage-infos 'pipeline-shader-stage-create-info i) info))
+    (setf (mem-ref p-vertex-input-state 'pipeline-vertex-input-state-create-info)
+	  (list (getf vertex-input-state :type)
+		(getf vertex-input-state :next)
+		(getf vertex-input-state :flags)
+		(getf vertex-input-state :vertex-binding-description-count)
+		(getf vertex-input-state )
+		(getf vertex-input-state :vertex-attribute-description-count)
+		(getf vertex-input-state )))
+    (setf (mem-ref obj 'graphics-pipeline-create-info)
+	  (list (getf info :type)             ;;    (:type VkStructureType)
+		(getf info :next)             ;;    (:next (:pointer :void))
+		(getf info :flags)            ;;    (:flags vk-flags)
+		stage-count                   ;;    (:stage-count :uint32)
+		p-stage-infos                 ;;    (:stages (:pointer (:struct vk-pipeline-shader-stage-create-info)))
+		;;    (:vertex-input-state (:pointer (:struct vk-pipeline-vertex-input-state-create-info)))
+		;;    (:input-assembly-state (:pointer (:struct vk-pipeline-input-assembly-state-create-info)))
+		;;    (:tessellation-state (:pointer (:struct vk-pipeline-tessellation-state-create-info)))
+		;;    (:viewport-state (:pointer (:struct vk-pipeline-viewport-state-create-info)))
+		;;    (:rasterization-state (:pointer (:struct vk-pipeline-rasterization-state-create-info)))
+		;;    (:multisample-state (:pointer (:struct vk-pipeline-multisample-state-create-info)))
+		;;    (:depth-stencil-state (:pointer (:struct vk-pipeline-depth-stencil-state-create-info)))
+		;;    (:color-blend-state (:pointer (:struct vk-pipeline-color-blend-state-create-info)))
+		;;    (:dynamic-state (:pointer (:struct vk-pipeline-dynamic-state-create-info)))
+		;;    (:layout vk-pipeline-layout)
+		;;    (:render-pass vk-render-pass)
+		;;    (:subpass :uint32)
+		;;    (:base-pipeline-handle vk-pipeline)
+		;;    (:base-pipeline-index :uint32)
+		)
+	  )
+    (mapcar #'foreign-free *graphics-alloced-obj*)
+    (setf *graphics-alloced-obj* nil))))              
+
+(defun create-graphics-pipeline (device pipeline-cache create-infos &key (allocator))
+  (let ((num (length create-infos)))
+    (when (zerop num)
+      (error "no create info"))
+    (with-foreign-object (info 'graphics-pipeline-create-info num)
+      (loop for l-info in create-infos
+	    for i from 0
+	    do (fill-graphics-pipeline (mem-aptr info 'graphics-pipeline-create-info i)
+				       l-info)))))
+
 (defun destroy-graphics-pipeline (device))
 ;;function for get
 (defun enumerate-physical-device (instance)

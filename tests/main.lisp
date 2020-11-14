@@ -107,9 +107,9 @@
     (insert-to-handle :device (create-device (get-handle :gpu)
 					     :info-exts '("VK_KHR_swapchain")
 					     :info-queues (list
-							   (create-device-queues :queue-family-index (get-handle :graphics-queue-index)
-										 :queue-count 1
-										 :queue-properties 1.0))))
+							   (make-lsp-device-queue-create-info :queue-family-index (get-handle :graphics-queue-index)
+											      :queue-count 1
+											      :queue-properties 1.0))))
     (insert-to-handle :surface (glfw-create-surface (get-handle :instance)
 						    *window*))
     (insert-to-handle :surface-cap (get-physical-device-surface-capabilities (get-handle :gpu)
