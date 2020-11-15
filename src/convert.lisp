@@ -648,8 +648,8 @@
   (:depth-compare-op VkCompareop)
   (:depth-bounds-test-enable vk-bool-32)
   (:stencil-test-enable vk-bool-32)
-  (:front (:struct vk-stencil-op-state))
-  (:back (:struct vk-stencil-op-state))
+  (:front (:struct vk-stencil-op-state) :parse 'stencil-op-state)
+  (:back (:struct vk-stencil-op-state) :parse 'stencil-op-state)
   (:min-depth-bounds :float)
   (:max-depth-bounds :float))
 
@@ -672,7 +672,7 @@
   (:logic-op-enable vk-bool-32)
   (:logic-op VkLogicop)
   (:attachment-count :uint32)
-  (:attachments (:pointer (:struct vk-pipeline-color-blend-attachment-state)))
+  (:attachments (:pointer (:struct vk-pipeline-color-blend-attachment-state)) :bind :attachment-count)
   (:blend-constants :float :count 4))
 
 (def-struct-translator vk-pipeline-dynamic-state-create-info

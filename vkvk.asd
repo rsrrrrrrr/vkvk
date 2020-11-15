@@ -13,7 +13,8 @@
 		 (:file "convert-struct")
 		 (:file "c-function")
 		 (:file "wrapps")
-		 (:file "assist-fun"))))
+		 (:file "assist-fun")
+		 (:file "pipeline.lisp"))))
   :description ""
   :in-order-to ((test-op (test-op "vkvk/tests"))))
 
