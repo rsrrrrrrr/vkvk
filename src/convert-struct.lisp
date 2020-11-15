@@ -5,11 +5,16 @@
 	  make-lsp-offset-3d
 	  make-lsp-extent-2d
 	  make-lsp-extent-3d
+	  make-lsp-rect-2d
 	  make-lsp-image-subresource-range
 	  make-lsp-viewport
 	  make-lsp-push-constant-range
 	  make-lsp-specialization-map-entry
-	  make-lsp-specialization-info))
+	  make-lsp-specialization-info
+	  make-lsp-stencil-op-state
+	  make-lsp-pipeline-color-blend-attachment-state
+	  make-lsp-vertex-input-binding-description
+	  make-lsp-vertex-input-attribute-description))
 
 ;;special 
 (defstruct lsp-device-queue-create-info

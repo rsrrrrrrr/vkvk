@@ -661,12 +661,10 @@
     (push p-entries *graphics-alloced-obj*)
     (loop for info in entries
 	  for i from 0
-	  unless (lsp-specialization-map-entry-p info)
-	    do (error "info type is npt specialization map entry")
 	  do (setf (mem-aref p-entries 'specialization-map-entry i)
-		   (list (lsp-specialization-map-entry-constant-id info)
-			 (lsp-specialization-map-entry-offset info)
-			 (lsp-specialization-map-entry-size info))))
+		   (list (getf info :constant-id)
+			 (getf info :offset)
+			 (getf info :size))))
     (setf (mem-ref obj 'specialization-info)
 	  (list entry-count
 		p-entries
@@ -687,6 +685,99 @@
 		(getf info :name)             ;;name
 		p-specialization-obj))))      ;;specialization-info
 
+(defun fill-vertex-input-state (obj info)
+  (let* ((vertex-binding-description-count (getf info :vertex-binding-description-count))
+	 (vertex-attribute-description-count (getf info :vertex-attribute-description-count))
+	 ;;info
+	 (vertex-binding-description (getf info :vertex-binding-description))
+	 (vertex-attribute-description (getf info :vertex-attribute-description))
+	 ;;pointer
+	 (p-vertex-binding-description (foreign-alloc 'vertex-input-binding-description :count vertex-binding-description-count))
+	 (p-vertex-attribute-description (foreign-alloc 'vertex-input-attribute-description :count vertex-attribute-description-count)))
+    (push p-vertex-binding-description *graphics-alloced-obj*)
+    (push p-vertex-attribute-description *graphics-alloced-obj*)
+    (loop for info in vertex-binding-description
+	  for i from 0
+	  do (setf (mem-aref p-vertex-binding-description 'vertex-input-binding-description i)
+		   (list (getf info :binding)
+			 (getf info :stride)
+			 (getf info :input-rage))))
+    (loop for info in vertex-attribute-description
+	  for i from 0
+	  do (setf (mem-aref p-vertex-attribute-description 'vertex-input-attribute-description i)
+		   (list (getf info :location)
+			 (getf info :binding)
+			 (getf info :format)
+			 (getf info :offset))))
+    (setf (mem-ref obj 'pipeline-vertex-input-state-create-info)
+	  (list (getf info :type)
+		(getf info :next)
+		(getf info :flags)
+		vertex-binding-description-count
+		p-vertex-binding-description
+		vertex-attribute-description-count
+		p-vertex-attribute-description))))
+
+(defun fill-viewport-state (obj info)
+  (let* ((viewport-count (getf info :viewport-count))
+	 (acissor-count (getf info :acissor-count))
+	 ;;info
+	 (viewports (getf info :viewports))
+	 (acissors (getf info :scissors))
+	 ;;pointer 
+	 (p-viewport (foreign-alloc 'viewport :count viewport-count))
+	 (p-acissor (foreign-alloc 'rect-2d :count acissor-count)))
+    (push p-viewport *graphics-alloced-obj*)
+    (push p-acissor *graphics-alloced-obj*)
+    ;;set pipeline viewport
+    (loop for info in viewports
+	  for i from 0
+	  do (setf (mem-aref p-viewport 'viewport i)
+		   (list (getf info :x)
+			 (getf info :y)
+			 (getf info :width)
+			 (getf info :height)
+			 (getf info :min-depth)
+			 (getf info :max-depth))))
+    ;;set acissor
+    (loop for info in acissors
+	  for i from 0
+	  for offset = (getf acissors :offset)
+	  for extent = (getf acissors ::extent)
+	  do (setf (mem-aref p-acissor 'rect-2d i)
+		   (list (list (getf offset :x)
+			       (getf offset :y))
+			 (list (getf extent :width)
+			       (getf extent :height)))))
+    (setf (mem-ref obj 'pipeline-viewport-state-create-info)
+	  (list (getf info :type)
+		(getf info :next)
+		(getf info :flags)
+		(getf info :viewport-count)
+		p-viewport
+		(getf info :acissor-count)
+		p-acissor))))
+
+(defun fill-multisample-state (obj info)
+  (let* ((sample-mask (getf info :sample-mask))
+	 (sample-mask-count (length sample-mask))
+	 (p-sample-mask (foreign-alloc :uint32 :count sample-mask-count)))
+    (push p-sample-mask *graphics-alloced-obj*)
+    (loop for mask in sample-mask
+	  for i from 0
+	  do (setf (mem-aref p-sample-mask :uint32 i)
+		   mask))
+    (setf (mem-ref obj 'pipeline-multisample-state-create-info)
+	  (list (getf obj :type)
+		(getf obj :next)
+		(getf obj :flags)
+		(getf obj :rasterization-sample)
+		(getf obj :sample-shading-enable)
+		(getf obj :min-sample-shading)
+		p-sample-mask
+		(getf obj :alpha-to-coverage-enable)
+		(getf obj :alpha-to-one-enable)))))
+
 (defun fill-graphics-pipeline (obj info)
   (let* ((alloc-list nil)
 	 (stage-count (getf info :stage-count))
@@ -696,6 +787,7 @@
 	 (tessellation-state (getf info :tessellation-state))
 	 (viewport-state (getf info :viewport-state))
 	 (rasterization-state (getf info :rasterization-state))
+	 
 	 (multisample-state (getf info :multisample-state))
 	 (depth-stencil-state (getf info :depth-stencil-state))
 	 (color-blend-state (getf info :color-blend-state))
@@ -703,9 +795,9 @@
 
 	 (p-stage-infos (foreign-alloc 'pipeline-shader-stage-create-info :count stage-count))
 	 (p-vertex-input-state (foreign-alloc 'pipeline-vertex-input-state-create-info))
-	 
-	 (p-assembly-state (foreign-alloc 'pipeline-input-assembly-state-create-info)) 
+	 (p-assembly-state (foreign-alloc 'pipeline-input-assembly-state-create-info))
 	 (p-tessellation-state (foreign-alloc 'pipeline-tessellation-state-create-info))
+	 
 	 (p-viewport-state (foreign-alloc 'pipeline-viewport-state-create-info))
 	 (p-rasterization-state (foreign-alloc 'pipeline-rasterization-state-create-info))
 	 (p-multisample-state (foreign-alloc 'pipeline-multisample-state-create-info))
@@ -715,11 +807,11 @@
     ;;free after use
     (push p-stage-infos *graphics-alloced-obj*)
     (push p-vertex-input-state *graphics-alloced-obj*)
-    
     (push p-assembly-state *graphics-alloced-obj*)
     (push p-tessellation-state *graphics-alloced-obj*)
     (push p-viewport-state *graphics-alloced-obj*)
     (push p-rasterization-state *graphics-alloced-obj*)
+    
     (push p-multisample-state *graphics-alloced-obj*)
     (push p-stencil-state *graphics-alloced-obj*)
     (push p-color-blend-state *graphics-alloced-obj*)
@@ -729,34 +821,60 @@
     (loop for info in stage-infos
 	  for i from 0
 	  do (fill-stage-stage (mem-aptr p-stage-infos 'pipeline-shader-stage-create-info i) info))
-    (setf (mem-ref p-vertex-input-state 'pipeline-vertex-input-state-create-info)
-	  (list (getf vertex-input-state :type)
-		(getf vertex-input-state :next)
-		(getf vertex-input-state :flags)
-		(getf vertex-input-state :vertex-binding-description-count)
-		(getf vertex-input-state )
-		(getf vertex-input-state :vertex-attribute-description-count)
-		(getf vertex-input-state )))
+    ;;set vertex input state
+    (fill-vertex-input-state p-vertex-input-state vertex-input-state)
+    ;;set vertex input assembly state
+    (setf (mem-ref p-assembly-state 'pipeline-vertex-input-state-create-info)
+	  (list (getf input-assembly-state :type)
+		(getf input-assembly-state :next)
+		(getf input-assembly-state :flags)
+		(getf input-assembly-state :topology)
+		(getf input-assembly-state :primitive-restart-enable)))
+    ;;set tessellation
+    (setf (mem-ref p-tessellation-state 'pipeline-tessellation-state-create-info)
+	  (list (getf tessellation-state :type)
+		(getf tessellation-state :next)
+		(getf tessellation-state :flags)
+		(getf tessellation-state :primitive-restart-enable)))
+    ;;set viewport state
+    (fill-viewport-state p-viewport-state viewport-state)
+    ;;set rasterization state
+    (setf (mem-ref p-rasterization-state 'pipeline-rasterization-state-create-info)
+	  (list (getf rasterization-state :type)
+		(getf rasterization-state :next)
+		(getf rasterization-state :flags)
+		(getf rasterization-state :depth-clamp-enable)
+		(getf rasterization-state :rasterizer-discard-enable)
+		(getf rasterization-state :polygon-mode)
+		(getf rasterization-state :cull-mode)
+		(getf rasterization-state :front-face)
+		(getf rasterization-state :depth-bias-enable)
+		(getf rasterization-state :depth-bias-constant-factor)
+		(getf rasterization-state :depth-bias-clamp)
+		(getf rasterization-state :depth-bias-slope-factor)
+		(getf rasterization-state :line-width)))
+    ;;set multisample state
+    (fill-multisample-state p-multisample-state multisample-state)
     (setf (mem-ref obj 'graphics-pipeline-create-info)
-	  (list (getf info :type)             ;;    (:type VkStructureType)
-		(getf info :next)             ;;    (:next (:pointer :void))
-		(getf info :flags)            ;;    (:flags vk-flags)
-		stage-count                   ;;    (:stage-count :uint32)
-		p-stage-infos                 ;;    (:stages (:pointer (:struct vk-pipeline-shader-stage-create-info)))
-		;;    (:vertex-input-state (:pointer (:struct vk-pipeline-vertex-input-state-create-info)))
-		;;    (:input-assembly-state (:pointer (:struct vk-pipeline-input-assembly-state-create-info)))
-		;;    (:tessellation-state (:pointer (:struct vk-pipeline-tessellation-state-create-info)))
-		;;    (:viewport-state (:pointer (:struct vk-pipeline-viewport-state-create-info)))
-		;;    (:rasterization-state (:pointer (:struct vk-pipeline-rasterization-state-create-info)))
-		;;    (:multisample-state (:pointer (:struct vk-pipeline-multisample-state-create-info)))
-		;;    (:depth-stencil-state (:pointer (:struct vk-pipeline-depth-stencil-state-create-info)))
-		;;    (:color-blend-state (:pointer (:struct vk-pipeline-color-blend-state-create-info)))
-		;;    (:dynamic-state (:pointer (:struct vk-pipeline-dynamic-state-create-info)))
-		;;    (:layout vk-pipeline-layout)
-		;;    (:render-pass vk-render-pass)
-		;;    (:subpass :uint32)
-		;;    (:base-pipeline-handle vk-pipeline)
-		;;    (:base-pipeline-index :uint32)
+	  (list (getf info :type)             ;;    :type 
+		(getf info :next)             ;;    :next 
+		(getf info :flags)            ;;    :flags
+		stage-count                   ;;    :stage-count
+		p-stage-infos                 ;;    :stages 
+		p-vertex-input-state          ;;    :vertex-input-state 
+		p-assembly-state              ;;    :input-assembly-state 
+		p-tessellation-state          ;;    :tessellation-state 
+		p-viewport-state              ;;    :viewport-state 
+		p-rasterization-state         ;;    :rasterization-state
+		;;    :multisample-state 
+		;;    :depth-stencil-state 
+		;;    :color-blend-state 
+		;;    :dynamic-state 
+		;;    :layout 
+		;;    :render-pass 
+		;;    :subpass 
+		;;    :base-pipeline-handle 
+		;;    :base-pipeline-index 
 		)
 	  )
     (mapcar #'foreign-free *graphics-alloced-obj*)

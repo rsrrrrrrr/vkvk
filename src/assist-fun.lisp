@@ -152,7 +152,7 @@
 				       :min-depth (lsp-viewport-min-depth obj)
 				       :max-depth (lsp-viewport-max-depth obj)))
 	:scissor-count (length scissor)
-	:scissprs (loop for obj in scissor
+	:scissors (loop for obj in scissor
 			unless (lsp-rect-2d-p obj)
 			  do (error "obj type is not rect 2d")
 			collect (list :offset (list :x (lsp-offset-2d-x (lsp-rect-2d-offset obj))

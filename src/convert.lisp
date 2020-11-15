@@ -596,9 +596,9 @@
   (:next (:pointer :void))
   (:flags vk-pipeline-viewport-state-create-flags)
   (:viewport-count :uint32)
-  (:viewports (:pointer (:struct vk-viewport)))
+  (:viewports (:pointer (:struct vk-viewport)) :bind :viewport-count)
   (:scissor-count :uint32)
-  (:scissprs (:pointer (:struct vk-rect-2d))))
+  (:scissprs (:pointer (:struct vk-rect-2d)) :bind :scissor-count))
 
 (def-struct-translator vk-pipeline-rasterization-state-create-info
     (s-pipeline-rasterization-state-create-info pipeline-rasterization-state-create-info)
