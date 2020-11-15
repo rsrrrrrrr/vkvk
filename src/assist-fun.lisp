@@ -5,7 +5,19 @@
 	  get-usable-device-extensions
 	  get-usable-device-layers
 	  get-usable-instance-extensions
-	  get-usable-instance-layers))
+	  get-usable-instance-layers
+	  create-specialization-info
+	  create-pipeline-shader-stage
+	  create-pipeline-vertex-input-state
+	  create-pipeline-input-assembly-state
+	  create-pipeline-tessellation-state
+	  create-pipeline-viewport-state
+	  create-pipeline-rasterization-state
+	  create-pipeline-multisample-state
+	  create-pipeline-depth-stencil-state
+	  create-pipeline-color-blend-state
+	  create-pipeline-dynamic-state
+	  create-graphics-pipeline-info))
 
 (defun select-queue (physical-device properties)
   (let* ((queue-families (first (get-physical-device-queue-family-properties physical-device)))
@@ -122,10 +134,10 @@
 	:patch-control-points patch-control-points))
 
 (defun create-pipeline-viewport-state (&key
-				(next *vk-nullptr*)
-				(flags 0)
-				(viewport nil)
-				(scissor nil))
+					 (next *vk-nullptr*)
+					 (flags 0)
+					 (viewport nil)
+					 (scissor nil))
   (list :type :structure-type-pipeline-viewport-state-create-info
 	:next next
 	:flags flags
@@ -224,14 +236,14 @@
 			 :references (lsp-stencil-op-state-references front))
 		   (error "front is not type stencil"))
 	:back (if (lsp-stencil-op-state-p back)
-		   (list :fail-op (lsp-stencil-op-state-fail-op back)
-			 :pass-op (lsp-stencil-op-state-pass-op back)
-			 :depth-fail-op (lsp-stencil-op-state-depth-fail-op back)
-			 :compare-op (lsp-stencil-op-state-compare-op back)
-			 :compare-mask (lsp-stencil-op-state-compare-mask back)
-			 :write-mask (lsp-stencil-op-state-write-mask back)
-			 :references (lsp-stencil-op-state-references back))
-		   (error "back is not type stencil"))
+		  (list :fail-op (lsp-stencil-op-state-fail-op back)
+			:pass-op (lsp-stencil-op-state-pass-op back)
+			:depth-fail-op (lsp-stencil-op-state-depth-fail-op back)
+			:compare-op (lsp-stencil-op-state-compare-op back)
+			:compare-mask (lsp-stencil-op-state-compare-mask back)
+			:write-mask (lsp-stencil-op-state-write-mask back)
+			:references (lsp-stencil-op-state-references back))
+		  (error "back is not type stencil"))
 	:min-depth-bounds min-depth-bounds
 	:max-depth-bounds max-depth-bounds))
 

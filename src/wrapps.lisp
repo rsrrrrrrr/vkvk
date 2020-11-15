@@ -760,7 +760,7 @@
 		)
 	  )
     (mapcar #'foreign-free *graphics-alloced-obj*)
-    (setf *graphics-alloced-obj* nil))))              
+    (setf *graphics-alloced-obj* nil)))
 
 (defun create-graphics-pipeline (device pipeline-cache create-infos &key (allocator))
   (let ((num (length create-infos)))
