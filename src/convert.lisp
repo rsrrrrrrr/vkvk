@@ -538,7 +538,7 @@
 (def-struct-translator vk-specialization-info
     (s-specialization-info specialization-info)
   (:map-entry-count :uint32)
-  (:map-entrys (:pointer (:struct vk-specialization-map-entry)))
+  (:map-entrys (:pointer (:struct vk-specialization-map-entry)) :bind :map-entry-count)
   (:data-size size-t)
   (:data (:pointer :void)))
 

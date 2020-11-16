@@ -8,9 +8,9 @@
   (:unix (:or "libvulkan.so")))
 
 (define-foreign-library libglfw3
-     (:unix (:or "libglfw.so.3.1" "libglfw.so.3"))
-     (:windows "glfw3.dll")
-     (t (:or (:default "libglfw3") (:default "libglfw"))))
+  (:unix (:or "libglfw.so.3.1" "libglfw.so.3"))
+  (:windows "glfw3.dll")
+  (t (:or (:default "libglfw3") (:default "libglfw"))))
 
 (use-foreign-library libvulkan)
 (use-foreign-library libglfw3)
@@ -61,7 +61,7 @@
 (defun process-count (type num ptr &optional (bind-p nil))
   (cond ((eql type :char) (foreign-string-to-lisp ptr))
 	(bind-p (loop for i upto (1- num)
-		 collect (mem-aref ptr type i)))
+		      collect (mem-aref ptr type i)))
 	(t (loop for i upto (1- num)
 		 for p = (mem-aptr ptr type i)
 		 until (null-pointer-p p)

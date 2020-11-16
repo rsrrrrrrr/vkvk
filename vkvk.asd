@@ -14,7 +14,7 @@
 		 (:file "c-function")
 		 (:file "wrapps")
 		 (:file "assist-fun")
-		 (:file "pipeline.lisp"))))
+		 (:file "pipeline"))))
   :description ""
   :in-order-to ((test-op (test-op "vkvk/tests"))))
 
