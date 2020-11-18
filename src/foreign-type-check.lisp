@@ -82,3 +82,8 @@
   `(typep ,val (foreign-enum-type vkformat)))
 (deftype vk-format-enum ()
   `(satisfies check-format-enum))
+
+(defun check-dynamic-state (val)
+  `(typep ,val (foreign-enum-type VkDynamicState)))
+(deftype vk-dynamic-state-enum ()
+  `(satisfies check-dynamic-state))

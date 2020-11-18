@@ -5,7 +5,8 @@
 	  get-usable-device-extensions
 	  get-usable-device-layers
 	  get-usable-instance-extensions
-	  get-usable-instance-layers))
+	  get-usable-instance-layers
+	  make-vk-flag))
 
 (defun select-queue (physical-device properties)
   (let* ((queue-families (first (get-physical-device-queue-family-properties physical-device)))
@@ -48,3 +49,8 @@
 			    (loop for extension in usable-extensions
 				  collect (getf extension :extension-name)))))
     (intersection exts extension-names :test #'string=)))
+
+(defun make-vk-flag (type &rest args)
+  (apply #'logior (mapcar #'(lambda (x)
+			      (foreign-enum-value type x))
+			  args)))

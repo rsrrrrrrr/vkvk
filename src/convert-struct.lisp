@@ -101,7 +101,7 @@
   (src-alpha-blend-factor :blend-factor-zero :type vk-blend-factor-enum)
   (dst-alpha-blend-factor :blend-factor-zero :type vk-blend-factor-enum)
   (alpha-blend-op :blend-op-add :type vk-blend-op-enum)
-  (color-write-mask 0))
+  (color-write-mask 0 :type integer))
 
 (defstruct lsp-vertex-input-binding-description
   (binding 0 :type integer)

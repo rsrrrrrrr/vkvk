@@ -16,7 +16,13 @@
 	  create-graphics-pipeline-multisample-state
 	  destroy-graphics-pipeline-multisample-state
 	  create-graphics-pipeline-depth-stencil-state
-	  destroy-graphics-pipeline-depth-stencil-state))
+	  destroy-graphics-pipeline-depth-stencil-state
+	  create-graphics-pipeline-color-blend-state
+	  destroy-graphics-pipeline-color-blend-state
+	  create-pipeline-dynamic-state
+	  destroy-pipeline-dynamic-state
+	  create-graphics-pipeline-info
+	  destroy-graphics-pipeline-info))
 
 ;;as you create a pipeline you shoud 
 ;;  create-graphics-pipeline-shader-stage-specialization
@@ -52,7 +58,7 @@
 							      (flags 0)
 							      (stage :shader-stage-vertex-bit)
 							      (name "main")
-							      (specialization-info nil))
+							      (specialization-info *vk-nullptr*))
   "return a c VkPipelineShaderStageCreateInfo pointer"
   (let ((p-shader-stage (foreign-alloc 'pipeline-shader-stage-create-info)))
     (push p-shader-stage *shader-stages*)
@@ -108,9 +114,13 @@
 		next
 		flags
 		binding-count
-		p-binding-descriptions
+		(if (zerop binding-count)
+		    *vk-nullptr*
+		     p-binding-descriptions)
 		attribute-count
-		p-attribute-descriptions))
+		(if (zerop attribute-count)
+		    *vk-nullptr*
+		    p-attribute-descriptions)))
     p-binding-descriptions))
 (defun destroy-graphics-pipeline-vertex-input-state ()
   (unless (null *vertex-input-state*)
@@ -221,7 +231,7 @@
 						       (depth-bias-constant-factor 0.0)
 						       (depth-bias-clamp 0.0 )
 						       (depth-bias-slop-factor 0.0)
-						       (depth-bias-line-width 0.0))
+						       (line-width 0.0))
   (let ((p-rasterization (foreign-alloc 'pipeline-rasterization-state-create-info)))
     (push p-rasterization *rasterization-state*)
     (setf (mem-ref p-rasterization 'pipeline-rasterization-state-create-info)
@@ -237,7 +247,7 @@
 		depth-bias-constant-factor
 		depth-bias-clamp
 		depth-bias-slop-factor
-		depth-bias-line-width))
+		line-width))
     p-rasterization))
 (defun destroy-graphics-pipeline-rasterization-state ()
   (unless (null *rasterization-state*)
@@ -251,7 +261,7 @@
 						     (flags 0)
 						     (rasterization-samples :sample-count-1-bit)
 						     (sample-shading-enable +vk-false+)
-						     (min-sample-shading 0.0)
+						     (min-sample-shading 1.0)
 						     (sample-mask nil)
 						     (alpha-to-coverage-enable +vk-false+)
 						     (alpha-to-one-enable +vk-false+))
@@ -271,7 +281,9 @@
 		rasterization-samples
 		sample-shading-enable
 		min-sample-shading
-		p-sample-mask
+		(if (zerop mask-count)
+		    *vk-nullptr*
+		     p-sample-mask)
 		alpha-to-coverage-enable
 		alpha-to-one-enable))
     p-multisample))
@@ -299,32 +311,161 @@
     (if (and (lsp-stencil-op-state-p front)
 	     (lsp-stencil-op-state-p back))
 	(setf (mem-ref p-depth-stencil 'pipeline-depth-stencil-state-create-info)
-	  (list :structure-type-pipeline-depth-stencil-state-create-info
-		next
-		flags
-		depth-test-enable
-		depth-write-enable
-		depth-compare-op
-		depth-bound-test-enable
-		stencil-test-enable
-		(list (lsp-stencil-op-state-fail-op front)
-		      (lsp-stencil-op-state-pass-op front)
-		      (lsp-stencil-op-state-depth-fail-op front)
-		      (lsp-stencil-op-state-compare-op front)
-		      (lsp-stencil-op-state-compare-mask front)
-		      (lsp-stencil-op-state-write-mask front)
-		      (lsp-stencil-op-state-references front))
-		(list (lsp-stencil-op-state-fail-op back)
-		      (lsp-stencil-op-state-pass-op back)
-		      (lsp-stencil-op-state-depth-fail-op back)
-		      (lsp-stencil-op-state-compare-op back)
-		      (lsp-stencil-op-state-compare-mask back)
-		      (lsp-stencil-op-state-write-mask back)
-		      (lsp-stencil-op-state-references back))
-		min-depth-bounds
-		max-depth-bounds))
+	      (list :structure-type-pipeline-depth-stencil-state-create-info
+		    next
+		    flags
+		    depth-test-enable
+		    depth-write-enable
+		    depth-compare-op
+		    depth-bound-test-enable
+		    stencil-test-enable
+		    (list (lsp-stencil-op-state-fail-op front)
+			  (lsp-stencil-op-state-pass-op front)
+			  (lsp-stencil-op-state-depth-fail-op front)
+			  (lsp-stencil-op-state-compare-op front)
+			  (lsp-stencil-op-state-compare-mask front)
+			  (lsp-stencil-op-state-write-mask front)
+			  (lsp-stencil-op-state-references front))
+		    (list (lsp-stencil-op-state-fail-op back)
+			  (lsp-stencil-op-state-pass-op back)
+			  (lsp-stencil-op-state-depth-fail-op back)
+			  (lsp-stencil-op-state-compare-op back)
+			  (lsp-stencil-op-state-compare-mask back)
+			  (lsp-stencil-op-state-write-mask back)
+			  (lsp-stencil-op-state-references back))
+		    min-depth-bounds
+		    max-depth-bounds))
 	(error "front or back type is not lsp-stencil-op-state"))))
 (defun destroy-graphics-pipeline-depth-stencil-state ()
   (unless (null *depth-stencil-state*)
     (mapcar #'foreign-free *depth-stencil-state*)
     (setf *depth-stencil-state* nil)))
+
+;;pipeline color blend state
+(defparameter *color-blend-state* nil)
+(defun create-graphics-pipeline-color-blend-state (&key
+						     (next *vk-nullptr*)
+						     (flags 0)
+						     (logic-op-enable +vk-false+)
+						     (logic-op :logic-op-and)
+						     (color-blend-attachment nil)
+						     (blend-constants '(0.0 0.0 0.0 0.0)))
+  (let* ((color-blend-attachment-count (length color-blend-attachment))
+	 (p-color-blend-attachment (foreign-alloc 'pipeline-color-blend-attachment-state
+						  :count color-blend-attachment-count))
+	 (p-blend-constants (foreign-alloc :float :count 4))
+	 (p-color-blend-state (foreign-alloc 'pipeline-color-blend-state-create-info)))
+    (push p-color-blend-attachment *color-blend-state*)
+    (push p-color-blend-state *color-blend-state*)
+    (push p-blend-constants *color-blend-state*)
+    (if (> (length blend-constants) 4)
+	(error "length of blend-constants is big than 4")
+	(loop for constant in blend-constants
+	      for i from 0
+	      do (setf (mem-aref p-blend-constants :float i)
+		       constant)))
+    (loop for attachment in color-blend-attachment
+	  for i from 0
+	  unless (lsp-pipeline-color-blend-attachment-state-p attachment)
+	    do (error "attachment type is not type of lsp-pipeline-color-blend-attachment-state")
+	  do (setf (mem-aref p-color-blend-attachment 'pipeline-color-blend-attachment-state i)
+		   (list (lsp-pipeline-color-blend-attachment-state-blend-enable attachment)
+			 (lsp-pipeline-color-blend-attachment-state-src-color-blend-factor attachment)
+			 (lsp-pipeline-color-blend-attachment-state-dst-color-blend-factor attachment)
+			 (lsp-pipeline-color-blend-attachment-state-color-blend-op attachment)
+			 (lsp-pipeline-color-blend-attachment-state-src-alpha-blend-factor attachment)
+			 (lsp-pipeline-color-blend-attachment-state-dst-alpha-blend-factor attachment)
+			 (lsp-pipeline-color-blend-attachment-state-alpha-blend-op attachment)
+			 (lsp-pipeline-color-blend-attachment-state-color-write-mask attachment))))
+    (setf (mem-ref p-color-blend-state 'pipeline-color-blend-state-create-info)
+	  (list :structure-type-pipeline-color-blend-state-create-info
+		next
+		flags
+		logic-op-enable
+		logic-op
+		color-blend-attachment-count
+		p-color-blend-attachment
+		p-blend-constants))
+    p-color-blend-state))
+(defun destroy-graphics-pipeline-color-blend-state ()
+  (unless (null *color-blend-state*)
+    (mapcar #'foreign-free *color-blend-state*)
+    (setf *color-blend-state* nil)))
+
+;;pipeline dynamic state
+(defparameter *dynamic-state* nil)
+(defun creaet-pipeline-dynamic-state (&key
+					(next *vk-nullptr*)
+					(flags 0)
+					(dynamic-states nil))
+  (let* ((states-count (length dynamic-states))
+	 (p-states (foreign-alloc 'VkDynamicState :count states-count))
+	 (p-dynamic (foreign-alloc 'pipeline-dynamic-state-create-info)))
+    (push p-states *dynamic-state*)
+    (push p-dynamic *dynamic-state*)
+    (loop for state in dynamic-states
+	  for i from 0
+	  unless (typep state 'vk-dynamic-state-enum)
+	    do (error "state type is not type of VkDynamicState")
+	  do (setf (mem-aref p-states 'VkDynamicState i)
+		   state))
+    (setf (mem-ref p-dynamic 'pipeline-dynamic-state-create-info)
+	  (list :structure-type-pipeline-dynamic-state-create-info
+		next
+		flags
+		states-count
+		p-states))
+    p-dynamic))
+(defun destroy-pipeline-dynamic-state ()
+  (unless (null *dynamic-state*)
+    (mapcar #'foreign-free *dynamic-state*)
+    (setf *dynamic-state* nil)))
+
+;;create graphics pipeline info
+(defparameter *graphics-pipeline-info* nil)
+(defun create-graphics-pipeline-info (layout
+				      render-pass
+				      subpass
+				      base-pipeline-handle
+				      base-pipeline-index
+				      &key
+					(next *vk-nullptr*)
+					(flags 0)
+					(stages nil)
+					(vertex-input-state *vk-nullptr*)
+					(input-assembly-state *vk-nullptr*)
+					(tessellation-state *vk-nullptr*)
+					(viewport-state *vk-nullptr*)
+					(rasterization-state *vk-nullptr*)
+					(multisample-state *vk-nullptr*)
+					(depth-stencil-state *vk-nullptr*)
+					(color-blend-state *vk-nullptr*)
+					(dynamic-state *vk-nullptr*))
+  (let ((p-create-info (foreign-alloc 'graphics-pipeline-create-info)))
+    (push p-create-info *graphics-pipeline-info*)
+    (setf (mem-ref p-create-info 'graphics-pipeline-create-info)
+	  (list	:structure-type-graphics-pipeline-create-info
+		next 
+		flags
+		(length stages)
+		(if (zerop (length stages))
+		    *vk-nullptr*
+		    stages)
+		vertex-input-state 
+		input-assembly-state 
+		tessellation-state 
+		viewport-state 
+		rasterization-state 
+		multisample-state
+		depth-stencil-state 
+		color-blend-state 
+		dynamic-state 
+		layout 
+		render-pass 
+		subpass 
+		base-pipeline-handle 
+		base-pipeline-index))))
+(defun destroy-graphics-pipeline-info ()    ;;free after create-graphics-pipeline
+  (unless (null *graphics-pipeline-info*)
+    (mapcar #'foreign-free *graphics-pipeline-info*)
+    (setf *graphics-pipeline-info* nil)))

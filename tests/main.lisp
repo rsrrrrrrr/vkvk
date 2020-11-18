@@ -43,6 +43,35 @@
 (defun get-handle (key)
   (getf *vulkan-handle* key))
 
+(defun make-graphics-pipeline ()
+  (insert-to-handle :vert (create-shader-module (get-handle :device)
+						"~/codes/vkvk/tests/vert.spv"))
+  (insert-to-handle :frag (create-shader-module (get-handle :device)
+						"~/codes/vkvk/tests/frag.spv"))
+  (insert-to-handle :vert-shader-stage (create-graphics-pipeline-shader-stage (get-handle :vert))) ;;stage as default vert
+  (insert-to-handle :frage-shader-stage (create-graphics-pipeline-shader-stage (get-handle :frag)
+									       :stage :shader-stage-fragment-bit))
+  (insert-to-handle :vertex-input-state (create-graphics-pipeline-vertex-input-state))
+  (insert-to-handle :input-assembly-state (create-graphics-pipeline-input-assembly-state :topology :primitive-topology-triangle-list))
+  (insert-to-handle :viewport-state (create-graphics-pipeline-viewport-state
+				     :viewports (list
+						 (make-lsp-viewport :x 0.0
+								    :y 0.0
+								    :width 600.0
+								    :height 600.0
+								    :min-depth 0.0
+								    :max-depth 1.0))
+
+				     :scissors (list
+						(make-lsp-rect-2d :offset
+								  (make-lsp-offset-2d :x 0 :y 0)
+								  :extent
+								  (make-lsp-extent-2d :width 600 :height 600)))))
+  (insert-to-handle :rasterization-state (create-graphics-pipeline-rasterization-state :line-width 1.0
+										       :cull-mode :cull-mode-back-bit
+										       :front-face :front-face-clockwise))
+  (insert-to-handle :multisample-state (create-graphics-pipeline-multisample-state)))
+
 (defun select-format-and-color-space (a-lst)
   (labels ((select (lst)
 	     (cond ((null lst) nil)
@@ -124,10 +153,7 @@
     (insert-to-handle :present-queue (get-device-queue (get-handle :device)
 						       (get-handle :present-queue-index)
 						       0))
-    (insert-to-handle :vert (create-shader-module (get-handle :device)
-						  "~/codes/vkvk/tests/vert.spv"))
-    (insert-to-handle :frag (create-shader-module (get-handle :device)
-						  "~/codes/vkvk/tests/frag.spv"))
+    
     (insert-to-handle :pipeline-layout (create-pipeline-layout (get-handle :device)))
     (destroy-shader-module (get-handle :device)
 			   (get-handle :vert))
