@@ -2,29 +2,20 @@
   :version "0.1.0"
   :author ""
   :license ""
-  :depends-on (:cffi :cl-glfw3)
-  :components ((:module "src"
-                :components
-                ((:file "package")
-		 (:file "c-enums")		 
-		 (:file "c-struct")
-		 (:file "convert")
-		 (:file "foreign-type-check")
-		 (:file "convert-struct")
-		 (:file "c-function")
-		 (:file "wrapps")
-		 (:file "assist-fun")
-		 (:file "pipeline"))))
-  :description ""
-  :in-order-to ((test-op (test-op "vkvk/tests"))))
+  :depends-on (:cffi)
+  :serial t
+  :components ((:file "src/package")
+	       (:file "src/enum")
+	       (:file "src/foreign-type")
+	       (:file "src/function")
+	       (:file "src/struct")
+	       (:file "src/convert")
+	       (:file "src/instance/instance")
+	       (:file "src/gpu/gpu")
+	       (:file "src/device/device")
+	       (:file "src/surface/surface")
+	       (:file "src/pipeline/pipeline")
+	       (:file "src/cmd/cmd")
+	       (:file "src/memory/memory")
+	       (:file "src/resource/resource")))
 
-(defsystem "vkvk/tests"
-  :author ""
-  :license ""
-  :depends-on ("vkvk"
-               "rove")
-  :components ((:module "tests"
-                :components
-                ((:file "main"))))
-  :description "Test system for vkvk"
-  :perform (test-op (op c) (symbol-call :rove :run c)))

@@ -1,44 +1,36 @@
 (in-package :vkvk)
 
-(def-struct-translator vk-basic-structure
-    (s-basic-structure basic-structure) 
+(defcstruct vk-basic-structure
   (:type VkStructureType)
   (:next (:pointer (:struct vk-basic-structure))))
 
-(def-struct-translator vk-basic-out-structure
-    (s-basic-out-structure basic-out-structure)
+(defcstruct vk-basic-out-structure
   (:type VkStructureType)
   (:next (:pointer (:struct vk-basic-structure))))
 
-(def-struct-translator vk-offset-2d
-    (s-offset-2d offset-2d)
+(defcstruct vk-offset-2d
   (:x :uint32)
   (:y :uint32))
 
-(def-struct-translator vk-offset-3d
-    (s-offset-3d offset-3d)
+(defcstruct vk-offset-3d
   (:x :uint32)
   (:y :uint32)
   (:z :uint32))
 
-(def-struct-translator vk-extent-2d
-    (s-extent-2d extent-2d)
+(defcstruct vk-extent-2d
   (:width :uint32)
   (:height :uint32))
 
-(def-struct-translator vk-extent-3d
-    (s-extent-3d  extent-3d)
+(defcstruct vk-extent-3d
   (:width :uint32)
   (:height :uint32)
   (:depth :uint32))
 
-(def-struct-translator vk-rect-2d
-    (s-rect-2d rect-2d)
+(defcstruct vk-rect-2d
   (:offset (:struct vk-offset-2d))
   (:extent (:struct vk-extent-2d)))
 
-(def-struct-translator vk-application-info
-    (s-application-info application-info )
+(defcstruct vk-application-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:app-name :string)
@@ -47,8 +39,7 @@
   (:engine-version :uint32)
   (:api-version :uint32))
 
-(def-struct-translator vk-instance-create-info
-    (s-instance-create-info instance-create-info )
+(defcstruct vk-instance-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags (vk-instance-create-flags))
@@ -58,14 +49,12 @@
   (:extension-count :uint32)
   (:extensions (:pointer :string)))
 
-(def-struct-translator vk-validation-flag-ext
-    (s-validation-flag-ext validation-flag-ext)
+(defcstruct vk-validation-flag-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:p-disable-validation-checks (:pointer VkValidationcheckext)))
 
-(def-struct-translator vk-validation-features-ext
-    (s-validation-features-ext validation-features-ext)
+(defcstruct vk-validation-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:enable-validation-feature-count :uint32)
@@ -73,8 +62,7 @@
   (:disable-validation-feature-count :uint32)
   (:disable-validation-features (:pointer VkValidationFeatureDisableEXT)))
 
-(def-struct-translator vk-physical-device-limits
-    (s-physical-device-limits physical-device-limits)
+(defcstruct vk-physical-device-limits
   (:max-image-dimension1-d :uint32)
   (:max-image-dimension2-d :uint32)
   (:max-image-dimension3-d :uint32)
@@ -182,16 +170,14 @@
   (:optimal-buffer-copy-row-pitch-alignment vk-device-size)
   (:non-coherent-atom-size vk-device-size))
 
-(def-struct-translator vk-physical-device-sparse-properties
-    (s-physical-device-sparse-properties physical-device-sparse-properties)
+(defcstruct vk-physical-device-sparse-properties
   (:residency-standard2-d-block-shape vk-bool-32)
   (:residency-standard2-d-multisample-block-shape vk-bool-32)
   (:residency-standard3-d-block-shape vk-bool-32)
   (:residency-aligned-mip-size vk-bool-32)
   (:residency-non-resident-strict vk-bool-32))
 
-(def-struct-translator vk-physical-device-properties
-    (s-physical-device-properties physical-device-properties)
+(defcstruct vk-physical-device-properties
   (:api-version :uint32)
   (:driver-version :uint32)
   (:vendor-id :uint32)
@@ -202,14 +188,12 @@
   (:limits  (:struct vk-physical-device-limits))
   (:spare-properties (:struct vk-physical-device-sparse-properties)))
 
-(def-struct-translator vk-physical-device-properties2
-    (s-physical-device-properties2 physical-device-properties2)
+(defcstruct vk-physical-device-properties2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:properties (:struct vk-physical-device-properties)))
 
-(def-struct-translator vk-physical-device-vulkan-11-properties
-    (s-physical-device-vulkan-11-properties physical-device-vulkan-11-properties)
+(defcstruct vk-physical-device-vulkan-11-properties
   (:type VkStructureType)
   (:next (:pointer :void))
   (:device-uuid :uint8 :count 16)
@@ -228,15 +212,13 @@
   (:max-per-set-descriptors :uint32)
   (:max-memory-allocation-size vk-device-size))
 
-(def-struct-translator vk-conformance-version
-    (s-conformance-version conformance-version)
+(defcstruct vk-conformance-version
   (:major :uint8)
   (:minor :uint8)
   (:subminor :uint8)
   (:patch :uint8))
 
-(def-struct-translator vk-physical-device-vulkan-12-properties
-    (s-physical-device-vulkan-12-properties physical-device-vulkan-12-properties)
+(defcstruct vk-physical-device-vulkan-12-properties
   (:type VkStructureType)
   (:next (:pointer :void))
   (:driver-id VkDriverId)
@@ -292,8 +274,7 @@
   (:max-timeline-semaphore-value-difference :uint64)
   (:framebuffer-integer-color-sample-counts vk-sample-count-flags))
 
-(def-struct-translator vk-physical-device-id-properties
-    (s-physical-device-id-properties physical-device-id-properties)
+(defcstruct vk-physical-device-id-properties
   (:type VkStructureType)
   (:next (:pointer :void))
   (:device-uuid :uint8 :count 16)
@@ -302,8 +283,7 @@
   (:device-node-mask :uint32)
   (:device-luid-vaild vk-bool-32))
 
-(def-struct-translator vk-physical-device-driver-properties
-    (s-physical-device-driver-properties physical-device-driver-properties)
+(defcstruct vk-physical-device-driver-properties
   (:type VkStructureType)
   (:next (:pointer :void))
   (:driver-id VkDriverid)
@@ -311,8 +291,7 @@
   (:driver-info :char :count 256)
   (:conformance-version (:struct vk-conformance-version)))
 
-(def-struct-translator vk-physical-device-pci-bus-info-properties-ext
-    (s-physical-device-pci-bus-info-properties-ext physical-device-pci-bus-info-properties-ext)
+(defcstruct vk-physical-device-pci-bus-info-properties-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:pci-domain :uint32)
@@ -320,27 +299,23 @@
   (:pci-device :uint32)
   (:pci-function :uint32))
 
-(def-struct-translator vk-queue-family-properties
-    (s-queue-family-properties queue-family-properties)
+(defcstruct vk-queue-family-properties
   (:queue-flags vk-queue-flags)
   (:queue-count :uint32)
   (:timestamp-valid-bits :uint32)
   (:min-image-transfer-granularity (:struct vk-extent-3d)))
 
-(def-struct-translator vk-queue-family-properties2
-    (s-queue-family-properties2 queue-family-properties2)
+(defcstruct vk-queue-family-properties2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:queue-family-properties (:struct vk-queue-family-properties)))
 
-(def-struct-translator vk-queue-family-checkpoint-properties-nv
-    (s-queue-family-checkpoint-properties-nv queue-family-checkpoint-properties-nv)
+(defcstruct vk-queue-family-checkpoint-properties-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:checkpoint-execution-stage-mask vk-pipeline-stage-flags))
 
-(def-struct-translator vk-performance-counter-khr
-    (s-performance-counter-khr performance-counter-khr)
+(defcstruct vk-performance-counter-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:unit VkPerformanceCounterunitkhr)
@@ -348,8 +323,7 @@
   (:storage VkPerformanceCounterStoragekhr)
   (:uuid :uint8 :count 16))
 
-(def-struct-translator vk-performance-counter-description-khr
-    (s-performance-counter-description-khr performance-counter-description-khr)
+(defcstruct vk-performance-counter-description-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-performance-counter-description-flags-khr)
@@ -357,16 +331,14 @@
   (:category :char :count 256)
   (:description :char :count 256))
 
-(def-struct-translator vk-physical-device-group-properties
-    (s-physical-device-group-properties physical-device-group-properties)
+(defcstruct vk-physical-device-group-properties
   (:type VkStructureType)
   (:next (:pointer :void))
   (:physical-device-count :uint32)
   (:physical-devices vk-physical-device :count 32)
   (:subset-allocation vk-bool-32))
 
-(def-struct-translator vk-device-queue-create-info
-    (s-device-queue-create-info device-queue-create-info)
+(defcstruct vk-device-queue-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-device-queue-create-flags)
@@ -374,8 +346,7 @@
   (:queue-count :uint32)
   (:queue-properties (:pointer :float)))
 
-(def-struct-translator vk-physical-device-features
-    (s-physical-device-features physical-device-features)
+(defcstruct vk-physical-device-features
   (:robust-buffer-access vk-bool-32)
   (:full-draw-index-uint32 vk-bool-32)
   (:image-cube-array vk-bool-32)
@@ -432,8 +403,7 @@
   (:variable-multisample-rate vk-bool-32)
   (:inherited-queries vk-bool-32))
 
-(def-struct-translator vk-device-create-info
-    (s-device-create-info device-create-info)
+(defcstruct vk-device-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-device-create-flags)
@@ -445,62 +415,53 @@
   (:extensions (:pointer :string))
   (:enable-features (:pointer (:struct vk-physical-device-features))))
 
-(def-struct-translator vk-device-group-device-create-info
-    (s-device-group-device-create-info device-group-device-create-info)
+(defcstruct vk-device-group-device-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:physical-device-count :uint32)
   (:physical-device (:pointer vk-physical-device)))
 
-(def-struct-translator vk-device-memory-overallocation-create-info-amd
-    (s-device-memory-overallocation-create-info-amd device-memory-overallocation-create-info-amd)
+(defcstruct vk-device-memory-overallocation-create-info-amd
   (:type VkStructureType)
   (:next (:pointer :void))
   (:overallocation-behavior VkMemoryOverallocationbehavioramd))
 
-(def-struct-translator vk-device-diagnostics-config-create-info-nv
-    (s-device-diagnostics-config-create-info-nv device-diagnostics-config-create-info-nv)
+(defcstruct vk-device-diagnostics-config-create-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-device-diagnostics-config-flags-nv))
 
-(def-struct-translator vk-device-private-data-create-info-ext
-    (s-device-private-data-create-info-ext device-private-data-create-info-ext)
+(defcstruct vk-device-private-data-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:private-data-slot-request-count :uint32))
 
-(def-struct-translator vk-device-queue-global-priority-create-info-ext
-    (s-device-queue-global-priority-create-info-ext device-queue-global-priority-create-info-ext)
+(defcstruct vk-device-queue-global-priority-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:global-priority VkQueueGlobalPriorityExt))
 
-(def-struct-translator vk-device-queue-info2
-    (s-device-queue-info2 device-queue-info2)
+(defcstruct vk-device-queue-info2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-device-queue-create-flags)
   (:queue-family-index :uint32)
   (:queue-index :uint32))
 
-(def-struct-translator vk-command-pool-create-info
-    (s-command-pool-create-info command-pool-create-info)
+(defcstruct vk-command-pool-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-command-pool-create-flags)
   (:queue-family-index :uint32))
 
-(def-struct-translator vk-command-buffer-allocate-info
-    (s-command-buffer-allocate-info command-buffer-allocate-info)
+(defcstruct vk-command-buffer-allocate-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:command-pool vk-command-pool)
   (:level VKCommandbufferlevel)
   (:command-buffer-count :uint32))
 
-(def-struct-translator vk-command-buffer-inheritance-info
-    (s-command-buffer-inheritance-info command-buffer-inheritance-info)
+(defcstruct vk-command-buffer-inheritance-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:render-pass vk-render-pass)
@@ -510,28 +471,24 @@
   (:flags vk-query-control-flags)
   (:pipeline-statistics vk-query-pipeline-statistic-flags))
 
-(def-struct-translator vk-command-buffer-begin-info
-    (s-command-buffer-begin-info command-buffer-begin-info)
+(defcstruct vk-command-buffer-begin-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-command-buffer-usage-flags)
   (:inheritance-info (:pointer (:struct vk-command-buffer-inheritance-info))))
 
-(def-struct-translator vk-command-buffer-inheritance-conditional-rendering-info-ext
-    (s-command-buffer-inheritance-conditional-rendering-info-ext command-buffer-inheritance-conditional-rendering-info-ext)
+(defcstruct vk-command-buffer-inheritance-conditional-rendering-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:conditional-rendering-enable vk-bool-32))
 
-(def-struct-translator vk-command-buffer-inheritance-render-pass-transform-info-qcom
-    (s-command-buffer-inheritance-render-pass-transform-info-qcom command-buffer-inheritance-render-pass-transform-info-qcom)
+(defcstruct vk-command-buffer-inheritance-render-pass-transform-info-qcom
   (:type VkStructureType)
   (:next (:pointer :void))
   (:transform VkSurfaceTransformflagbitskhr)
   (:render-area (:struct vk-rect-2d)))
 
-(def-struct-translator vk-submit-info
-    (s-submit-info submit-info)
+(defcstruct vk-submit-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:wait-semaphore-count :uint32)
@@ -542,8 +499,7 @@
   (:signal-semaphore-count :uint32)
   (:signal-semaphores (:pointer vk-semaphore)))
 
-(def-struct-translator vk-timeline-semaphore-submit-info
-    (s-timeline-semaphore-submit-info timeline-semaphore-submit-info)
+(defcstruct vk-timeline-semaphore-submit-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:wait-semaphore-value-count :uint32)
@@ -551,8 +507,7 @@
   (:signal-semaphore-count :uint32)
   (:signal-semaphore-values (:pointer :uint64)))
 
-(def-struct-translator vk-d3d12-fence-submit-info-khr
-    (s-d3d12-fence-submit-info-khr d3d12-fence-submit-info-khr)
+(defcstruct vk-d3d12-fence-submit-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:wait-semaphore-value-count :uint32)
@@ -560,8 +515,7 @@
   (:signal-semaphore-count :uint32)
   (:signal-semaphore-values (:pointer :uint64)))
 
-(def-struct-translator vk-win32-keyed-mutex-acquire-release-info
-    (s-win32-keyed-mutex-acquire-release-info win32-keyed-mutex-acquire-release-info)
+(defcstruct vk-win32-keyed-mutex-acquire-release-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:acquire-count :uint32)
@@ -572,8 +526,7 @@
   (:release-syncs (:pointer vk-device-memory))
   (:release-keys (:pointer :uint64)))
 
-(def-struct-translator vk-win32-keyed-mutex-acquire-release-info-nv
-    (s-win32-keyed-mutex-acquire-release-info-nv win32-keyed-mutex-acquire-release-info-nv)
+(defcstruct vk-win32-keyed-mutex-acquire-release-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:acquire-count :uint32)
@@ -584,14 +537,12 @@
   (:release-syncs (:pointer vk-device-memory))
   (:release-keys (:pointer :uint64)))
 
-(def-struct-translator vk-protected-submit-info
-    (s-protected-submit-info protected-submit-info)
+(defcstruct vk-protected-submit-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:protected-submit vk-bool-32))
 
-(def-struct-translator vk-device-group-submit-info
-    (s-device-group-submit-info device-group-submit-info)
+(defcstruct vk-device-group-submit-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:wait-semaphore-count :uint32)
@@ -601,74 +552,63 @@
   (:signal-semaphore-count :uint32)
   (:signal-semaphore-device-indices (:pointer :uint32)))
 
-(def-struct-translator vk-performance-query-submit-info-khr
-    (s-performance-query-submit-info-khr performance-query-submit-info-khr)
+(defcstruct vk-performance-query-submit-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:count-pass-index :uint32))
 
-(def-struct-translator vk-device-group-command-buffer-begin-info
-    (s-device-group-command-buffer-begin-info device-group-command-buffer-begin-info)
+(defcstruct vk-device-group-command-buffer-begin-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:device-mask :uint32))
 
-(def-struct-translator vk-fence-create-info
-    (s-fence-create-info fence-create-info)
+(defcstruct vk-fence-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-fence-create-flags))
 
-(def-struct-translator vk-export-fence-create-info
-    (s-export-fence-create-info export-fence-create-info)
+(defcstruct vk-export-fence-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-external-fence-handle-type-flags))
 
 ;;in windows 
-(def-struct-translator security-attributes
-    (s-security-attributes vkvk-security-attributes)
+(defcstruct security-attributes
   (:length :uint32)
   (:lp-void (:pointer :void))
   (:bool :int32))
 
-(def-struct-translator vk-export-fence-win32-handle-info-khr
-    (s-export-fence-win32-handle-info-khr export-fence-win32-handle-info-khr)
+(defcstruct vk-export-fence-win32-handle-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:attributes (:pointer (:struct security-attributes)))
   (:dw-access :uint32)
   (:name (:pointer :uint16)))
 
-(def-struct-translator vk-fence-get-win32-handle-info-khr
-    (s-fence-get-win32-handle-info-khr fence-get-win32-handle-info-khr)
+(defcstruct vk-fence-get-win32-handle-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:fence vk-fence)
   (:handle-type VkExternalFenceHandleTypeFlagBits))
 ;;end windows
 
-(def-struct-translator vk-fence-get-info-khr
-    (s-fence-get-info-khr fence-get-info-khr)
+(defcstruct vk-fence-get-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:fence vk-fence)
   (:handle-type VkExternalFenceHandleTypeFlagBits))
 
-(def-struct-translator vk-device-event-info-ext
-    (s-device-event-info-ext device-event-info-ext)
+(defcstruct vk-device-event-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:device-event VkDeviceEventTypeExt))
 
-(def-struct-translator vk-display-event-info-ext
-    (s-display-event-info-ext display-event-info-ext)
+(defcstruct vk-display-event-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:display-event VkDisplayEventTypeExt))
 
-(def-struct-translator vk-import-fence-win32-handle-info-khr
-    (s-import-fence-win32-handle-info-khr import-fence-win32-handle-info-khr)
+(defcstruct vk-import-fence-win32-handle-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:fence vk-fence)
@@ -677,8 +617,7 @@
   (:handle (:pointer :void))
   (:name (:pointer :uint16)))
 
-(def-struct-translator vk-import-fence-fd-info-khr
-    (s-import-fence-fd-info-khr import-fence-fd-info-khr)
+(defcstruct vk-import-fence-fd-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:fence vk-fence)
@@ -686,49 +625,42 @@
   (:handle-type VkExternalFenceFeatureFlagBits)
   (:fd :int))
 
-(def-struct-translator vk-semaphore-create-info
-    (s-semaphore-create-info semaphore-create-info)
+(defcstruct vk-semaphore-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-semaphore-create-flags))
 
-(def-struct-translator vk-semaphore-type-create-info
-    (s-semaphore-type-create-info semaphore-type-create-info)
+(defcstruct vk-semaphore-type-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:semaphore-type VkSemaphoreType)
   (:initial-value :uint64))
 
-(def-struct-translator vk-export-semaphore-create-info
-    (s-export-semaphore-create-info export-semaphore-create-info)
+(defcstruct vk-export-semaphore-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:handle-type vk-external-semaphore-handle-type-flags))
 
-(def-struct-translator vk-export-semaphore-win32-handle-info-khr
-    (s-export-semaphore-win32-handle-info-khr export-semaphore-win32-handle-info-khr)
+(defcstruct vk-export-semaphore-win32-handle-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:attributes (:pointer (:struct security-attributes)))
   (:dw-access :uint32)
   (:name (:pointer :uint16)))
 
-(def-struct-translator vk-semaphore-get-win32-handle-info-khr
-    (s-semaphore-get-win32-handle-info-khr semaphore-get-win32-handle-info-khr)
+(defcstruct vk-semaphore-get-win32-handle-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:semaphore vk-semaphore)
   (:handle-type VkExternalSemaphoreHandleTypeFlagbits))
 
-(def-struct-translator vk-semaphore-get-fd-info-khr
-    (s-semaphore-get-fd-info-khr semaphore-get-fd-info-khr)
+(defcstruct vk-semaphore-get-fd-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:semaphore vk-semaphore)
   (:handle-type VkExternalSemaphoreHandleTypeFlagbits))
 
-(def-struct-translator vk-semaphore-wait-info
-    (s-semaphore-wait-info semaphore-wait-info)
+(defcstruct vk-semaphore-wait-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-semaphore-wait-flags)
@@ -736,15 +668,13 @@
   (:semaphores (:pointer vk-semaphore))
   (:value (:pointer :uint64)))
 
-(def-struct-translator vk-semaphore-signal-info
-    (s-semaphore-signal-info semaphore-signal-info)
+(defcstruct vk-semaphore-signal-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:semaphore vk-semaphore)
   (:value :uint64))
 
-(def-struct-translator vk-import-semaphore-win32-handle-info-khr
-    (s-import-semaphore-win32-handle-info-khr import-semaphore-win32-handle-info-khr)
+(defcstruct vk-import-semaphore-win32-handle-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:semaphore vk-semaphore)
@@ -753,8 +683,7 @@
   (:handle (:pointer :void))
   (:name (:pointer :uint16)))
 
-(def-struct-translator vk-import-semaphore-fd-info-khr
-    (s-import-semaphore-fd-info-khr import-semaphore-fd-info-khr)
+(defcstruct vk-import-semaphore-fd-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:semaphore vk-semaphore)
@@ -762,20 +691,18 @@
   (:handle-type VkExternalSemaphoreHandleTypeFlagBits)
   (:fd :int))
 
-(def-struct-translator vk-event-create-info
+(defcstruct vk-event-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-event-create-flags))
 
-(def-struct-translator vk-memory-barrier
-    (s-memory-barrier memory-barrier)
+(defcstruct vk-memory-barrier
   (:type VkStructureType)
   (:next (:pointer :void))
   (:src-access-mask vk-access-flags)
   (:dst-access-mask vk-access-flags))
 
-(def-struct-translator vk-buffer-memory-barrier
-    (s-buffer-memory-barrier buffer-memory-barrier)
+(defcstruct vk-buffer-memory-barrier
   (:type VkStructureType)
   (:next (:pointer :void))
   (:src-access-mask vk-access-flags)
@@ -786,16 +713,14 @@
   (:offset vk-device-size)
   (:size vk-device-size))
 
-(def-struct-translator vk-image-subresource-range
-    (s-image-subresource-range image-subresource-range)
+(defcstruct vk-image-subresource-range
   (:aspect-mask VkImageAspectFlagBits)
   (:base-mip-level :uint32)
   (:level-count :uint32)
   (:base-array-layer :uint32)
   (:layer-count :uint32))
 
-(def-struct-translator vk-image-memory-barrier
-    (s-image-memory-barrier image-memory-barrier)
+(defcstruct vk-image-memory-barrier
   (:type VkStructureType)
   (:next (:pointer :void))
   (:src-access-mask vk-access-flags)
@@ -807,14 +732,12 @@
   (:image vk-image)
   (:sub-resource-range (:struct vk-image-subresource-range)))
 
-(def-struct-translator vk-calibrated-timestamp-info-ext
-    (s-calibrated-timestamp-info-ext calibrated-timestamp-info-ext)
+(defcstruct vk-calibrated-timestamp-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:time-domain VkTimedomainext))
 
-(def-struct-translator vk-attachment-description
-    (s-attachment-description attachment-description)
+(defcstruct vk-attachment-description
   (:flags vk-attachment-description-flags)
   (:format VkFormat)
   (:samples VkSampleCountFlagbits)
@@ -825,13 +748,11 @@
   (:initial-layout VkImageLayout)
   (:final-layout VkImageLayout))
 
-(def-struct-translator vk-attachment-reference
-    (s-attachment-reference attachment-reference)
+(defcstruct vk-attachment-reference
   (:attachment :uint32)
   (:layout VkImageLayout))
 
-(def-struct-translator vk-subpass-description
-    (s-subpass-description subpass-description)
+(defcstruct vk-subpass-description
   (:flags vk-subpass-description-flags)
   (:pipeline-bind-point VkPipelineBindpoint)
   (:input-attachment-cout :uint32)
@@ -842,8 +763,8 @@
   (:depth-stencil-attachments (:pointer (:struct vk-attachment-reference)))
   (:reserve-attachment-count :uint32)
   (:preserve-attachments (:pointer :uint32)))
-#|
-(def-struct-translator vk-subpass-dependency
+
+(defcstruct vk-subpass-dependency
   (:src-subpass :uint32)
   (:dst-subpass :uint32)
   (:src-stage-mask vk-pipeline-stage-flags)
@@ -852,7 +773,7 @@
   (:dst-access-mask vk-access-flags)
   (:dependency-flags vk-dependency-flags))
 
-(def-struct-translator vk-render-pass-create-info
+(defcstruct vk-render-pass-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-render-pass-create-flags)
@@ -863,7 +784,7 @@
   (:dependency-count :uint32)
   (:dependencies (:pointer (:struct vk-subpass-dependency))))
 
-(def-struct-translator vk-render-pass-multiview-create-info
+(defcstruct vk-render-pass-multiview-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:subpass-count :uint32)
@@ -873,23 +794,23 @@
   (:correlation-mask-count :uint32)
   (:correlation-mask (:pointer :uint32)))
 
-(def-struct-translator vk-render-pass-fragment-density-map-create-info-ext
+(defcstruct vk-render-pass-fragment-density-map-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:fragment-density-map-attachment (:struct vk-attachment-reference)))
 
-(def-struct-translator vk-input-attachment-aspect-reference
+(defcstruct vk-input-attachment-aspect-reference
   (:subpass :uint32)
   (:input-attachment-index :uint32)
   (:aspect-mask vk-image-aspect-flags))
 
-(def-struct-translator vk-render-pass-input-attachment-aspect-create-info
+(defcstruct vk-render-pass-input-attachment-aspect-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:aspect-reference-count :uint32)
   (:aspect-reference (:pointer (:struct vk-input-attachment-aspect-reference))))
 
-(def-struct-translator vk-attachment-description2
+(defcstruct vk-attachment-description2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-attachment-description-flags)
@@ -902,14 +823,14 @@
   (:initial-layout VkImageLayout)
   (:final-layout VkImageLayout))
 
-(def-struct-translator vk-attachment-reference2
+(defcstruct vk-attachment-reference2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:attachment :uint32)
   (:layout VkImageLayout)
   (:aspect-mask vk-image-aspect-flags))
 
-(def-struct-translator vk-subpass-description2
+(defcstruct vk-subpass-description2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-subpass-description-flags)
@@ -924,7 +845,7 @@
   (:reserve-attachment-count :uint32)
   (:preserve-attachments (:pointer :uint32)))
 
-(def-struct-translator vk-subpass-dependency2
+(defcstruct vk-subpass-dependency2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:src-subpass :uint32)
@@ -936,7 +857,7 @@
   (:dependency-flags vk-dependency-flags)
   (:view-offset :uint32))
 
-(def-struct-translator vk-render-pass-create-info2
+(defcstruct vk-render-pass-create-info2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-render-pass-create-flags)
@@ -949,25 +870,25 @@
   (:correlate-view-mask-count :uint32)
   (:correlated-view-masks (:pointer :uint32)))
 
-(def-struct-translator vk-attachment-description-stenci-layout
+(defcstruct vk-attachment-description-stenci-layout
   (:type VkStructureType)
   (:next (:pointer :void))
   (:stencil-initial-layout VkImageLayout)
   (:stencil-final-layout VkImageLayout))
 
-(def-struct-translator vk-subpass-description-depth-stencil-reslove
+(defcstruct vk-subpass-description-depth-stencil-reslove
   (:type VkStructureType)
   (:next (:pointer :void))
   (:depth-reslove-mode VkResolveModeFlagbits)
   (:stencil-reslove-mode VkResolveModeFlagbits)
   (:depth-stencil-resolve-attachment (:struct vk-attachment-reference2)))
 
-(def-struct-translator vk-attachment-reference-stencil-layout
+(defcstruct vk-attachment-reference-stencil-layout
   (:type VkStructureType)
   (:next (:pointer :void))
   (:stencil-layout VkImageLayout))
 
-(def-struct-translator vk-framebuffer-create-info
+(defcstruct vk-framebuffer-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-framebuffer-create-flags)
@@ -978,7 +899,7 @@
   (:height :uint32)
   (:layers :uint32))
 
-(def-struct-translator vk-framebuffer-attachment-image-info
+(defcstruct vk-framebuffer-attachment-image-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-image-create-flags)
@@ -989,7 +910,7 @@
   (:voew-format-count :uint32)
   (:view-formats (:pointer VkFormat)))
 
-(def-struct-translator vk-framebuffer-attachments-create-info
+(defcstruct vk-framebuffer-attachments-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:attachment-image-info-count :uint32)
@@ -1000,7 +921,7 @@
   (:i32 (:pointer :int32))
   (:ui32 (:pointer :uint32)))
 
-(def-struct-translator vk-clear-depth-stencil-value
+(defcstruct vk-clear-depth-stencil-value
   (:depth :float)
   (:stencil :uint32))
 
@@ -1008,7 +929,7 @@
   (:color (:union vk-clear-color-value))
   (:depth-stencil (:struct vk-clear-depth-stencil-value)))
 
-(def-struct-translator vk-render-pass-begin-info
+(defcstruct vk-render-pass-begin-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:render-pass vk-render-pass)
@@ -1017,11 +938,11 @@
   (:clear-value-count :uint32)
   (:clear-values (:pointer (:union vk-clear-value))))
 
-(def-struct-translator vk-sample-location-ext
+(defcstruct vk-sample-location-ext
   (:x :float)
   (:y :float))
 
-(def-struct-translator vk-sample-locations-info-ext
+(defcstruct vk-sample-locations-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:sample-locations-per-pixel VkSampleCountFlagbits)
@@ -1029,15 +950,15 @@
   (:sample-locations-count :uint32)
   (:sample-locations (:pointer (:struct vk-sample-location-ext))))
 
-(def-struct-translator vk-attachment-sample-locations-ext
+(defcstruct vk-attachment-sample-locations-ext
   (:attachment-index :uint32)
   (:sample-locations-info (:struct vk-sample-locations-info-ext)))
 
-(def-struct-translator vk-subpass-sample-locations-ext
+(defcstruct vk-subpass-sample-locations-ext
   (:subpass-index :uint32)
   (:sample-location-info (:struct vk-sample-locations-info-ext)))
 
-(def-struct-translator vk-render-pass-sample-locations-begin-info-ext
+(defcstruct vk-render-pass-sample-locations-begin-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:attachment-initial-sample-locations-count :uint32)
@@ -1045,46 +966,46 @@
   (:post-subpass-sample-locations-count :uint32)
   (:post-subpass-sample-locations (:struct vk-subpass-sample-locations-ext)))
 
-(def-struct-translator vk-render-pass-transform-begin-info-qcom
+(defcstruct vk-render-pass-transform-begin-info-qcom
   (:type VkStructureType)
   (:next (:pointer :void))
   (:transform VkSurfaceTransformFlagbitsKHR))
 
-(def-struct-translator vk-subpass-begin-info
+(defcstruct vk-subpass-begin-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:contents VkSubpassContents))
 
-(def-struct-translator vk-device-group-render-pass-begin-info
+(defcstruct vk-device-group-render-pass-begin-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:device-mask :uint32)
   (:device-render-area-count :uint32)
   (:device-render-areas (:pointer (:struct vk-rect-2d))))
 
-(def-struct-translator vk-render-pass-attachment-begin-info
+(defcstruct vk-render-pass-attachment-begin-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:attachment-count :uint32)
   (:attachment (:pointer vk-image-view)))
 
-(def-struct-translator vk-subpass-end-info
+(defcstruct vk-subpass-end-info
   (:type VkStructureType)
   (:next (:pointer :void)))
 
-(def-struct-translator vk-shader-module-create-info
+(defcstruct vk-shader-module-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-module-create-flags)
   (:code-size size-t)
   (:code (:pointer :uint32)))
 
-(def-struct-translator vk-shader-module-validation-cache-create-info-ext
+(defcstruct vk-shader-module-validation-cache-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:validation-cache vk-validation-cache-ext))
 
-(def-struct-translator vk-cooperative-matrix-properties-nv
+(defcstruct vk-cooperative-matrix-properties-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:m-size :uint32)
@@ -1096,25 +1017,25 @@
   (:d-type VkComponentTypeNV)
   (:scope VkScopeNV))
 
-(def-struct-translator vk-validation-cache-create-info-ext
+(defcstruct vk-validation-cache-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-validation-cache-create-flags-ext)
   (:initial-data-size size-t)
   (:initial-data (:pointer :void)))
 
-(def-struct-translator vk-specialization-map-entry
+(defcstruct vk-specialization-map-entry
   (:constant-id :uint32)
   (:offset :uint32)
   (:size size-t))
 
-(def-struct-translator vk-specialization-info
+(defcstruct vk-specialization-info
   (:map-entry-count :uint32)
   (:map-entrys (:pointer (:struct vk-specialization-map-entry)))
   (:data-size size-t)
   (:data (:pointer :void)))
 
-(def-struct-translator vk-pipeline-shader-stage-create-info
+(defcstruct vk-pipeline-shader-stage-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-stage-flags)
@@ -1123,7 +1044,7 @@
   (:name :string)
   (:specialization-info (:pointer (:struct vk-specialization-info))))
 
-(def-struct-translator vk-compute-pipeline-create-info
+(defcstruct vk-compute-pipeline-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-create-flags)
@@ -1132,23 +1053,23 @@
   (:base-pipeline-handle vk-pipeline)
   (:base-pipeline-index :uint32))
 
-(def-struct-translator vk-pipeline-shader-stage-required-subground-size-create-info-ext
+(defcstruct vk-pipeline-shader-stage-required-subground-size-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:required-subground-size :uint32))
 
-(def-struct-translator vk-vertex-input-binding-description
+(defcstruct vk-vertex-input-binding-description
   (:binding :uint32)
   (:stride :uint32)
   (:input-rate VkVertexInputRate))
 
-(def-struct-translator vk-vertex-input-attribute-description
+(defcstruct vk-vertex-input-attribute-description
   (:location :uint32)
   (:binding :uint32)
   (:format VkFormat)
   (:offset :uint32))
 
-(def-struct-translator vk-pipeline-vertex-input-state-create-info
+(defcstruct vk-pipeline-vertex-input-state-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-vertex-input-state-create-flags)
@@ -1157,20 +1078,20 @@
   (:vertex-attribute-description-count :uint32)
   (:vertex-attribute-description (:pointer (:struct vk-vertex-input-attribute-description))))
 
-(def-struct-translator vk-pipeline-input-assembly-state-create-info
+(defcstruct vk-pipeline-input-assembly-state-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-input-assembly-state-create-flags)
   (:topology VkPrimitiveTopology)
   (:primitive-restart-enable vk-bool-32))
 
-(def-struct-translator vk-pipeline-tessellation-state-create-info
+(defcstruct vk-pipeline-tessellation-state-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-tessellation-state-create-flags)
   (:patch-control-points :uint32))
 
-(def-struct-translator vk-viewport
+(defcstruct vk-viewport
   (:x :float)
   (:y :float)
   (:width :float)
@@ -1178,7 +1099,7 @@
   (:min-depth :float)
   (:max-depth :float))
 
-(def-struct-translator vk-pipeline-viewport-state-create-info
+(defcstruct vk-pipeline-viewport-state-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-viewport-state-create-flags)
@@ -1187,7 +1108,7 @@
   (:scissor-count :uint32)
   (:scissprs (:pointer (:struct vk-rect-2d))))
 
-(def-struct-translator vk-pipeline-rasterization-state-create-info
+(defcstruct vk-pipeline-rasterization-state-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-rasterization-state-create-flags)
@@ -1202,7 +1123,7 @@
   (:depth-bias-slope-factor :float)
   (:line-width :float))
 
-(def-struct-translator vk-pipeline-multisample-state-create-info
+(defcstruct vk-pipeline-multisample-state-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-multisample-state-create-flags)
@@ -1213,7 +1134,7 @@
   (:alpha-to-coverage-enable vk-bool-32)
   (:alpha-to-one-enable vk-bool-32))
 
-(def-struct-translator vk-stencil-op-state
+(defcstruct vk-stencil-op-state
   (:fail-op VkStencilop)
   (:pass-op VkStencilop)
   (:depth-fail-op VkStencilop)
@@ -1222,7 +1143,7 @@
   (:write-mask :uint32)
   (:references :uint32))
 
-(def-struct-translator vk-pipeline-depth-stencil-state-create-info
+(defcstruct vk-pipeline-depth-stencil-state-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-depth-stencil-state-create-flags)
@@ -1236,7 +1157,7 @@
   (:min-depth-bounds :float)
   (:max-depth-bounds :float))
 
-(def-struct-translator vk-pipeline-color-blend-attachment-state
+(defcstruct vk-pipeline-color-blend-attachment-state
   (:blend-enable vk-bool-32)
   (:src-color-blend-factor VkBlendFactor)
   (:dst-color-blend-factor VkBlendFactor)
@@ -1246,7 +1167,7 @@
   (:alpha-blend-op VkBlendop)
   (:color-write-mask vk-color-component-flags))
 
-(def-struct-translator vk-pipeline-color-blend-state-create-info
+(defcstruct vk-pipeline-color-blend-state-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-color-blend-state-create-flags)
@@ -1256,14 +1177,14 @@
   (:attachments (:pointer (:struct vk-pipeline-color-blend-attachment-state)))
   (:blend-constants :float :count 4))
 
-(def-struct-translator vk-pipeline-dynamic-state-create-info
+(defcstruct vk-pipeline-dynamic-state-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-dynamic-state-create-flags)
   (:dynamic-state-count :uint32)
   (:dynamic-states (:pointer VkDynamicState)))
 
-(def-struct-translator vk-graphics-pipeline-create-info
+(defcstruct vk-graphics-pipeline-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-create-flags)
@@ -1284,7 +1205,7 @@
   (:base-pipeline-handle vk-pipeline)
   (:base-pipeline-index :uint32))
 
-(def-struct-translator vk-graphics-shader-group-create-info-nv
+(defcstruct vk-graphics-shader-group-create-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:stage-count :uint32)
@@ -1292,7 +1213,7 @@
   (:vetex-input-state (:pointer (:struct vk-pipeline-vertex-input-state-create-info)))
   (:tessellation-stage (:pointer (:struct vk-pipeline-tessellation-state-create-info))))
 
-(def-struct-translator vk-graphics-pipeline-shader-groups-create-info-nv
+(defcstruct vk-graphics-pipeline-shader-groups-create-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:group-count :uint32)
@@ -1300,25 +1221,25 @@
   (:pipeline-count :uint32)
   (:pipelines (:pointer vk-pipeline)))
 
-(def-struct-translator vk-pipeline-cache-create-info
+(defcstruct vk-pipeline-cache-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-cache-create-flags)
   (:initial-date-size size-t)
   (:init-data (:pointer :void)))
 
-(def-struct-translator vk-pipeline-library-create-info-khr
+(defcstruct vk-pipeline-library-create-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:library-count :uint32)
   (:libraries (:pointer vk-pipeline)))
 
-(def-struct-translator vk-pipeline-info-khr
+(defcstruct vk-pipeline-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:pipeline vk-pipeline))
 
-(def-struct-translator vk-pipeline-executable-properties-khr
+(defcstruct vk-pipeline-executable-properties-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:stage vk-shader-stage-flags)
@@ -1326,7 +1247,7 @@
   (:description :char :count 256)
   (:subgroup-size :uint32))
 
-(def-struct-translator vk-pipeline-executable-info-khr
+(defcstruct vk-pipeline-executable-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:pipeline vk-pipeline)
@@ -1338,7 +1259,7 @@
   (:u64 :uint64)
   (:f64 :double))
 
-(def-struct-translator vk-pipeline-executable-statistic-khr
+(defcstruct vk-pipeline-executable-statistic-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:name :char :count 256)
@@ -1346,7 +1267,7 @@
   (:format VkPipelineExecutableStatisticFormatKHR)
   (:value (:union vk-pipeline-executable-statistic-value-khr)))
 
-(def-struct-translator vk-pipeline-executable-internal-representation-khr
+(defcstruct vk-pipeline-executable-internal-representation-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:name :char :count 256)
@@ -1355,14 +1276,14 @@
   (:data-size size-t)
   (:data (:pointer :void)))
 
-(def-struct-translator vk-shader-resource-usage-amd
+(defcstruct vk-shader-resource-usage-amd
   (:num-used-vgprs :uint32)
   (:num-used-sgprs :uint32)
   (:lds-size-per-local-work-group :uint32)
   (:lds-usage-size-in-bytes size-t)
   (:scratch-mem-usage-in-bytes size-t))
 
-(def-struct-translator vk-shader-statistics-info-amd
+(defcstruct vk-shader-statistics-info-amd
   (:shader-stage-mask vk-shader-stage-flags)
   (:resource-usage (:struct vk-shader-resource-usage-amd))
   (:num-physical-vgprs :uint32)
@@ -1371,12 +1292,12 @@
   (:num-available-sgprs :uint32)
   (:computeWorkGroupSize :uint32 :count 3))
 
-(def-struct-translator vk-pipeline-compiler-control-create-info-amd
+(defcstruct vk-pipeline-compiler-control-create-info-amd
   (:type VkStructureType)
   (:next (:pointer :void))
   (:compiler-control-flags vk-pipeline-compiler-control-flags-amd))
 
-(def-struct-translator vk-ray-tracing-shader-group-create-info-nv
+(defcstruct vk-ray-tracing-shader-group-create-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:type VkRayTracingShaderGroupTypeKHR)
@@ -1385,7 +1306,7 @@
   (:any-hit-shader :uint32)
   (:intersection-shader :uint32))
 
-(def-struct-translator vk-ray-tracing-pipeline-create-info-nv
+(defcstruct vk-ray-tracing-pipeline-create-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-create-flags)
@@ -1397,7 +1318,7 @@
   (:base-pipeline-handle vk-pipeline)
   (:base-pipeline-index :uint32))
 
-(def-struct-translator vk-ray-tracing-shader-group-create-info-khr
+(defcstruct vk-ray-tracing-shader-group-create-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:type VkRayTracingShaderGroupTypeKHR)
@@ -1407,20 +1328,20 @@
   (:intersection-shader :uint32)
   (:shader-group-capture-replay-handle (:pointer :void)))
 
-(def-struct-translator vk-pipeline-library-create-info-khr
+(defcstruct vk-pipeline-library-create-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:library-count :uint32)
   (:library (:pointer vk-pipeline)))
 
-(def-struct-translator vk-ray-tracing-pipeline-interface-create-info-khr
+(defcstruct vk-ray-tracing-pipeline-interface-create-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:max-payload-size :uint32)
   (:max-attribute-size :uint32)
   (:max-callable-size :uint32))
 
-(def-struct-translator vk-ray-tracing-pipeline-create-info-khr
+(defcstruct vk-ray-tracing-pipeline-create-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-create-flags)
@@ -1435,18 +1356,18 @@
   (:base-pipeline-handle vk-pipeline)
   (:base-pipeline-index :uint32))
 
-(def-struct-translator vk-pipeline-creation-feedback-ext
+(defcstruct vk-pipeline-creation-feedback-ext
   (:flags vk-pipeline-creation-feedback-flags-ext)
   (:duration :uint64))
 
-(def-struct-translator vk-pipeline-creation-feedback-create-info-khr
+(defcstruct vk-pipeline-creation-feedback-create-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:pipeline-creation-feedback (:pointer (:struct vk-pipeline-creation-feedback-ext)))
   (:pipeline-stage-creation-feedback-count :uint32)
   (:pipeline-stage-creation-feedbacks (:pointer (:struct vk-pipeline-creation-feedback-ext))))
 
-(def-struct-translator vk-allocation-callback
+(defcstruct vk-allocation-callback
   (:user-data (:pointer :void))
   (:fn-allocation vk-allocation-function)
   (:fn-reallocation vk-reallocation-function)
@@ -1454,115 +1375,115 @@
   (:fn-internal-allocation vk-internal-allocation-notification)
   (:fn-internal-free vk-internal-free-notification))
 
-(def-struct-translator vk-memory-type
+(defcstruct vk-memory-type
   (:property-flags vk-memory-property-flags)
   (:hape-index :uint32))
 
-(def-struct-translator vk-memory-heap
+(defcstruct vk-memory-heap
   (:size vk-device-size)
   (:flags vk-memory-heap-flags))
 
-(def-struct-translator vk-physical-device-memory-properties
+(defcstruct vk-physical-device-memory-properties
   (:memory-type-count :uint32)
   (:memory-types (:struct vk-memory-type) :count 32) 
   (:memory-heap-count :uint32)
   (:memory-heaps (:struct vk-memory-heap) :count 16))
 
-(def-struct-translator vk-physical-device-memory-properties2
+(defcstruct vk-physical-device-memory-properties2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:memory-properties (:struct vk-physical-device-properties)))
 
-(def-struct-translator vk-physical-device-memory-budget-properties-ext
+(defcstruct vk-physical-device-memory-budget-properties-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:heap-budget vk-device-size :count 32)
   (:heap-usage vk-device-size :count 32))
 
-(def-struct-translator vk-memory-allocate-info
+(defcstruct vk-memory-allocate-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:allocation-size vk-device-size)
   (:memory-type-index :uint32))
 
-(def-struct-translator vk-memory-dedicated-allocate-info
+(defcstruct vk-memory-dedicated-allocate-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:image vk-image)
   (:buffer vk-buffer))
 
-(def-struct-translator vk-dedicated-allocation-memory-allocate-info-nv
+(defcstruct vk-dedicated-allocation-memory-allocate-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:image vk-image)
   (:buffer vk-buffer))
 
-(def-struct-translator vk-memory-priority-allocate-info-ext
+(defcstruct vk-memory-priority-allocate-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:priority :float))
 
-(def-struct-translator vk-export-memory-allocate-info
+(defcstruct vk-export-memory-allocate-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:handle-type vk-external-memory-handle-type-flags))
 
-(def-struct-translator vk-export-memory-win32-handle-info-ext
+(defcstruct vk-export-memory-win32-handle-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:attributes (:pointer (:struct security-attributes)))
   (:dw-access :uint32)
   (:name (:pointer :uint16)))
 
-(def-struct-translator vk-import-memory-win32-handle-info-khr
+(defcstruct vk-import-memory-win32-handle-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:handle-type VkExternalMemoryHandleTypeFlagBits)
   (:handle (:pointer :void))
   (:name (:pointer :uint16)))
 
-(def-struct-translator vk-memory-get-win32-handle-info-khr
+(defcstruct vk-memory-get-win32-handle-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:memory vk-device-memory)
   (:handle-type VkExternalMemoryHandleTypeFlagBits))
 
-(def-struct-translator vk-memory-win32-handle-properties-khr
+(defcstruct vk-memory-win32-handle-properties-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:memory-type-bits :uint32))
 
-(def-struct-translator vk-import-memory-fd-info-khr
+(defcstruct vk-import-memory-fd-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:handle-type VkExternalMemoryHandleTypeFlagBits)
   (:fd :int))
 
-(def-struct-translator vk-memory-get-fd-info-khr
+(defcstruct vk-memory-get-fd-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:memory vk-device-memory)
   (:handle-type VkExternalMemoryHandleTypeFlagBits))
 
-(def-struct-translator vk-memory-fd-properties-khr
+(defcstruct vk-memory-fd-properties-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:memory-type-bits :uint32))
 
-(def-struct-translator vk-import-memory-host-pointer-info-ext
+(defcstruct vk-import-memory-host-pointer-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:handle-type VkExternalMemoryHandleTypeFlagBits)
   (:host-pointer (:pointer :void)))
 
-(def-struct-translator vk-memory-host-pointer-properties-ext
+(defcstruct vk-memory-host-pointer-properties-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:memory-type-bits :uint32))
 
 #|
 i don't know how to set up android in lisp
-(def-struct-translator vk-import-android-hardware-buffer-info-android
+(defcstruct vk-import-android-hardware-buffer-info-android
   (:type VkStructureType)
   (:next (:pointer :void)))
 
@@ -1570,70 +1491,70 @@ i don't know how to set up android in lisp
   (:type VkStructureType)
   (:next (:pointer :void)))
 
-(def-struct-translator vk-android-hardware-buffer-properties-android
+(defcstruct vk-android-hardware-buffer-properties-android
   (:type VkStructureType)
   (:next (:pointer :void)))
 
-(def-struct-translator vk-android-hardware-buffer-format-properties-android
+(defcstruct vk-android-hardware-buffer-format-properties-android
   (:type VkStructureType)
   (:next (:pointer :void)))
 
-(def-struct-translator vk-external-format-android
+(defcstruct vk-external-format-android
   (:type VkStructureType)
   (:next (:pointer :void)))
 
-(def-struct-translator vk-android-surface-create-info-khr
+(defcstruct vk-android-surface-create-info-khr
   (:type VkStructureType)
   (:next (:pointer :void)))
 
 |#
 
-(def-struct-translator vk-export-memory-allocate-info-nv
+(defcstruct vk-export-memory-allocate-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:handle-type vk-external-memory-handle-type-flags-nv))
 
-(def-struct-translator vk-export-memory-win32-handle-info-nv
+(defcstruct vk-export-memory-win32-handle-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:attributes (:pointer (:struct security-attributes)))
   (:dw-access :uint32))
 
-(def-struct-translator vk-import-memory-win32-handle-info-nv
+(defcstruct vk-import-memory-win32-handle-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:handle-type vk-external-memory-handle-type-flags-nv)
   (:handle (:pointer :void)))
 
-(def-struct-translator vk-memory-allocate-flags-info
+(defcstruct vk-memory-allocate-flags-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-memory-allocate-flags)
   (:device-mask :uint32))
 
-(def-struct-translator vk-memory-opaque-capture-address-allocate-info
+(defcstruct vk-memory-opaque-capture-address-allocate-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:opaque-capture-address :uint64))
 
-(def-struct-translator vk-memory-opaque-capture-address-allocate-info
+(defcstruct vk-memory-opaque-capture-address-allocate-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:opaque-capture-address :uint64))
 
-(def-struct-translator vk-mapped-memory-range
+(defcstruct vk-mapped-memory-range
   (:type VkStructureType)
   (:next (:pointer :void))
   (:memory vk-device-memory)
   (:offset vk-device-size)
   (:size vk-device-size))
 
-(def-struct-translator vk-device-memory-opaque-capture-address-info
+(defcstruct vk-device-memory-opaque-capture-address-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:memory vk-device-memory))
 
-(def-struct-translator vk-buffer-create-info
+(defcstruct vk-buffer-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-buffer-create-flags)
@@ -1643,27 +1564,27 @@ i don't know how to set up android in lisp
   (:queue-family-count :uint32)
   (:queue-family-indices (:pointer :uint32)))
 
-(def-struct-translator vk-dedicated-allocation-buffer-create-info-nv
+(defcstruct vk-dedicated-allocation-buffer-create-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:dedicated-allocation vk-bool-32))
 
-(def-struct-translator vk-external-memory-buffer-create-info
+(defcstruct vk-external-memory-buffer-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:handle-types vk-external-memory-handle-type-flags))
 
-(def-struct-translator vk-buffer-opaque-capture-address-create-info
+(defcstruct vk-buffer-opaque-capture-address-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:opaque-capture-address :uint64))
 
-(def-struct-translator vk-buffer-device-address-create-info-ext
+(defcstruct vk-buffer-device-address-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:device-address vk-device-address))
 
-(def-struct-translator vk-buffer-view-create-info
+(defcstruct vk-buffer-view-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-buffer-view-create-flags)
@@ -1672,7 +1593,7 @@ i don't know how to set up android in lisp
   (:offset vk-device-size)
   (:range vk-device-size))
 
-(def-struct-translator vk-image-create-info
+(defcstruct vk-image-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-image-create-flags)
@@ -1689,74 +1610,74 @@ i don't know how to set up android in lisp
   (:queue-family-indices (:pointer :uint32))
   (:initial-layout VkImageLayout))
 
-(def-struct-translator vk-image-stencil-usage-create-info
+(defcstruct vk-image-stencil-usage-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:stencil-usage vk-image-usage-flags))
 
-(def-struct-translator vk-dedicated-allocation-image-create-info-nv
+(defcstruct vk-dedicated-allocation-image-create-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:dedicated-allocation vk-bool-32))
 
-(def-struct-translator vk-external-memory-image-create-info
+(defcstruct vk-external-memory-image-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:handle-types vk-external-memory-handle-type-flags))
 
-(def-struct-translator vk-external-memory-image-create-info-nv
+(defcstruct vk-external-memory-image-create-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:handle-type vk-external-memory-handle-type-flags-nv))
 
-(def-struct-translator vk-image-swapchain-create-info-khr
+(defcstruct vk-image-swapchain-create-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:swapchain vk-swapchain-khr))
 
-(def-struct-translator vk-image-format-list-create-info
+(defcstruct vk-image-format-list-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:view-format-count :uint32)
   (:view-format (:pointer VkFormat)))
 
-(def-struct-translator vk-image-drm-format-modifier-list-create-info-ext
+(defcstruct vk-image-drm-format-modifier-list-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:drm-format-modifier-count :uint32)
   (:drm-format-modifiers (:pointer :uint64)))
 
-(def-struct-translator vk-subresource-layout
+(defcstruct vk-subresource-layout
   (:offset vk-device-size)
   (:size vk-device-size)
   (:row-pitch vk-device-size)
   (:array-pitch vk-device-size)
   (:depth-pitch vk-device-size))
 
-(def-struct-translator vk-image-drm-format-modifier-explicit-create-info-ext
+(defcstruct vk-image-drm-format-modifier-explicit-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:drm-format-modifier :uint64)
   (:drm-format-modifier-plane-count :uint32)
   (:plane-layouts (:pointer (:struct vk-subresource-layout))))
 
-(def-struct-translator vk-image-subresource
+(defcstruct vk-image-subresource
   (:aspect-mask vk-image-aspect-flags)
   (:mip-level :Uint32)
   (:array-layer :uint32))
 
-(def-struct-translator vk-image-drm-format-modifier-properties-ext
+(defcstruct vk-image-drm-format-modifier-properties-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:drm-format-modifier :uint64))
 
-(def-struct-translator vk-component-mapping
+(defcstruct vk-component-mapping
   (:r VkComponentSwizzle)
   (:g VkComponentSwizzle)
   (:b VkComponentSwizzle)
   (:a VkComponentSwizzle))
 
-(def-struct-translator vk-image-view-create-info
+(defcstruct vk-image-view-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-image-view-create-flags)
@@ -1766,81 +1687,81 @@ i don't know how to set up android in lisp
   (:components (:struct vk-component-mapping))
   (:subresource-range (:struct vk-image-subresource-range)))
 
-(def-struct-translator vk-image-view-usage-create-info
+(defcstruct vk-image-view-usage-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:usage vk-image-usage-flags))
 
-(def-struct-translator vk-image-view-a-s-t-c-decode-mode-ext
+(defcstruct vk-image-view-a-s-t-c-decode-mode-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:decode-mode VkFormat))
 
-(def-struct-translator vk-image-view-handle-info-nvx
+(defcstruct vk-image-view-handle-info-nvx
   (:type VkStructureType)
   (:next (:pointer :void))
   (:image-view vk-image-view)
   (:descriptor-type VkDescriptorType)
   (:sampler vk-sampler))
 
-(def-struct-translator vk-image-view-address-properties-nvx
+(defcstruct vk-image-view-address-properties-nvx
   (:type VkStructureType)
   (:next (:pointer :void))
   (:device-address vk-device-address)
   (:size vk-device-size))
 
-(def-struct-translator vk-memory-requirements
+(defcstruct vk-memory-requirements
   (:size vk-device-size)
   (:alignment vk-device-size)
   (:memory-type-bits :uint32))
 
-(def-struct-translator vk-buffer-memory-requirements-info2
+(defcstruct vk-buffer-memory-requirements-info2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:buffer vk-buffer))
 
-(def-struct-translator vk-image-memory-requirements-info2
+(defcstruct vk-image-memory-requirements-info2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:image vk-image))
 
-(def-struct-translator vk-image-plane-memory-requirements-info
+(defcstruct vk-image-plane-memory-requirements-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:plane-aspect VkImageAspectFlagBits))
 
-(def-struct-translator vk-memory-requirements2
+(defcstruct vk-memory-requirements2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:memory-requirements (:struct vk-memory-requirements)))
 
-(def-struct-translator vk-memory-dedicated-requirements
+(defcstruct vk-memory-dedicated-requirements
   (:type VkStructureType)
   (:next (:pointer :void))
   (:prefers-dedicated-allocation vk-bool-32)
   (:requires-dedicated-allocation vk-bool-32))
 
-(def-struct-translator vk-bind-buffer-memory-info
+(defcstruct vk-bind-buffer-memory-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:buffer vk-buffer)
   (:memory vk-device-memory)
   (:memory-offset vk-device-size))
 
-(def-struct-translator vk-bind-buffer-memory-device-group-info
+(defcstruct vk-bind-buffer-memory-device-group-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:device-index-count :uint32)
   (:device-indices (:pointer :uint32)))
 
-(def-struct-translator vk-bind-image-memory-info
+(defcstruct vk-bind-image-memory-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:imaeg vk-image)
   (:memory vk-device-memory)
   (:memory-offset vk-device-size))
 
-(def-struct-translator vk-bind-image-memory-device-group-info
+(defcstruct vk-bind-image-memory-device-group-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:device-index-count :uint32)
@@ -1848,18 +1769,18 @@ i don't know how to set up android in lisp
   (:split-instance-bind-region-count :uint32)
   (:split-instance-bind-regions (:pointer (:struct vk-rect-2d))))
 
-(def-struct-translator vk-bind-image-memory-swapchain-info-khr
+(defcstruct vk-bind-image-memory-swapchain-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:swapchain vk-swapchain-khr)
   (:image-index :uint32))
 
-(def-struct-translator vk-bind-image-plane-memory-info
+(defcstruct vk-bind-image-plane-memory-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:plane-aspect VkImageAspectFlagBits))
 
-(def-struct-translator vk-geometry-triangles-nv
+(defcstruct vk-geometry-triangles-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:vertex-data vk-buffer)
@@ -1874,7 +1795,7 @@ i don't know how to set up android in lisp
   (:transform-data vk-buffer)
   (:transform-offset vk-device-size))
 
-(def-struct-translator vk-geometry-aabb-nv
+(defcstruct vk-geometry-aabb-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:aabb-data vk-buffer)
@@ -1882,18 +1803,18 @@ i don't know how to set up android in lisp
   (:stride :uint32)
   (:offset vk-device-size))
 
-(def-struct-translator vk-geometry-data-nv
+(defcstruct vk-geometry-data-nv
   (:triangles (:struct vk-geometry-triangles-nv))
   (:aabbs (:struct vk-geometry-aabb-nv)))
 
-(def-struct-translator vk-geometry-nv
+(defcstruct vk-geometry-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:geometry-type VkGeometryTypeKHR)
   (:geometry-data (:struct vk-geometry-data-nv))
   (:flags vk-geometry-flags-khr))
 
-(def-struct-translator vk-acceleration-structure-info-nv
+(defcstruct vk-acceleration-structure-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:type VkAccelerationStructureTypeKHR)
@@ -1902,13 +1823,13 @@ i don't know how to set up android in lisp
   (:geometry-count :uint32)
   (:geometries (:pointer (:struct vk-geometry-nv))))
 
-(def-struct-translator vk-acceleration-structure-create-info-nv
+(defcstruct vk-acceleration-structure-create-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:compacted-size vk-device-size)
   (:info (:struct vk-acceleration-structure-info-nv)))
 
-(def-struct-translator vk-acceleration-structure-create-geometry-type-info-khr
+(defcstruct vk-acceleration-structure-create-geometry-type-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:geometry-type VkGeometryTypeKHR)
@@ -1918,7 +1839,7 @@ i don't know how to set up android in lisp
   (:vertex-format VkFormat)
   (:allows-transforms vk-bool-32))
 
-(def-struct-translator vk-acceleration-structure-create-info-khr
+(defcstruct vk-acceleration-structure-create-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:compacted-size vk-device-size)
@@ -1928,20 +1849,20 @@ i don't know how to set up android in lisp
   (:geometry-infos (:pointer (:struct vk-acceleration-structure-create-geometry-type-info-khr)))
   (:device-address vk-device-address))
 
-(def-struct-translator vk-acceleration-structure-memory-requirements-info-nv
+(defcstruct vk-acceleration-structure-memory-requirements-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:type VkAccelerationStructureMemoryRequirementsTypeKHR)
   (:acceleration-structure vk-acceleration-structure-khr))
 
-(def-struct-translator vk-acceleration-structure-memory-requirements-info-khr
+(defcstruct vk-acceleration-structure-memory-requirements-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:type VkAccelerationStructureMemoryRequirementsTypeKHR)
   (:build-type VkAccelerationStructureBuildTypeKHR)
   (:acceleration-structure vk-acceleration-structure-khr))
 
-(def-struct-translator vk-bind-acceleration-structure-memory-info-khr
+(defcstruct vk-bind-acceleration-structure-memory-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:acceleration-structure vk-acceleration-structure-khr)
@@ -1950,12 +1871,12 @@ i don't know how to set up android in lisp
   (:device-index-count :uint32)
   (:device-indices (:pointer :uint32)))
 
-(def-struct-translator vk-acceleration-structure-device-address-info-khr
+(defcstruct vk-acceleration-structure-device-address-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:acceleration-structure vk-acceleration-structure-khr))
 
-(def-struct-translator vk-sampler-create-info
+(defcstruct vk-sampler-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-sampler-create-flags)
@@ -1975,17 +1896,17 @@ i don't know how to set up android in lisp
   (:border-color VkBorderColor)
   (:unnormalized-coordinates vk-bool-32))
 
-(def-struct-translator vk-sampler-reduction-mode-create-info
+(defcstruct vk-sampler-reduction-mode-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:reduction-mode VkSamplerReductionMode))
 
-(def-struct-translator vk-sampler-ycbcr-conversion-info
+(defcstruct vk-sampler-ycbcr-conversion-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:conversion vk-sampler-ycbcr-conversion))
 
-(def-struct-translator vk-sampler-ycbcr-conversion-create-info
+(defcstruct vk-sampler-ycbcr-conversion-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:format VkFormat)
@@ -1997,48 +1918,48 @@ i don't know how to set up android in lisp
   (:chroma-filter VkFilter)
   (:force-explicit-reconstruction vk-bool-32))
 
-(def-struct-translator vk-sampler-custom-border-color-create-info-ext
+(defcstruct vk-sampler-custom-border-color-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:custom-border-color (:union vk-clear-value))
   (:format VkFormat))
 
-(def-struct-translator vk-descriptor-set-layout-binding
+(defcstruct vk-descriptor-set-layout-binding
   (:binding :uint32)
   (:descriptor-type VkDescriptorType)
   (:descriptor-count :uint32)
   (:stage-flags vk-shader-stage-flags)
   (:immutable-samplers (:pointer vk-sampler)))
 
-(def-struct-translator vk-descriptor-set-layout-create-info
+(defcstruct vk-descriptor-set-layout-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-descriptor-set-layout-create-flags)
   (:binding-count :uint32)
   (:bindings (:pointer (:struct vk-descriptor-set-layout-binding))))
 
-(def-struct-translator vk-descriptor-set-layout-binding-flags-create-info
+(defcstruct vk-descriptor-set-layout-binding-flags-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:binding-count :uint32)
   (:binding-flags (:pointer vk-descriptor-binding-flags)))
 
-(def-struct-translator vk-descriptor-set-layout-support
+(defcstruct vk-descriptor-set-layout-support
   (:type VkStructureType)
   (:next (:pointer :void))
   (:supported vk-bool-32))
 
-(def-struct-translator vk-descriptor-set-variable-descriptor-count-layout-support
+(defcstruct vk-descriptor-set-variable-descriptor-count-layout-support
   (:type VkStructureType)
   (:next (:pointer :void))
   (:max-variable-descriptor-count :uint32))
 
-(def-struct-translator vk-push-constant-range
+(defcstruct vk-push-constant-range
   (:stage-flags vk-shader-stage-flags)
   (:offset :uint32)
   (:size :uint32))
 
-(def-struct-translator vk-pipeline-layout-create-info
+(defcstruct vk-pipeline-layout-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-layout-create-flags)
@@ -2047,11 +1968,11 @@ i don't know how to set up android in lisp
   (:push-constant-range-count :uint32)
   (:push-constant-ranges (:pointer (:struct vk-push-constant-range))))
 
-(def-struct-translator vk-descriptor-pool-size
+(defcstruct vk-descriptor-pool-size
   (:type VkDescriptorType)
   (:descriptor-count :uint32))
 
-(def-struct-translator vk-descriptor-pool-create-info
+(defcstruct vk-descriptor-pool-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-descriptor-pool-create-flags)
@@ -2059,76 +1980,76 @@ i don't know how to set up android in lisp
   (:pool-size-count :uint32)
   (:pool-sizes (:pointer (:struct vk-descriptor-pool-size))))
 
-(def-struct-translator vk-descriptor-pool-inline-uniform-block-create-info-ext
+(defcstruct vk-descriptor-pool-inline-uniform-block-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:max-inline-uniform-block-bindings :uint32))
 
-(def-struct-translator vk-descriptor-set-allocate-info
+(defcstruct vk-descriptor-set-allocate-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:descript-pool vk-descriptor-pool)
   (:descript-set-count :uint32)
   (:set-layouts vk-descriptor-set-layout))
 
-(def-struct-translator vk-descriptor-set-variable-descriptor-count-allocate-info
+(defcstruct vk-descriptor-set-variable-descriptor-count-allocate-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:descriptor-set-count :uint32)
   (:descriptor-counts (:pointer :uint32)))
 
-(def-struct-translator vk-memory-requirements
+(defcstruct vk-memory-requirements
   (:size vk-device-size)
   (:alignment vk-device-size)
   (:memory-type-bits :uint32))
 
-(def-struct-translator vk-buffer-memory-requirements-info2
+(defcstruct vk-buffer-memory-requirements-info2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:buffer vk-buffer))
 
-(def-struct-translator vk-image-memory-requirements-info2
+(defcstruct vk-image-memory-requirements-info2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:image vk-image))
 
-(def-struct-translator vk-image-plane-memory-requirements-info
+(defcstruct vk-image-plane-memory-requirements-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:plane-aspect VkImageAspectFlagBits))
 
-(def-struct-translator vk-memory-requirements2
+(defcstruct vk-memory-requirements2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:memory-requirements (:struct vk-memory-requirements)))
 
-(def-struct-translator vk-memory-dedicated-requirements
+(defcstruct vk-memory-dedicated-requirements
   (:type VkStructureType)
   (:next (:pointer :void))
   (:prefers-dedicated-allocation vk-bool-32)
   (:requires-dedicated-allocation vk-bool-32))
 
-(def-struct-translator vk-bind-buffer-memory-info
+(defcstruct vk-bind-buffer-memory-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:buffer vk-buffer)
   (:memory vk-device-memory)
   (:memory-offset vk-device-size))
 
-(def-struct-translator vk-bind-buffer-memory-device-group-info
+(defcstruct vk-bind-buffer-memory-device-group-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:device-index-count :uint32)
   (:device-indices (:pointer :uint32)))
 
-(def-struct-translator vk-bind-image-memory-info
+(defcstruct vk-bind-image-memory-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:imaeg vk-image)
   (:memory vk-device-memory)
   (:memory-offset vk-device-size))
 
-(def-struct-translator vk-bind-image-memory-device-group-info
+(defcstruct vk-bind-image-memory-device-group-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:device-index-count :uint32)
@@ -2136,18 +2057,18 @@ i don't know how to set up android in lisp
   (:split-instance-bind-region-count :uint32)
   (:split-instance-bind-regions (:pointer (:struct vk-rect-2d))))
 
-(def-struct-translator vk-bind-image-memory-swapchain-info-khr
+(defcstruct vk-bind-image-memory-swapchain-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:swapchain vk-swapchain-khr)
   (:image-index :uint32))
 
-(def-struct-translator vk-bind-image-plane-memory-info
+(defcstruct vk-bind-image-plane-memory-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:plane-aspect VkImageAspectFlagBits))
 
-(def-struct-translator vk-geometry-triangles-nv
+(defcstruct vk-geometry-triangles-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:vertex-data vk-buffer)
@@ -2162,7 +2083,7 @@ i don't know how to set up android in lisp
   (:transform-data vk-buffer)
   (:transform-offset vk-device-size))
 
-(def-struct-translator vk-geometry-aabb-nv
+(defcstruct vk-geometry-aabb-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:aabb-data vk-buffer)
@@ -2170,18 +2091,18 @@ i don't know how to set up android in lisp
   (:stride :uint32)
   (:offset vk-device-size))
 
-(def-struct-translator vk-geometry-data-nv
+(defcstruct vk-geometry-data-nv
   (:triangles (:struct vk-geometry-triangles-nv))
   (:aabbs (:struct vk-geometry-aabb-nv)))
 
-(def-struct-translator vk-geometry-nv
+(defcstruct vk-geometry-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:geometry-type VkGeometryTypeKHR)
   (:geometry-data (:struct vk-geometry-data-nv))
   (:flags vk-geometry-flags-khr))
 
-(def-struct-translator vk-acceleration-structure-info-nv
+(defcstruct vk-acceleration-structure-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:type VkAccelerationStructureTypeKHR)
@@ -2190,13 +2111,13 @@ i don't know how to set up android in lisp
   (:geometry-count :uint32)
   (:geometries (:pointer (:struct vk-geometry-nv))))
 
-(def-struct-translator vk-acceleration-structure-create-info-nv
+(defcstruct vk-acceleration-structure-create-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:compacted-size vk-device-size)
   (:info (:struct vk-acceleration-structure-info-nv)))
 
-(def-struct-translator vk-acceleration-structure-create-geometry-type-info-khr
+(defcstruct vk-acceleration-structure-create-geometry-type-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:geometry-type VkGeometryTypeKHR)
@@ -2206,7 +2127,7 @@ i don't know how to set up android in lisp
   (:vertex-format VkFormat)
   (:allows-transforms vk-bool-32))
 
-(def-struct-translator vk-acceleration-structure-create-info-khr
+(defcstruct vk-acceleration-structure-create-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:compacted-size vk-device-size)
@@ -2216,20 +2137,20 @@ i don't know how to set up android in lisp
   (:geometry-infos (:pointer (:struct vk-acceleration-structure-create-geometry-type-info-khr)))
   (:device-address vk-device-address))
 
-(def-struct-translator vk-acceleration-structure-memory-requirements-info-nv
+(defcstruct vk-acceleration-structure-memory-requirements-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:type VkAccelerationStructureMemoryRequirementsTypeKHR)
   (:acceleration-structure vk-acceleration-structure-khr))
 
-(def-struct-translator vk-acceleration-structure-memory-requirements-info-khr
+(defcstruct vk-acceleration-structure-memory-requirements-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:type VkAccelerationStructureMemoryRequirementsTypeKHR)
   (:build-type VkAccelerationStructureBuildTypeKHR)
   (:acceleration-structure vk-acceleration-structure-khr))
 
-(def-struct-translator vk-bind-acceleration-structure-memory-info-khr
+(defcstruct vk-bind-acceleration-structure-memory-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:acceleration-structure vk-acceleration-structure-khr)
@@ -2238,12 +2159,12 @@ i don't know how to set up android in lisp
   (:device-index-count :uint32)
   (:device-indices (:pointer :uint32)))
 
-(def-struct-translator vk-acceleration-structure-device-address-info-khr
+(defcstruct vk-acceleration-structure-device-address-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:acceleration-structure vk-acceleration-structure-khr))
 
-(def-struct-translator vk-sampler-create-info
+(defcstruct vk-sampler-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-sampler-create-flags)
@@ -2263,17 +2184,17 @@ i don't know how to set up android in lisp
   (:border-color VkBorderColor)
   (:unnormalized-coordinates vk-bool-32))
 
-(def-struct-translator vk-sampler-reduction-mode-create-info
+(defcstruct vk-sampler-reduction-mode-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:reduction-mode VkSamplerReductionMode))
 
-(def-struct-translator vk-sampler-ycbcr-conversion-info
+(defcstruct vk-sampler-ycbcr-conversion-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:conversion vk-sampler-ycbcr-conversion))
 
-(def-struct-translator vk-sampler-ycbcr-conversion-create-info
+(defcstruct vk-sampler-ycbcr-conversion-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:format VkFormat)
@@ -2285,48 +2206,48 @@ i don't know how to set up android in lisp
   (:chroma-filter VkFilter)
   (:force-explicit-reconstruction vk-bool-32))
 
-(def-struct-translator vk-sampler-custom-border-color-create-info-ext
+(defcstruct vk-sampler-custom-border-color-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:custom-border-color (:union vk-clear-value))
   (:format VkFormat))
 
-(def-struct-translator vk-descriptor-set-layout-binding
+(defcstruct vk-descriptor-set-layout-binding
   (:binding :uint32)
   (:descriptor-type VkDescriptorType)
   (:descriptor-count :uint32)
   (:stage-flags vk-shader-stage-flags)
   (:immutable-samplers (:pointer vk-sampler)))
 
-(def-struct-translator vk-descriptor-set-layout-create-info
+(defcstruct vk-descriptor-set-layout-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-descriptor-set-layout-create-flags)
   (:binding-count :uint32)
   (:bindings (:pointer (:struct vk-descriptor-set-layout-binding))))
 
-(def-struct-translator vk-descriptor-set-layout-binding-flags-create-info
+(defcstruct vk-descriptor-set-layout-binding-flags-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:binding-count :uint32)
   (:binding-flags (:pointer vk-descriptor-binding-flags)))
 
-(def-struct-translator vk-descriptor-set-layout-support
+(defcstruct vk-descriptor-set-layout-support
   (:type VkStructureType)
   (:next (:pointer :void))
   (:supported vk-bool-32))
 
-(def-struct-translator vk-descriptor-set-variable-descriptor-count-layout-support
+(defcstruct vk-descriptor-set-variable-descriptor-count-layout-support
   (:type VkStructureType)
   (:next (:pointer :void))
   (:max-variable-descriptor-count :uint32))
 
-(def-struct-translator vk-push-constant-range
+(defcstruct vk-push-constant-range
   (:stage-flags vk-shader-stage-flags)
   (:offset :uint32)
   (:size :uint32))
 
-(def-struct-translator vk-pipeline-layout-create-info
+(defcstruct vk-pipeline-layout-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-layout-create-flags)
@@ -2335,11 +2256,11 @@ i don't know how to set up android in lisp
   (:push-constant-range-count :uint32)
   (:push-constant-ranges (:pointer (:struct vk-push-constant-range))))
 
-(def-struct-translator vk-descriptor-pool-size
+(defcstruct vk-descriptor-pool-size
   (:type VkDescriptorType)
   (:descriptor-count :uint32))
 
-(def-struct-translator vk-descriptor-pool-create-info
+(defcstruct vk-descriptor-pool-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-descriptor-pool-create-flags)
@@ -2347,76 +2268,76 @@ i don't know how to set up android in lisp
   (:pool-size-count :uint32)
   (:pool-sizes (:pointer (:struct vk-descriptor-pool-size))))
 
-(def-struct-translator vk-descriptor-pool-inline-uniform-block-create-info-ext
+(defcstruct vk-descriptor-pool-inline-uniform-block-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:max-inline-uniform-block-bindings :uint32))
 
-(def-struct-translator vk-descriptor-set-allocate-info
+(defcstruct vk-descriptor-set-allocate-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:descript-pool vk-descriptor-pool)
   (:descript-set-count :uint32)
   (:set-layouts vk-descriptor-set-layout))
 
-(def-struct-translator vk-descriptor-set-variable-descriptor-count-allocate-info
+(defcstruct vk-descriptor-set-variable-descriptor-count-allocate-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:descriptor-set-count :uint32)
   (:descriptor-counts (:pointer :uint32)))
 
-(def-struct-translator vk-memory-requirements
+(defcstruct vk-memory-requirements
   (:size vk-device-size)
   (:alignment vk-device-size)
   (:memory-type-bits :uint32))
 
-(def-struct-translator vk-buffer-memory-requirements-info2
+(defcstruct vk-buffer-memory-requirements-info2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:buffer vk-buffer))
 
-(def-struct-translator vk-image-memory-requirements-info2
+(defcstruct vk-image-memory-requirements-info2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:image vk-image))
 
-(def-struct-translator vk-image-plane-memory-requirements-info
+(defcstruct vk-image-plane-memory-requirements-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:plane-aspect VkImageAspectFlagBits))
 
-(def-struct-translator vk-memory-requirements2
+(defcstruct vk-memory-requirements2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:memory-requirements (:struct vk-memory-requirements)))
 
-(def-struct-translator vk-memory-dedicated-requirements
+(defcstruct vk-memory-dedicated-requirements
   (:type VkStructureType)
   (:next (:pointer :void))
   (:prefers-dedicated-allocation vk-bool-32)
   (:requires-dedicated-allocation vk-bool-32))
 
-(def-struct-translator vk-bind-buffer-memory-info
+(defcstruct vk-bind-buffer-memory-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:buffer vk-buffer)
   (:memory vk-device-memory)
   (:memory-offset vk-device-size))
 
-(def-struct-translator vk-bind-buffer-memory-device-group-info
+(defcstruct vk-bind-buffer-memory-device-group-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:device-index-count :uint32)
   (:device-indices (:pointer :uint32)))
 
-(def-struct-translator vk-bind-image-memory-info
+(defcstruct vk-bind-image-memory-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:imaeg vk-image)
   (:memory vk-device-memory)
   (:memory-offset vk-device-size))
 
-(def-struct-translator vk-bind-image-memory-device-group-info
+(defcstruct vk-bind-image-memory-device-group-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:device-index-count :uint32)
@@ -2424,18 +2345,18 @@ i don't know how to set up android in lisp
   (:split-instance-bind-region-count :uint32)
   (:split-instance-bind-regions (:pointer (:struct vk-rect-2d))))
 
-(def-struct-translator vk-bind-image-memory-swapchain-info-khr
+(defcstruct vk-bind-image-memory-swapchain-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:swapchain vk-swapchain-khr)
   (:image-index :uint32))
 
-(def-struct-translator vk-bind-image-plane-memory-info
+(defcstruct vk-bind-image-plane-memory-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:plane-aspect VkImageAspectFlagBits))
 
-(def-struct-translator vk-geometry-triangles-nv
+(defcstruct vk-geometry-triangles-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:vertex-data vk-buffer)
@@ -2450,7 +2371,7 @@ i don't know how to set up android in lisp
   (:transform-data vk-buffer)
   (:transform-offset vk-device-size))
 
-(def-struct-translator vk-geometry-aabb-nv
+(defcstruct vk-geometry-aabb-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:aabb-data vk-buffer)
@@ -2458,18 +2379,18 @@ i don't know how to set up android in lisp
   (:stride :uint32)
   (:offset vk-device-size))
 
-(def-struct-translator vk-geometry-data-nv
+(defcstruct vk-geometry-data-nv
   (:triangles (:struct vk-geometry-triangles-nv))
   (:aabbs (:struct vk-geometry-aabb-nv)))
 
-(def-struct-translator vk-geometry-nv
+(defcstruct vk-geometry-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:geometry-type VkGeometryTypeKHR)
   (:geometry-data (:struct vk-geometry-data-nv))
   (:flags vk-geometry-flags-khr))
 
-(def-struct-translator vk-acceleration-structure-info-nv
+(defcstruct vk-acceleration-structure-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:type VkAccelerationStructureTypeKHR)
@@ -2478,13 +2399,13 @@ i don't know how to set up android in lisp
   (:geometry-count :uint32)
   (:geometries (:pointer (:struct vk-geometry-nv))))
 
-(def-struct-translator vk-acceleration-structure-create-info-nv
+(defcstruct vk-acceleration-structure-create-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:compacted-size vk-device-size)
   (:info (:struct vk-acceleration-structure-info-nv)))
 
-(def-struct-translator vk-acceleration-structure-create-geometry-type-info-khr
+(defcstruct vk-acceleration-structure-create-geometry-type-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:geometry-type VkGeometryTypeKHR)
@@ -2494,7 +2415,7 @@ i don't know how to set up android in lisp
   (:vertex-format VkFormat)
   (:allows-transforms vk-bool-32))
 
-(def-struct-translator vk-acceleration-structure-create-info-khr
+(defcstruct vk-acceleration-structure-create-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:compacted-size vk-device-size)
@@ -2504,20 +2425,20 @@ i don't know how to set up android in lisp
   (:geometry-infos (:pointer (:struct vk-acceleration-structure-create-geometry-type-info-khr)))
   (:device-address vk-device-address))
 
-(def-struct-translator vk-acceleration-structure-memory-requirements-info-nv
+(defcstruct vk-acceleration-structure-memory-requirements-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:type VkAccelerationStructureMemoryRequirementsTypeKHR)
   (:acceleration-structure vk-acceleration-structure-khr))
 
-(def-struct-translator vk-acceleration-structure-memory-requirements-info-khr
+(defcstruct vk-acceleration-structure-memory-requirements-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:type VkAccelerationStructureMemoryRequirementsTypeKHR)
   (:build-type VkAccelerationStructureBuildTypeKHR)
   (:acceleration-structure vk-acceleration-structure-khr))
 
-(def-struct-translator vk-bind-acceleration-structure-memory-info-khr
+(defcstruct vk-bind-acceleration-structure-memory-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:acceleration-structure vk-acceleration-structure-khr)
@@ -2526,12 +2447,12 @@ i don't know how to set up android in lisp
   (:device-index-count :uint32)
   (:device-indices (:pointer :uint32)))
 
-(def-struct-translator vk-acceleration-structure-device-address-info-khr
+(defcstruct vk-acceleration-structure-device-address-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:acceleration-structure vk-acceleration-structure-khr))
 
-(def-struct-translator vk-sampler-create-info
+(defcstruct vk-sampler-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-sampler-create-flags)
@@ -2551,17 +2472,17 @@ i don't know how to set up android in lisp
   (:border-color VkBorderColor)
   (:unnormalized-coordinates vk-bool-32))
 
-(def-struct-translator vk-sampler-reduction-mode-create-info
+(defcstruct vk-sampler-reduction-mode-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:reduction-mode VkSamplerReductionMode))
 
-(def-struct-translator vk-sampler-ycbcr-conversion-info
+(defcstruct vk-sampler-ycbcr-conversion-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:conversion vk-sampler-ycbcr-conversion))
 
-(def-struct-translator vk-sampler-ycbcr-conversion-create-info
+(defcstruct vk-sampler-ycbcr-conversion-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:format VkFormat)
@@ -2573,48 +2494,48 @@ i don't know how to set up android in lisp
   (:chroma-filter VkFilter)
   (:force-explicit-reconstruction vk-bool-32))
 
-(def-struct-translator vk-sampler-custom-border-color-create-info-ext
+(defcstruct vk-sampler-custom-border-color-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:custom-border-color (:union vk-clear-value))
   (:format VkFormat))
 
-(def-struct-translator vk-descriptor-set-layout-binding
+(defcstruct vk-descriptor-set-layout-binding
   (:binding :uint32)
   (:descriptor-type VkDescriptorType)
   (:descriptor-count :uint32)
   (:stage-flags vk-shader-stage-flags)
   (:immutable-samplers (:pointer vk-sampler)))
 
-(def-struct-translator vk-descriptor-set-layout-create-info
+(defcstruct vk-descriptor-set-layout-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-descriptor-set-layout-create-flags)
   (:binding-count :uint32)
   (:bindings (:pointer (:struct vk-descriptor-set-layout-binding))))
 
-(def-struct-translator vk-descriptor-set-layout-binding-flags-create-info
+(defcstruct vk-descriptor-set-layout-binding-flags-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:binding-count :uint32)
   (:binding-flags (:pointer vk-descriptor-binding-flags)))
 
-(def-struct-translator vk-descriptor-set-layout-support
+(defcstruct vk-descriptor-set-layout-support
   (:type VkStructureType)
   (:next (:pointer :void))
   (:supported vk-bool-32))
 
-(def-struct-translator vk-descriptor-set-variable-descriptor-count-layout-support
+(defcstruct vk-descriptor-set-variable-descriptor-count-layout-support
   (:type VkStructureType)
   (:next (:pointer :void))
   (:max-variable-descriptor-count :uint32))
 
-(def-struct-translator vk-push-constant-range
+(defcstruct vk-push-constant-range
   (:stage-flags vk-shader-stage-flags)
   (:offset :uint32)
   (:size :uint32))
 
-(def-struct-translator vk-pipeline-layout-create-info
+(defcstruct vk-pipeline-layout-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-layout-create-flags)
@@ -2623,11 +2544,11 @@ i don't know how to set up android in lisp
   (:push-constant-range-count :uint32)
   (:push-constant-ranges (:pointer (:struct vk-push-constant-range))))
 
-(def-struct-translator vk-descriptor-pool-size
+(defcstruct vk-descriptor-pool-size
   (:type VkDescriptorType)
   (:descriptor-count :uint32))
 
-(def-struct-translator vk-descriptor-pool-create-info
+(defcstruct vk-descriptor-pool-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-descriptor-pool-create-flags)
@@ -2635,35 +2556,35 @@ i don't know how to set up android in lisp
   (:pool-size-count :uint32)
   (:pool-sizes (:pointer (:struct vk-descriptor-pool-size))))
 
-(def-struct-translator vk-descriptor-pool-inline-uniform-block-create-info-ext
+(defcstruct vk-descriptor-pool-inline-uniform-block-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:max-inline-uniform-block-bindings :uint32))
 
-(def-struct-translator vk-descriptor-set-allocate-info
+(defcstruct vk-descriptor-set-allocate-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:descript-pool vk-descriptor-pool)
   (:descript-set-count :uint32)
   (:set-layouts vk-descriptor-set-layout))
 
-(def-struct-translator vk-descriptor-set-variable-descriptor-count-allocate-info
+(defcstruct vk-descriptor-set-variable-descriptor-count-allocate-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:descriptor-set-count :uint32)
   (:descriptor-counts (:pointer :uint32)))
 
-(def-struct-translator vk-descriptor-image-info
+(defcstruct vk-descriptor-image-info
   (:sampler vk-sampler)
   (:image-view vk-image-view)
   (:image-layout VkImageLayout))
 
-(def-struct-translator vk-descriptor-buffer-info
+(defcstruct vk-descriptor-buffer-info
   (:buffer vk-buffer)
   (:offset vk-device-size)
   (:range vk-device-size))
 
-(def-struct-translator vk-write-descriptor-set
+(defcstruct vk-write-descriptor-set
   (:type VkStructureType)
   (:next (:pointer :void))
   (:dst-set vk-descriptor-set)
@@ -2675,19 +2596,19 @@ i don't know how to set up android in lisp
   (:buffer-info (:pointer (:struct vk-descriptor-buffer-info)))
   (:texel-buffer-view (:pointer vk-buffer-view)))
 
-(def-struct-translator vk-write-descriptor-set-inline-uniform-block-ext
+(defcstruct vk-write-descriptor-set-inline-uniform-block-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:data-size :uint32)
   (:data (:pointer :void)))
 
-(def-struct-translator vk-write-descriptor-set-acceleration-structure-khr
+(defcstruct vk-write-descriptor-set-acceleration-structure-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:acceleration-structure-count :uint32)
   (:acceleration-structures vk-acceleration-structure-khr))
 
-(def-struct-translator vk-copy-descriptor-set
+(defcstruct vk-copy-descriptor-set
   (:type VkStructureType)
   (:next (:pointer :void))
   (:src-set vk-descriptor-set)
@@ -2698,7 +2619,7 @@ i don't know how to set up android in lisp
   (:dst-array-element :uint32)
   (:descriptor-count :uint32))
 
-(def-struct-translator vk-descriptor-update-template-entry
+(defcstruct vk-descriptor-update-template-entry
   (:dst-binding :uint32)
   (:dst-array-element :uint32)
   (:descript-count :uint32)
@@ -2706,7 +2627,7 @@ i don't know how to set up android in lisp
   (:offset size-t)
   (:stride size-t))
 
-(def-struct-translator vk-descriptor-update-template-create-info
+(defcstruct vk-descriptor-update-template-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-descriptor-update-template-create-flags)
@@ -2718,12 +2639,12 @@ i don't know how to set up android in lisp
   (:pipeline-layout vk-pipeline-layout)
   (:set :uint32))
 
-(def-struct-translator vk-buffer-device-address-info
+(defcstruct vk-buffer-device-address-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:buffer vk-buffer))
 
-(def-struct-translator vk-query-pool-create-info
+(defcstruct vk-query-pool-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-query-pool-create-flags)
@@ -2731,7 +2652,7 @@ i don't know how to set up android in lisp
   (:query-count :uint32)
   (:pipeline-statistics vk-query-pipeline-statistic-flags))
 
-(def-struct-translator vk-query-pool-performance-create-info-khr
+(defcstruct vk-query-pool-performance-create-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:queue-family-index :uint32)
@@ -2746,13 +2667,13 @@ i don't know how to set up android in lisp
   (:f :float)
   (:d :double))
 
-(def-struct-translator vk-acquire-profiling-lock-info-khr
+(defcstruct vk-acquire-profiling-lock-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-acquire-profiling-lock-flags-khr)
   (:timeout :uint64))
 
-(def-struct-translator vk-initialize-performance-api-info-intel
+(defcstruct vk-initialize-performance-api-info-intel
   (:type VkStructureType)
   (:next (:pointer :void))
   (:user-data (:pointer :void)))
@@ -2764,66 +2685,66 @@ i don't know how to set up android in lisp
   (:value-bool vk-bool-32)
   (:value-string :string))
 
-(def-struct-translator vk-performance-value-intel
+(defcstruct vk-performance-value-intel
   (:type VkPerformanceValueTypeINTEL)
   (:data (:union vk-performance-value-data-intel)))
 
-(def-struct-translator vk-query-pool-performance-query-create-info-intel
+(defcstruct vk-query-pool-performance-query-create-info-intel
   (:type VkStructureType)
   (:next (:pointer :void))
   (:performance-counters-sampling VkQueryPoolSamplingModeINTEL))
 
-(def-struct-translator vk-performance-marker-info-intel
+(defcstruct vk-performance-marker-info-intel
   (:type VkStructureType)
   (:next (:pointer :void))
   (:marker :uint64))
 
-(def-struct-translator vk-performance-stream-marker-info-intel
+(defcstruct vk-performance-stream-marker-info-intel
   (:type VkStructureType)
   (:next (:pointer :void))
   (:marker :uint32))
 
-(def-struct-translator vk-performance-override-info-intel
+(defcstruct vk-performance-override-info-intel
   (:type VkStructureType)
   (:next (:pointer :void))
   (:type VkPerformanceOverrideTypeINTEL)
   (:enable vk-bool-32)
   (:parameter :uint64))
 
-(def-struct-translator vk-performance-configuration-acquire-info-intel
+(defcstruct vk-performance-configuration-acquire-info-intel
   (:type VkStructureType)
   (:next (:pointer :void))
   (:type VkPerformanceConfigurationTypeINTEL))
 
-(def-struct-translator vk-clear-rect
+(defcstruct vk-clear-rect
   (:rect (:struct vk-rect-2d))
   (:base-array-layer :uint32)
   (:layer-count :uint32))
 
-(def-struct-translator vk-clear-attachment
+(defcstruct vk-clear-attachment
   (:aspect-mask vk-image-aspect-flags)
   (:color-attachment :uint32)
   (:clear-values (:union vk-clear-value)))
 
-(def-struct-translator vk-buffer-copy
+(defcstruct vk-buffer-copy
   (:src-offset vk-device-size)
   (:dst-offset vk-device-size)
   (:size vk-device-size))
 
-(def-struct-translator vk-image-subresource-layers
+(defcstruct vk-image-subresource-layers
   (:aspect-mask vk-image-aspect-flags)
   (:mip-level :uint32)
   (:base-array-layer :uint32)
   (:layers-count :uint32))
 
-(def-struct-translator vk-image-copy
+(defcstruct vk-image-copy
   (:src-subresource (:struct vk-image-subresource-layers))
   (:src-offset (:struct vk-offset-3d))
   (:dst-subresource (:struct vk-image-subresource-layers))
   (:dst-offset (:struct vk-offset-3d))
   (:extent (:struct vk-extent-3d)))
 
-(def-struct-translator vk-buffer-image-copy
+(defcstruct vk-buffer-image-copy
   (:buffer-offset vk-device-size)
   (:buffer-row-length :uint32)
   (:buffer-image-height :uint32)
@@ -2831,135 +2752,135 @@ i don't know how to set up android in lisp
   (:image-offset (:struct vk-offset-3d))
   (:image-extent (:struct vk-extent-3d)))
 
-(def-struct-translator vk-image-blit
+(defcstruct vk-image-blit
   (:src-subresource (:struct vk-image-subresource-layers))
   (:src-offsets (:struct vk-offset-3d) :count 2)
   (:dst-subresource (:struct vk-image-subresource-layers))
   (:dst-offsets (:struct vk-offset-3d) :count 2))
 
-(def-struct-translator vk-image-resloved
+(defcstruct vk-image-resloved
   (:src-subresource (:struct vk-image-subresource-layers))
   (:src-offset (:struct vk-offset-3d))
   (:dst-subresource (:struct vk-image-subresource-layers))
   (:dst-offset (:struct vk-offset-3d))
   (:extent (:struct vk-extent-3d)))
 
-(def-struct-translator vk-draw-indirect-command
+(defcstruct vk-draw-indirect-command
   (:vertex-count :uint32)
   (:instance-count :uint32)
   (:firset-vertex :uint32)
   (:firset-instance :uint32))
 
-(def-struct-translator vk-draw-indexed-indirect-command
+(defcstruct vk-draw-indexed-indirect-command
   (:index-count :uint32)
   (:instance-count :uint32)
   (:firset-index :uint32)
   (:vertex-offset :int32)
   (:firset-instance :uint32))
 
-(def-struct-translator vk-conditional-rendering-begin-info-ext
+(defcstruct vk-conditional-rendering-begin-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:buffer vk-buffer)
   (:offset vk-device-size)
   (:flags vk-conditional-rendering-flags-ext))
 
-(def-struct-translator vk-draw-mesh-tasks-indirect-command-nv
+(defcstruct vk-draw-mesh-tasks-indirect-command-nv
   (:task-count :uint32)
   (:first-task :uint32))
 
-(def-struct-translator vk-pipeline-vertex-input-divisor-state-create-info-ext
+(defcstruct vk-pipeline-vertex-input-divisor-state-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:vertex-binding-divisor-count :uint32)
   (:vertex-binding-divisors (:pointer vk-conditional-rendering-flags-ext)))
 
-(def-struct-translator vk-vertex-input-binding-divisor-description-ext
+(defcstruct vk-vertex-input-binding-divisor-description-ext
   (:binding :uint32)
   (:divisor :uint32))
 
-(def-struct-translator vk-pipeline-tessellation-domain-origin-state-create-info
+(defcstruct vk-pipeline-tessellation-domain-origin-state-create-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:domain-origin VkTessellationDomainOrigin))
 
-(def-struct-translator vk-viewport-swizzle-nv
+(defcstruct vk-viewport-swizzle-nv
   (:x VkViewportCoordinateSwizzleNV)
   (:y VkViewportCoordinateSwizzleNV)
   (:z VkViewportCoordinateSwizzleNV)
   (:w VkViewportCoordinateSwizzleNV))
 
-(def-struct-translator vk-pipeline-viewport-swizzle-state-create-info-nv
+(defcstruct vk-pipeline-viewport-swizzle-state-create-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-viewport-swizzle-state-create-flags-nv)
   (:view-port-count :uint32)
   (:view-port-swizzles (:pointer (:struct vk-viewport-swizzle-nv))))
 
-(def-struct-translator vk-viewport-w-scaling-nv
+(defcstruct vk-viewport-w-scaling-nv
   (:xcoeff :float)
   (:ycoeff :float))
 
-(def-struct-translator vk-pipeline-viewport-w-scaling-state-create-info-nv
+(defcstruct vk-pipeline-viewport-w-scaling-state-create-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:view-port-w-scaling-enable vk-bool-32)
   (:view-port-count :uint32)
   (:view-port-w-scalings (:pointer (:struct vk-viewport-w-scaling-nv))))
 
-(def-struct-translator vk-pipeline-rasterization-depth-clip-state-create-info-ext
+(defcstruct vk-pipeline-rasterization-depth-clip-state-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-rasterization-depth-clip-state-create-flags-ext)
   (:depth-clip-enable vk-bool-32))
 
-(def-struct-translator vk-pipeline-rasterization-state-stream-create-info-ext
+(defcstruct vk-pipeline-rasterization-state-stream-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-rasterization-state-stream-create-flags-ext)
   (:rasterization-stream :uint32))
 
-(def-struct-translator vk-pipeline-rasterization-state-rasterization-order-amd
+(defcstruct vk-pipeline-rasterization-state-rasterization-order-amd
   (:type VkStructureType)
   (:next (:pointer :void))
   (:rasterization-order VkRasterizationOrderAMD))
 
-(def-struct-translator vk-pipeline-sample-locations-state-create-info-ext
+(defcstruct vk-pipeline-sample-locations-state-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:sampler-locations-enable vk-bool-32)
   (:sampler-locations-info (:struct vk-sample-locations-info-ext)))
 
-(def-struct-translator vk-shading-rate-palette-nv
+(defcstruct vk-shading-rate-palette-nv
   (:shading-rate-palette-entry-count :uint32)
   (:shading-rate-palette-entries (:pointer VkShadingRatePaletteEntryNV)))
 
-(def-struct-translator vk-pipeline-viewport-shading-rate-image-state-create-info-nv
+(defcstruct vk-pipeline-viewport-shading-rate-image-state-create-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:shading-rate-image-enable vk-bool-32)
   (:view-port-count :uint32)
   (:shading-rate-palettes (:pointer (:struct vk-shading-rate-palette-nv))))
 
-(def-struct-translator vk-coarse-sample-location-nv
+(defcstruct vk-coarse-sample-location-nv
   (:pixel-x :uint32)
   (:pixel-y :uint32)
   (:sample :uint32))
 
-(def-struct-translator vk-coarse-sample-order-custom-nv
+(defcstruct vk-coarse-sample-order-custom-nv
   (:shading-rate VkShadingRatePaletteEntryNV)
   (:sample-count :uint32)
   (:sample-location-count :uint32)
   (:sample-locations (:pointer (:struct vk-coarse-sample-location-nv))))
 
-(def-struct-translator vk-pipeline-viewport-coarse-sample-order-state-create-info-nv
+(defcstruct vk-pipeline-viewport-coarse-sample-order-state-create-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:sample-order-type VkCoarseSampleOrderTypeNV)
   (:custom-sample-order-count :uint32)
   (:custom-sample-orders (:pointer (:struct vk-coarse-sample-order-custom-nv))))
 
-(def-struct-translator vk-pipeline-rasterization-line-state-create-info-ext
+(defcstruct vk-pipeline-rasterization-line-state-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:line-rasterization-mode VkLineRasterizationModeEXT)
@@ -2967,14 +2888,14 @@ i don't know how to set up android in lisp
   (:line-stipple-factor :uint32)
   (:line-stipple-pattern :uint16))
 
-(def-struct-translator vk-pipeline-rasterization-conservative-state-create-info-ext
+(defcstruct vk-pipeline-rasterization-conservative-state-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-rasterization-conservative-state-create-flags-ext)
   (:conservative-rasterization-mode VkConservativeRasterizationModeEXT)
   (:extra-primitive-overestimation-size :float))
 
-(def-struct-translator vk-pipeline-discard-rectangle-state-create-info-ext
+(defcstruct vk-pipeline-discard-rectangle-state-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-discard-rectangle-state-create-flags-ext)
@@ -2982,31 +2903,31 @@ i don't know how to set up android in lisp
   (:discard-rectangle-count :uint32)
   (:discard-rectangles (:pointer (:struct vk-rect-2d))))
 
-(def-struct-translator vk-pipeline-viewport-exclusive-scissor-state-create-info-nv
+(defcstruct vk-pipeline-viewport-exclusive-scissor-state-create-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:exclusive-scissor-count :uint32)
   (:discard-rectangle-count (:pointer (:struct vk-rect-2d))))
 
-(def-struct-translator vk-pipeline-representative-fragment-test-state-create-info-nv
+(defcstruct vk-pipeline-representative-fragment-test-state-create-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:representative-fragment-test-enable vk-bool-32))
 
-(def-struct-translator vk-pipeline-coverage-to-color-state-create-info-nv
+(defcstruct vk-pipeline-coverage-to-color-state-create-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-coverage-to-color-state-create-flags-nv)
   (:coverage-to-color-enable vk-bool-32)
   (:coverage-to-color-location :uint32))
 
-(def-struct-translator vk-pipeline-coverage-reduction-state-create-info-nv
+(defcstruct vk-pipeline-coverage-reduction-state-create-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-coverage-reduction-state-create-flags-nv)
   (:coverage-reduction-mode VkCoverageReductionModeNV))
 
-(def-struct-translator vk-framebuffer-mixed-samples-combination-nv
+(defcstruct vk-framebuffer-mixed-samples-combination-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:coverage-reduction-mode VkCoverageReductionModeNV)
@@ -3014,7 +2935,7 @@ i don't know how to set up android in lisp
   (:depth-stencil-samples vk-sample-count-flags)
   (:color-samples vk-sample-count-flags))
 
-(def-struct-translator vk-pipeline-coverage-modulation-state-create-info-nv
+(defcstruct vk-pipeline-coverage-modulation-state-create-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-pipeline-coverage-modulation-state-create-flags-nv)
@@ -3023,19 +2944,19 @@ i don't know how to set up android in lisp
   (:coverage-modulation-table-count :uint32)
   (:coverage-modulation-table (:pointer :float)))
 
-(def-struct-translator vk-pipeline-color-blend-advanced-state-create-info-ext
+(defcstruct vk-pipeline-color-blend-advanced-state-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:src-premultiplied vk-bool-32)
   (:dst-premultiplied vk-bool-32)
   (:blend-overlap VkBlendOverlapEXT))
 
-(def-struct-translator vk-dispatch-indirect-command
+(defcstruct vk-dispatch-indirect-command
   (:x :uint32)
   (:y :uint32)
   (:z :uint32))
 
-(def-struct-translator vk-indirect-commands-layout-token-nv
+(defcstruct vk-indirect-commands-layout-token-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:token-type VkIndirectCommandsTokenTypeNV)
@@ -3052,7 +2973,7 @@ i don't know how to set up android in lisp
   (:index-type (:pointer VkIndexType))
   (:index-type-value (:pointer :uint32)))
 
-(def-struct-translator vk-indirect-commands-layout-create-info-nv
+(defcstruct vk-indirect-commands-layout-create-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-indirect-commands-layout-usage-flags-nv)
@@ -3062,27 +2983,27 @@ i don't know how to set up android in lisp
   (:stream-count :uint32)
   (:stream-strides (:pointer :uint32)))
 
-(def-struct-translator vk-indirect-commands-stream-nv
+(defcstruct vk-indirect-commands-stream-nv
   (:buffer vk-buffer)
   (:offset vk-device-size))
 
-(def-struct-translator vk-bind-shader-group-indirect-command-nv
+(defcstruct vk-bind-shader-group-indirect-command-nv
   (:group-index :uint32))
 
-(def-struct-translator vk-bind-index-buffer-indirect-command-nv
+(defcstruct vk-bind-index-buffer-indirect-command-nv
   (:buffer-address vk-device-address)
   (:size :uint32)
   (:index-type VkIndexType))
 
-(def-struct-translator vk-bind-vertex-buffer-indirect-command-nv
+(defcstruct vk-bind-vertex-buffer-indirect-command-nv
   (:buffer-address vk-device-address)
   (:size :uint32)
   (:stride :uint32))
 
-(def-struct-translator vk-set-state-flags-indirect-command-nv
+(defcstruct vk-set-state-flags-indirect-command-nv
   (:data :uint32))
 
-(def-struct-translator vk-generated-commands-memory-requirements-info-nv
+(defcstruct vk-generated-commands-memory-requirements-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:pipeline-bind-point VkPipelineBindPoint)
@@ -3090,7 +3011,7 @@ i don't know how to set up android in lisp
   (:indirect-commands-layout vk-indirect-commands-layout-nv)
   (:max-sequences-count :uint32))
 
-(def-struct-translator vk-generated-commands-info-nv
+(defcstruct vk-generated-commands-info-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:pipeline-bind-point VkPipelineBindPoint)
@@ -3107,19 +3028,19 @@ i don't know how to set up android in lisp
   (:sequences-index-buffer vk-buffer)
   (:sequences-index-offset vk-device-size))
 
-(def-struct-translator vk-physical-device-sparse-properties
+(defcstruct vk-physical-device-sparse-properties
   (:residency-standard2-d-block-shape vk-bool-32)
   (:residency-standard2-d-multisample-block-shape vk-bool-32)
   (:residency-standard3-d-block-shape vk-bool-32)
   (:residency-aligned-mip-size vk-bool-32)
   (:residency-non-resident-strict vk-bool-32))
 
-(def-struct-translator vk-sparse-image-format-properties
+(defcstruct vk-sparse-image-format-properties
   (:aspect-mask vk-image-aspect-flags)
   (:image-granularity (:struct vk-extent-3d))
   (:flags vk-sparse-image-format-flags))
 
-(def-struct-translator vk-physical-device-sparse-image-format-info2
+(defcstruct vk-physical-device-sparse-image-format-info2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:format VkFormat)
@@ -3128,46 +3049,46 @@ i don't know how to set up android in lisp
   (:usage vk-image-usage-flags)
   (:tiling VkImageTiling))
 
-(def-struct-translator vk-sparse-image-format-properties2
+(defcstruct vk-sparse-image-format-properties2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:properties (:struct vk-sparse-image-format-properties)))
 
-(def-struct-translator vk-sparse-image-memory-requirements
+(defcstruct vk-sparse-image-memory-requirements
   (:format-properties (:struct vk-sparse-image-format-properties))
   (:image-mip-tail-first-lod :uint32)
   (:image-mip-tail-size vk-device-size)
   (:image-mip-tail-offset vk-device-size)
   (:image-mip-tail-stride vk-device-size))
 
-(def-struct-translator vk-image-sparse-memory-requirements-info2
+(defcstruct vk-image-sparse-memory-requirements-info2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:image vk-image))
 
-(def-struct-translator vk-sparse-image-memory-requirements2
+(defcstruct vk-sparse-image-memory-requirements2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:memory-requirements (:struct vk-sparse-image-memory-requirements)))
 
-(def-struct-translator vk-sparse-memory-bind
+(defcstruct vk-sparse-memory-bind
   (:resource-offset vk-device-size)
   (:size vk-device-size)
   (:memory vk-device-memory)
   (:memory-offset vk-device-size)
   (:flags vk-sparse-memory-bind-flags))
 
-(def-struct-translator vk-sparse-buffer-memory-bind-info
+(defcstruct vk-sparse-buffer-memory-bind-info
   (:buffer vk-buffer)
   (:bind-count :uint32)
   (:binds (:pointer (:struct vk-sparse-memory-bind))))
 
-(def-struct-translator vk-sparse-image-opaque-memory-bind-info
+(defcstruct vk-sparse-image-opaque-memory-bind-info
   (:image vk-image)
   (:bind-count :uint32)
   (:binds (:pointer (:struct vk-sparse-memory-bind))))
 
-(def-struct-translator vk-sparse-image-memory-bind
+(defcstruct vk-sparse-image-memory-bind
   (:subresource (:struct vk-image-subresource))
   (:offset (:struct vk-offset-3d))
   (:extent (:struct vk-extent-3d))
@@ -3175,12 +3096,12 @@ i don't know how to set up android in lisp
   (:memory-offset vk-device-size)
   (:flags vk-sparse-memory-bind-flags))
 
-(def-struct-translator vk-sparse-image-memory-bind-info
+(defcstruct vk-sparse-image-memory-bind-info
   (:image vk-image)
   (:bind-count :uint32)
   (:binds (:pointer (:struct vk-sparse-image-memory-bind))))
 
-(def-struct-translator vk-bind-sparse-info
+(defcstruct vk-bind-sparse-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:wait-semaphore-count :uint32)
@@ -3194,27 +3115,27 @@ i don't know how to set up android in lisp
   (:signal-semaphore-count :uint32)
   (:signal-semaphores (:pointer vk-semaphore)))
 
-(def-struct-translator vk-device-group-bind-sparse-info
+(defcstruct vk-device-group-bind-sparse-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:resource-device-index :uint32)
   (:memory-device-index :uint32))
 
 #|
-(def-struct-translator vk-wayland-surface-create-info-khr)
-(def-struct-translator vk-win32-surface-create-info-khr)
-(def-struct-translator vk-xcb-surface-create-info-khr)
-(def-struct-translator vk-xlib-surface-create-info-khr)
-(def-struct-translator vk-direct-f-b-surface-create-info-ext)
-(def-struct-translator vk-image-pipe-surface-create-info-fuchsia)
-(def-struct-translator vk-stream-descriptor-surface-create-info-ggp)
-(def-struct-translator vk-ios-surface-create-info-mvk)
-(def-struct-translator vk-macos-surface-create-info-mvk)
-(def-struct-translator vk-vi-surface-create-info-nn)
-(def-struct-translator vk-metal-surface-create-info-ext)
+(defcstruct vk-wayland-surface-create-info-khr)
+(defcstruct vk-win32-surface-create-info-khr)
+(defcstruct vk-xcb-surface-create-info-khr)
+(defcstruct vk-xlib-surface-create-info-khr)
+(defcstruct vk-direct-f-b-surface-create-info-ext)
+(defcstruct vk-image-pipe-surface-create-info-fuchsia)
+(defcstruct vk-stream-descriptor-surface-create-info-ggp)
+(defcstruct vk-ios-surface-create-info-mvk)
+(defcstruct vk-macos-surface-create-info-mvk)
+(defcstruct vk-vi-surface-create-info-nn)
+(defcstruct vk-metal-surface-create-info-ext)
 |#
 
-(def-struct-translator vk-display-properties-khr
+(defcstruct vk-display-properties-khr
   (:display vk-display-khr)
   (:display-name :string)
   (:physical-dimensions (:struct vk-extent-2d))
@@ -3223,44 +3144,44 @@ i don't know how to set up android in lisp
   (:plane-reorder-possible vk-bool-32)
   (:persistent-content vk-bool-32))
 
-(def-struct-translator vk-display-properties2-khr
+(defcstruct vk-display-properties2-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:display-properties (:struct vk-display-properties-khr)))
 
-(def-struct-translator vk-display-plane-properties-khr
+(defcstruct vk-display-plane-properties-khr
   (:current-display vk-display-khr)
   (:current-stack-index :uint32))
 
-(def-struct-translator vk-display-plane-properties2-khr
+(defcstruct vk-display-plane-properties2-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:display-plane-properties (:struct vk-display-plane-properties-khr)))
 
-(def-struct-translator vk-display-mode-parameters-khr
+(defcstruct vk-display-mode-parameters-khr
   (:visible-region (:struct vk-extent-2d))
   (:refresh-rate :uint32))
 
-(def-struct-translator vk-display-mode-properties-khr
+(defcstruct vk-display-mode-properties-khr
   (:display-mode vk-display-mode-khr)
   (:parameter (:struct vk-display-mode-parameters-khr)))
 
-(def-struct-translator vk-display-mode-properties2-khr
+(defcstruct vk-display-mode-properties2-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:display-mode-properties (:struct vk-display-mode-properties-khr)))
 
-(def-struct-translator vk-display-mode-parameters-khr
+(defcstruct vk-display-mode-parameters-khr
   (:visible-region (:struct vk-extent-2d))
   (:refresh-rate :uint32))
 
-(def-struct-translator vk-display-mode-create-info-khr
+(defcstruct vk-display-mode-create-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-display-mode-create-flags-khr)
   (:parameters (:struct vk-display-mode-parameters-khr)))
 
-(def-struct-translator vk-display-plane-capabilities-khr
+(defcstruct vk-display-plane-capabilities-khr
   (:supported-alpha vk-display-plane-alpha-flags-khr)
   (:min-src-position (:struct vk-offset-2d))
   (:max-src-position (:struct vk-offset-2d))
@@ -3271,23 +3192,23 @@ i don't know how to set up android in lisp
   (:min-dst-extent (:struct vk-extent-2d))
   (:max-dst-extent (:struct vk-extent-2d)))
 
-(def-struct-translator vk-display-plane-info2-khr
+(defcstruct vk-display-plane-info2-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:mode vk-display-mode-khr)
   (:plane-index :uint32))
 
-(def-struct-translator vk-display-plane-capabilities2-khr
+(defcstruct vk-display-plane-capabilities2-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:capability (:struct vk-display-plane-capabilities-khr)))
 
-(def-struct-translator vk-display-power-info-ext
+(defcstruct vk-display-power-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:power-state VkDisplayPowerStateEXT))
 
-(def-struct-translator vk-display-surface-create-info-khr
+(defcstruct vk-display-surface-create-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-display-surface-create-flags-khr)
@@ -3299,12 +3220,12 @@ i don't know how to set up android in lisp
   (:alpha-mode VkDisplayPlaneAlphaFlagBitsKHR)
   (:image-extent (:struct vk-extent-2d)))
 
-(def-struct-translator vk-headless-surface-create-info-ext
+(defcstruct vk-headless-surface-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-headless-surface-create-flags-ext))
 
-(def-struct-translator vk-surface-capabilities-khr
+(defcstruct vk-surface-capabilities-khr
   (:min-image-count :uint32)
   (:max-image-count :uint32)
   (:current-extent (:struct vk-extent-2d))
@@ -3316,47 +3237,47 @@ i don't know how to set up android in lisp
   (:supported-composite-alpha :uint32)
   (:supported-usage-flags :uint32))
 
-(def-struct-translator vk-physical-device-surface-info2-khr
+(defcstruct vk-physical-device-surface-info2-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:surface vk-surface-khr))
 
-(def-struct-translator vk-surface-full-screen-exclusive-info-ext
+(defcstruct vk-surface-full-screen-exclusive-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:full-screen-exclusive VkFullScreenExclusiveEXT))
 
-(def-struct-translator vk-surface-full-screen-exclusive-win32-info-ext
+(defcstruct vk-surface-full-screen-exclusive-win32-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:hmonitor (:pointer :void)))
 
-(def-struct-translator vk-surface-capabilities2-khr
+(defcstruct vk-surface-capabilities2-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:surface-capabilities (:struct vk-surface-capabilities-khr)))
 
-(def-struct-translator vk-surface-protected-capabilities-khr
+(defcstruct vk-surface-protected-capabilities-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:supports-protected vk-bool-32))
 
-(def-struct-translator vk-shared-present-surface-capabilities-khr
+(defcstruct vk-shared-present-surface-capabilities-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:shared-present-supported-usage-flags vk-image-usage-flags))
 
-(def-struct-translator vk-display-native-hdr-surface-capabilities-amd
+(defcstruct vk-display-native-hdr-surface-capabilities-amd
   (:type VkStructureType)
   (:next (:pointer :void))
   (:local-dimming-support vk-bool-32))
 
-(def-struct-translator vk-surface-capabilities-full-screen-exclusive-ext
+(defcstruct vk-surface-capabilities-full-screen-exclusive-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:full-screen-exclusive-supported vk-bool-32))
 
-(def-struct-translator vk-surface-capabilities2-ext
+(defcstruct vk-surface-capabilities2-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:min-image-count :uint32)
@@ -3371,32 +3292,32 @@ i don't know how to set up android in lisp
   (:supported-usage-flags vk-image-usage-flags)
   (:supported-surface-counters vk-surface-counter-flags-ext))
 
-(def-struct-translator vk-surface-format-khr
+(defcstruct vk-surface-format-khr
   (:format VkFormat)
   (:color-space VkColorSpaceKHR))
 
-(def-struct-translator vk-surface-format2-khr
+(defcstruct vk-surface-format2-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:surface-format (:struct vk-surface-format-khr)))
 
-(def-struct-translator vk-device-group-present-capabilities-khr
+(defcstruct vk-device-group-present-capabilities-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:present-mask :uint32 :count 32)
   (:modes vk-device-group-present-mode-flags-khr))
 
-(def-struct-translator vk-refresh-cycle-duration-google
+(defcstruct vk-refresh-cycle-duration-google
   (:refresh-duration :uint64))
 
-(def-struct-translator vk-past-presentation-timing-google
+(defcstruct vk-past-presentation-timing-google
   (:present-id :uint32)
   (:desired-present-time :uint64)
   (:actual-present-time :uint64)
   (:earliest-present-time :uint64)
   (:present-margin :uint64))
 
-(def-struct-translator vk-swapchain-create-info-khr
+(defcstruct vk-swapchain-create-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-swapchain-create-flags)
@@ -3416,22 +3337,22 @@ i don't know how to set up android in lisp
   (:clipped vk-bool-32)
   (:old-swapchain vk-swapchain-khr))
 
-(def-struct-translator vk-device-group-swapchain-create-info-khr
+(defcstruct vk-device-group-swapchain-create-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:modes vk-device-group-present-mode-flags-khr))
 
-(def-struct-translator vk-swapchain-display-native-hdr-create-info-amd
+(defcstruct vk-swapchain-display-native-hdr-create-info-amd
   (:type VkStructureType)
   (:next (:pointer :void))
   (:local-dimming-enable vk-bool-32))
 
-(def-struct-translator vk-swapchain-counter-create-info-ext
+(defcstruct vk-swapchain-counter-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:surface-counters vk-surface-counter-flags-ext))
 
-(def-struct-translator vk-acquire-next-image-info-khr
+(defcstruct vk-acquire-next-image-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:swapchain vk-swapchain-khr)
@@ -3440,7 +3361,7 @@ i don't know how to set up android in lisp
   (:fence vk-fence)
   (:device-mask :uint32))
 
-(def-struct-translator vk-present-info-khr
+(defcstruct vk-present-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:wait-semaphore-count :uint32)
@@ -3450,51 +3371,51 @@ i don't know how to set up android in lisp
   (:image-indices (:pointer :uint32))
   (:result VkResult))
 
-(def-struct-translator vk-present-regions-khr
+(defcstruct vk-present-regions-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:swapchain-count :uint32)
   (:regions (:pointer (:struct vk-present-regions-khr))))
 
-(def-struct-translator vk-rect-layer-khr
+(defcstruct vk-rect-layer-khr
   (:offset (:struct vk-offset-2d))
   (:extent (:struct vk-extent-2d))
   (:layer :uint32))
 
-(def-struct-translator vk-display-present-khr
+(defcstruct vk-display-present-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:src-rect (:struct vk-rect-2d))
   (:dst-rect (:struct vk-rect-2d))
   (:persistent vk-bool-32))
 
-(def-struct-translator vk-device-group-present-info-khr
+(defcstruct vk-device-group-present-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:swapchain-count :uint32)
   (:device-mask (:pointer :uint32))
   (:mode VkDeviceGroupPresentModeFlagBitsKHR))
 
-(def-struct-translator vk-present-time-google
+(defcstruct vk-present-time-google
   (:present-id :uint32)
   (:desired-present-time :uint64))
 
-(def-struct-translator vk-present-times-info-google
+(defcstruct vk-present-times-info-google
   (:type VkStructureType)
   (:next (:pointer :void))
   (:swapchain-count :uint32)
   (:times (:pointer (:struct vk-present-time-google))))
 
-(def-struct-translator vk-present-frame-token-ggp
+(defcstruct vk-present-frame-token-ggp
   (:type VkStructureType)
   (:next (:pointer :void))
   (:frame-token :uint32))   ;;maybe ??
 
-(def-struct-translator vk-xy-color-ext
+(defcstruct vk-xy-color-ext
   (:x :float)
   (:y :float))
 
-(def-struct-translator vk-hdr-metadata-ext
+(defcstruct vk-hdr-metadata-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:display-primary-red (:struct vk-xy-color-ext))
@@ -3506,23 +3427,23 @@ i don't know how to set up android in lisp
   (:max-content-light-level :float)
   (:max-frame-average-light-level :float))
 
-(def-struct-translator vk-deferred-operation-info-khr
+(defcstruct vk-deferred-operation-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:operation-handle vk-deferred-operation-khr))
 
-(def-struct-translator vk-private-data-slot-create-info-ext
+(defcstruct vk-private-data-slot-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-private-data-slot-create-flags-ext))
 
-(def-struct-translator vk-strided-buffer-region-khr
+(defcstruct vk-strided-buffer-region-khr
   (:buffer vk-buffer)
   (:offset vk-device-size)
   (:stride vk-device-size)
   (:size vk-device-size))
 
-(def-struct-translator vk-trace-rays-indirect-command-khr
+(defcstruct vk-trace-rays-indirect-command-khr
   (:width :uint32)
   (:height :uint32)
   (:depth :uint32))
@@ -3531,7 +3452,7 @@ i don't know how to set up android in lisp
   (:device-address vk-device-address)
   (:host-address (:pointer :void)))
 
-(def-struct-translator vk-acceleration-structure-geometry-triangles-data-khr
+(defcstruct vk-acceleration-structure-geometry-triangles-data-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:vertex-format VkFormat)
@@ -3541,13 +3462,13 @@ i don't know how to set up android in lisp
   (:index-data (:union vk-device-or-host-address-const-khr))
   (:transform-data (:union vk-device-or-host-address-const-khr)))
 
-(def-struct-translator vk-acceleration-structure-geometry-aabbs-data-khr
+(defcstruct vk-acceleration-structure-geometry-aabbs-data-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:data (:union vk-device-or-host-address-const-khr))
   (:stride vk-device-size))
 
-(def-struct-translator vk-acceleration-structure-geometry-instances-data-khr
+(defcstruct vk-acceleration-structure-geometry-instances-data-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:array-of-pointers vk-bool-32)
@@ -3558,7 +3479,7 @@ i don't know how to set up android in lisp
   (:aabbs (:struct vk-acceleration-structure-geometry-aabbs-data-khr))
   (:instances (:struct vk-acceleration-structure-geometry-instances-data-khr)))
 
-(def-struct-translator vk-acceleration-structure-geometry-khr
+(defcstruct vk-acceleration-structure-geometry-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:geometry-type VkGeometryTypeKHR)
@@ -3569,7 +3490,7 @@ i don't know how to set up android in lisp
   (:device-address vk-device-address)
   (:host-address (:pointer :void)))
 
-(def-struct-translator vk-acceleration-structure-build-geometry-info-khr
+(defcstruct vk-acceleration-structure-build-geometry-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:type VkAccelerationStructureTypeKHR)
@@ -3580,10 +3501,10 @@ i don't know how to set up android in lisp
   (:geometry-array-of-pointers vk-bool-32)
   (:scratch-data (:union vk-device-or-host-address-khr)))
 
-(def-struct-translator vk-transform-matrix-khr
+(defcstruct vk-transform-matrix-khr
   (:matrix :float :count 3 :count 4))
 
-(def-struct-translator vk-aabb-positions-khr
+(defcstruct vk-aabb-positions-khr
   (:minx :float)
   (:miny :float)
   (:minz :float)
@@ -3591,7 +3512,7 @@ i don't know how to set up android in lisp
   (:maxy :float)
   (:maxz :float))
 
-(def-struct-translator vk-acceleration-structure-instance-khr
+(defcstruct vk-acceleration-structure-instance-khr
   (:transform (:struct vk-transform-matrix-khr))
   (:instance-custom-index :uint32)                        ;;initialize as 24
   (:mask :uint32)                                         ;;initialize as 8
@@ -3599,54 +3520,54 @@ i don't know how to set up android in lisp
   (:flags vk-geometry-instance-flags-khr)                 ;;initialize as 8
   (:acceleration-structure-reference :uint64))
 
-(def-struct-translator vk-acceleration-structure-build-offset-info-khr
+(defcstruct vk-acceleration-structure-build-offset-info-khr
   (:primitive-count :uint32)
   (:primitive-offset :uint32)
   (:first-vertex :uint32)
   (:transform-offset :uint32))
 
-(def-struct-translator vk-copy-acceleration-structure-info-khr
+(defcstruct vk-copy-acceleration-structure-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:src vk-acceleration-structure-khr)
   (:dst vk-acceleration-structure-khr)
   (:mode VkCopyAccelerationStructureModeKHR))
 
-(def-struct-translator vk-copy-acceleration-structure-to-memory-info-khr
+(defcstruct vk-copy-acceleration-structure-to-memory-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:src vk-acceleration-structure-khr)
   (:dst (:union vk-device-or-host-address-khr))
   (:mode VkCopyAccelerationStructureModeKHR))
 
-(def-struct-translator vk-copy-memory-to-acceleration-structure-info-khr
+(defcstruct vk-copy-memory-to-acceleration-structure-info-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:src (:union vk-device-or-host-address-const-khr))
   (:dst vk-acceleration-structure-khr)
   (:mode VkCopyAccelerationStructureModeKHR))
 
-(def-struct-translator vk-acceleration-structure-version-khr
+(defcstruct vk-acceleration-structure-version-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:version-data (:pointer :uint8)))
 
-(def-struct-translator vk-layer-properties
+(defcstruct vk-layer-properties
   (:layer-name :char :count 256)
   (:spec-version :uint32)
   (:implementation-version :uint32)
   (:description :char :count 256))
 
-(def-struct-translator vk-extension-properties
+(defcstruct vk-extension-properties
   (:extension-name :char :count 256)
   (:spec-version :uint32))
 
-(def-struct-translator vk-physical-device-features2
+(defcstruct vk-physical-device-features2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:feature (:struct vk-physical-device-features)))
 
-(def-struct-translator vk-physical-device-vulkan11-features
+(defcstruct vk-physical-device-vulkan11-features
   (:type VkStructureType)
   (:next (:pointer :void))
   (:storage-buffer16-bit-access vk-bool-32)
@@ -3662,7 +3583,7 @@ i don't know how to set up android in lisp
   (:sampler-ycbcr-conversion vk-bool-32)
   (:shader-draw-parameters vk-bool-32))
 
-(def-struct-translator vk-physical-device-vulkan12-features
+(defcstruct vk-physical-device-vulkan12-features
   (:type VkStructureType)
   (:next (:pointer :void))
   (:sampler-mirror-clamp-to-edge vk-bool-32)
@@ -3713,20 +3634,20 @@ i don't know how to set up android in lisp
   (:shader-output-layer vk-bool-32)
   (:subgroup-broadcast-dynamic-id vk-bool-32))
 
-(def-struct-translator vk-physical-device-variable-pointers-features
+(defcstruct vk-physical-device-variable-pointers-features
   (:type VkStructureType)
   (:next (:pointer :void))
   (:variable-pointers-storage-buffer vk-bool-32)
   (:variable-pointers vk-bool-32))
 
-(def-struct-translator vk-physical-device-multiview-features
+(defcstruct vk-physical-device-multiview-features
   (:type VkStructureType)
   (:next (:pointer :void))
   (:multiview vk-bool-32)
   (:multiview-geometry-shader vk-bool-32)
   (:multiview-tessellation-shader vk-bool-32))
 
-(def-struct-translator vk-physical-device-shader-atomic-float-features-ext
+(defcstruct vk-physical-device-shader-atomic-float-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:shader-buffer-float-32-atomics vk-bool-32)
@@ -3742,71 +3663,71 @@ i don't know how to set up android in lisp
   (:sparse-image-float-32-atomics vk-bool-32)
   (:sparse-image-float-32-atomic-add vk-bool-32))
 
-(def-struct-translator vk-physical-device-shader-atomic-int-64-features
+(defcstruct vk-physical-device-shader-atomic-int-64-features
   (:type VkStructureType)
   (:next (:pointer :void))
   (:shader-buffer-int-64-atomics vk-bool-32)
   (:shader-shared-int-64-atomics vk-bool-32))
 
-(def-struct-translator vk-physical-device-8-bit-storage-features
+(defcstruct vk-physical-device-8-bit-storage-features
   (:type VkStructureType)
   (:next (:pointer :void))
   (:storage-buffer-8-bit-access vk-bool-32)
   (:uniform-and-storage-buffer-8-bit-access vk-bool-32)
   (:storage-push-constant-8 vk-bool-32))
 
-(def-struct-translator vk-physical-device-16-bit-storage-features
+(defcstruct vk-physical-device-16-bit-storage-features
   (:type VkStructureType)
   (:next (:pointer :void))
   (:storage-buffer-16-bit-access vk-bool-32)
   (:uniform-and-storage-buffer-16-bit-access vk-bool-32)
   (:storage-push-constant-16 vk-bool-32))
 
-(def-struct-translator vk-physical-device-shader-float-16-int-8-features
+(defcstruct vk-physical-device-shader-float-16-int-8-features
   (:type VkStructureType)
   (:next (:pointer :void))
   (:shader-float-16 vk-bool-32)
   (:shader-int8 vk-bool-32))
 
-(def-struct-translator vk-physical-device-shader-clock-features-khr
+(defcstruct vk-physical-device-shader-clock-features-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:shader-subgroup-clock vk-bool-32)
   (:shader-device-clock vk-bool-32))
 
-(def-struct-translator vk-physical-device-sampler-ycbcr-conversion-features
+(defcstruct vk-physical-device-sampler-ycbcr-conversion-features
   (:type VkStructureType)
   (:next (:pointer :void))
   (:sampler-ycbcr-conversion vk-bool-32))
 
-(def-struct-translator vk-physical-device-protected-memory-features
+(defcstruct vk-physical-device-protected-memory-features
   (:type VkStructureType)
   (:next (:pointer :void))
   (:protected-memory vk-bool-32))
 
-(def-struct-translator vk-physical-device-blend-operation-advanced-features-ext
+(defcstruct vk-physical-device-blend-operation-advanced-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:advanced-blend-coherent-operations vk-bool-32))
 
-(def-struct-translator vk-physical-device-conditional-rendering-features-ext
+(defcstruct vk-physical-device-conditional-rendering-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:conditional-rendering vk-bool-32)
   (:inherited-conditional-rendering vk-bool-32))
 
-(def-struct-translator vk-physical-device-shader-draw-parameters-features
+(defcstruct vk-physical-device-shader-draw-parameters-features
   (:type VkStructureType)
   (:next (:pointer :void))
   (:shader-draw-parameters vk-bool-32))
 
-(def-struct-translator vk-physical-device-mesh-shader-features-nv
+(defcstruct vk-physical-device-mesh-shader-features-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:task-shader vk-bool-32)
   (:mesh-shader vk-bool-32))
 
-(def-struct-translator vk-physical-device-descriptor-indexing-features
+(defcstruct vk-physical-device-descriptor-indexing-features
   (:type VkStructureType)
   (:next (:pointer :void))
   (:shader-input-attachment-array-dynamic-indexing vk-bool-32)
@@ -3830,208 +3751,208 @@ i don't know how to set up android in lisp
   (:descriptor-binding-variable-descriptor-count vk-bool-32)
   (:runtime-descriptor-array vk-bool-32))
 
-(def-struct-translator vk-physical-device-vertex-attribute-divisor-features-ext
+(defcstruct vk-physical-device-vertex-attribute-divisor-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:vertex-attribute-instance-rate-divisor vk-bool-32)
   (:vertex-attribute-instance-rate-zero-divisor vk-bool-32))
 
-(def-struct-translator vk-physical-device-a-s-t-c-decode-features-ext
+(defcstruct vk-physical-device-a-s-t-c-decode-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:decode-mode-shared-exponent vk-bool-32))
 
-(def-struct-translator vk-physical-device-transform-feedback-features-ext
+(defcstruct vk-physical-device-transform-feedback-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:transform-feedback vk-bool-32)
   (:geometry-streams vk-bool-32))
 
-(def-struct-translator vk-physical-device-vulkan-memory-model-features
+(defcstruct vk-physical-device-vulkan-memory-model-features
   (:type VkStructureType)
   (:next (:pointer :void))
   (:vulkan-memory-model vk-bool-32)
   (:vulkan-memory-model-device-scope vk-bool-32)
   (:vulkan-memory-model-availability-visibility-chains vk-bool-32))
 
-(def-struct-translator vk-physical-device-inline-uniform-block-features-ext
+(defcstruct vk-physical-device-inline-uniform-block-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:inline-uniform-block vk-bool-32)
   (:descriptor-binding-inline-uniform-block-update-after-bind vk-bool-32))
 
-(def-struct-translator vk-physical-device-representative-fragment-test-features-nv
+(defcstruct vk-physical-device-representative-fragment-test-features-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:representative-fragment-test vk-bool-32))
 
-(def-struct-translator vk-physical-device-exclusive-scissor-features-nv
+(defcstruct vk-physical-device-exclusive-scissor-features-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:exclusive-scissor vk-bool-32))
 
-(def-struct-translator vk-physical-device-corner-sampled-image-features-nv
+(defcstruct vk-physical-device-corner-sampled-image-features-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:corner-sampled-image vk-bool-32))
 
-(def-struct-translator vk-physical-device-compute-shader-derivatives-features-nv
+(defcstruct vk-physical-device-compute-shader-derivatives-features-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:compute-derivative-group-quads vk-bool-32)
   (:compute-derivative-group-linear vk-bool-32))
 
-(def-struct-translator vk-physical-device-fragment-shader-barycentric-features-nv
+(defcstruct vk-physical-device-fragment-shader-barycentric-features-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:fragment-shader-barycentric vk-bool-32))
 
-(def-struct-translator vk-physical-device-shader-image-footprint-features-nv
+(defcstruct vk-physical-device-shader-image-footprint-features-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:imaeg-footprint vk-bool-32))
 
-(def-struct-translator vk-physical-device-shading-rate-image-features-nv
+(defcstruct vk-physical-device-shading-rate-image-features-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:shading-rate-image vk-bool-32)
   (:shading-rate-coarse-sample-order vk-bool-32))
 
-(def-struct-translator vk-physical-device-fragment-density-map-features-ext
+(defcstruct vk-physical-device-fragment-density-map-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:fragment-density-map vk-bool-32)
   (:fragment-density-map-dynamic vk-bool-32)
   (:fragment-density-map-non-subsampled-images vk-bool-32))
 
-(def-struct-translator vk-physical-device-fragment-density-map2-features-ext
+(defcstruct vk-physical-device-fragment-density-map2-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:fragment-density-map-deferred vk-bool-32))
 
-(def-struct-translator vk-physical-device-scalar-block-layout-features
+(defcstruct vk-physical-device-scalar-block-layout-features
   (:type VkStructureType)
   (:next (:pointer :void))
   (:scalar-block-layout vk-bool-32))
 
-(def-struct-translator vk-physical-device-uniform-buffer-standard-layout-features
+(defcstruct vk-physical-device-uniform-buffer-standard-layout-features
   (:type VkStructureType)
   (:next (:pointer :void))
   (:uniform-buffer-standard-layout vk-bool-32))
 
-(def-struct-translator vk-physical-device-depth-clip-enable-features-ext
+(defcstruct vk-physical-device-depth-clip-enable-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:depth-clip-enable vk-bool-32))
 
-(def-struct-translator vk-physical-device-memory-priority-features-ext
+(defcstruct vk-physical-device-memory-priority-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:memory-prioryity vk-bool-32))
 
-(def-struct-translator vk-physical-device-buffer-device-address-features
+(defcstruct vk-physical-device-buffer-device-address-features
   (:type VkStructureType)
   (:next (:pointer :void))
   (:buffer-device-address vk-bool-32)
   (:buffer-device-address-capture-replay vk-bool-32)
   (:buffer-device-address-multi-device vk-bool-32))
 
-(def-struct-translator vk-physical-device-buffer-device-address-features-ext
+(defcstruct vk-physical-device-buffer-device-address-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:buffer-device-address vk-bool-32)
   (:buffer-device-address-capture-replay vk-bool-32)
   (:buffer-device-address-multi-device vk-bool-32))
 
-(def-struct-translator vk-physical-device-dedicated-allocation-image-aliasing-features-nv
+(defcstruct vk-physical-device-dedicated-allocation-image-aliasing-features-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:dedicated-allocation-image-aliasing vk-bool-32))
 
-(def-struct-translator vk-physical-device-imageless-framebuffer-features
+(defcstruct vk-physical-device-imageless-framebuffer-features
   (:type VkStructureType)
   (:next (:pointer :void))
   (:imageless-framebuffer vk-bool-32))
 
-(def-struct-translator vk-physical-device-fragment-shader-interlock-features-ext
+(defcstruct vk-physical-device-fragment-shader-interlock-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:fragment-shader-sample-interlock vk-bool-32)
   (:fragment-shader-pixel-interlock vk-bool-32)
   (:fragment-shader-shading-rate-interlock vk-bool-32))
 
-(def-struct-translator vk-physical-device-cooperative-matrix-features-nv
+(defcstruct vk-physical-device-cooperative-matrix-features-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:cooperative-matrix vk-bool-32)
   (:cooperative-matrix-robust-buffer-access vk-bool-32))
 
-(def-struct-translator vk-physical-device-ycbcr-image-arrays-features-ext
+(defcstruct vk-physical-device-ycbcr-image-arrays-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:ycbcr-image-arrays vk-bool-32))
 
-(def-struct-translator vk-physical-device-shader-subgroup-extended-types-features
+(defcstruct vk-physical-device-shader-subgroup-extended-types-features
   (:type VkStructureType)
   (:next (:pointer :void))
   (:shader-subgroup-extended-types vk-bool-32))
 
-(def-struct-translator vk-physical-device-host-query-reset-features
+(defcstruct vk-physical-device-host-query-reset-features
   (:type VkStructureType)
   (:next (:pointer :void))
   (:host-query-reset vk-bool-32))
 
-(def-struct-translator vk-physical-device-shader-integer-functions2-features-intel
+(defcstruct vk-physical-device-shader-integer-functions2-features-intel
   (:type VkStructureType)
   (:next (:pointer :void))
   (:shader-integer-functions2 vk-bool-32))
 
-(def-struct-translator vk-physical-device-coverage-reduction-mode-features-nv
+(defcstruct vk-physical-device-coverage-reduction-mode-features-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:coverage-reduction-mode vk-bool-32))
 
-(def-struct-translator vk-physical-device-timeline-semaphore-features
+(defcstruct vk-physical-device-timeline-semaphore-features
   (:type VkStructureType)
   (:next (:pointer :void))
   (:timeline-semaphore vk-bool-32))
 
-(def-struct-translator vk-physical-device-index-type-uint8-features-ext
+(defcstruct vk-physical-device-index-type-uint8-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:index-type-uint8 vk-bool-32))
 
-(def-struct-translator vk-physical-device-shader-sm-builtins-features-nv
+(defcstruct vk-physical-device-shader-sm-builtins-features-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:shader-sm-builtins vk-bool-32))
 
-(def-struct-translator vk-physical-device-separate-depth-stencil-layouts-features
+(defcstruct vk-physical-device-separate-depth-stencil-layouts-features
   (:type VkStructureType)
   (:next (:pointer :void))
   (:separate-depth-stencil-layouts vk-bool-32))
 
-(def-struct-translator vk-physical-device-pipeline-executable-properties-features-khr
+(defcstruct vk-physical-device-pipeline-executable-properties-features-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:pipeline-executable-info vk-bool-32))
 
-(def-struct-translator vk-physical-device-shader-demote-to-helper-invocation-features-ext
+(defcstruct vk-physical-device-shader-demote-to-helper-invocation-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:shader-demote-to-helper-invocation vk-bool-32))
 
-(def-struct-translator vk-physical-device-texel-buffer-alignment-features-ext
+(defcstruct vk-physical-device-texel-buffer-alignment-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:texel-buffer-alignment vk-bool-32))
 
-(def-struct-translator vk-physical-device-texture-compression-astchdr-features-ext
+(defcstruct vk-physical-device-texture-compression-astchdr-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:texture-compression-astc-hdr vk-bool-32))
 
-(def-struct-translator vk-physical-device-line-rasterization-features-ext
+(defcstruct vk-physical-device-line-rasterization-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:rectangular-lines vk-bool-32)
@@ -4041,18 +3962,18 @@ i don't know how to set up android in lisp
   (:stippled-bresenham-lines vk-bool-32)
   (:stippled-smooth-lines vk-bool-32))
 
-(def-struct-translator vk-physical-device-subgroup-size-control-features-ext
+(defcstruct vk-physical-device-subgroup-size-control-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:subgroup-size-control vk-bool-32)
   (:compute-full-subgroups vk-bool-32))
 
-(def-struct-translator vk-physical-device-coherent-memory-features-amd
+(defcstruct vk-physical-device-coherent-memory-features-amd
   (:type VkStructureType)
   (:next (:pointer :void))
   (:device-coherent-memory vk-bool-32))
 
-(def-struct-translator vk-physical-device-ray-tracing-features-khr
+(defcstruct vk-physical-device-ray-tracing-features-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:ray-tracing vk-bool-32)
@@ -4065,73 +3986,73 @@ i don't know how to set up android in lisp
   (:ray-query vk-bool-32)
   (:ray-tracing-primitive-culling vk-bool-32))
 
-(def-struct-translator vk-physical-device-extended-dynamic-state-features-ext
+(defcstruct vk-physical-device-extended-dynamic-state-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:extended-dynamic-state vk-bool-32))
 
-(def-struct-translator vk-physical-device-device-generated-commands-features-nv
+(defcstruct vk-physical-device-device-generated-commands-features-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:device-generated-commands vk-bool-32))
 
-(def-struct-translator vk-physical-device-diagnostics-config-features-nv
+(defcstruct vk-physical-device-diagnostics-config-features-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:diagnostics-config vk-bool-32))
 
-(def-struct-translator vk-physical-device-pipeline-creation-cache-control-features-ext
+(defcstruct vk-physical-device-pipeline-creation-cache-control-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:pipeline-creation-cache-control vk-bool-32))
 
-(def-struct-translator vk-physical-device-private-data-features-ext
+(defcstruct vk-physical-device-private-data-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:private-data vk-bool-32))
 
-(def-struct-translator vk-physical-device-robustness2-features-ext
+(defcstruct vk-physical-device-robustness2-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:robust-buffer-access2 vk-bool-32)
   (:robust-image-access2 vk-bool-32)
   (:null-descriptor vk-bool-32))
 
-(def-struct-translator vk-physical-device-image-robustness-features-ext
+(defcstruct vk-physical-device-image-robustness-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:robust-image-access vk-bool-32))
 
-(def-struct-translator vk-physical-device-custom-border-color-features-ext
+(defcstruct vk-physical-device-custom-border-color-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:custom-border-colors vk-bool-32)
   (:custom-border-color-without-format vk-bool-32))
 
-(def-struct-translator vk-physical-device-performance-query-features-khr
+(defcstruct vk-physical-device-performance-query-features-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:performance-counter-query-pools vk-bool-32)
   (:performance-counter-multiple-query-pools vk-bool-32))
 
-(def-struct-translator vk-physical-device-4444-formats-features-ext
+(defcstruct vk-physical-device-4444-formats-features-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:format-a4-r4-g4-b4 vk-bool-32)
   (:format-a4-b4-g4-r4 vk-bool-32))
 
-(def-struct-translator vk-physical-device-push-descriptor-properties-khr
+(defcstruct vk-physical-device-push-descriptor-properties-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:max-push-descriptors :uint32))
 
-(def-struct-translator vk-physical-device-multiview-properties
+(defcstruct vk-physical-device-multiview-properties
   (:type VkStructureType)
   (:next (:pointer :void))
   (:max-multiview-view-count :uint32)
   (:max-multiview-instance-index :uint32))
 
-(def-struct-translator vk-physical-device-float-controls-properties
+(defcstruct vk-physical-device-float-controls-properties
   (:type VkStructureType)
   (:next (:pointer :void))
   (:denorm-behavior-independence VkShaderFloatControlsIndependence)
@@ -4152,12 +4073,12 @@ i don't know how to set up android in lisp
   (:shader-rounding-mode-r-t-z-float32 vk-bool-32)
   (:shader-rounding-mode-r-t-z-float64 vk-bool-32))
 
-(def-struct-translator vk-physical-device-discard-rectangle-properties-ext
+(defcstruct vk-physical-device-discard-rectangle-properties-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:max-discard-rectangles :uint32))
 
-(def-struct-translator vk-physical-device-sample-locations-properties-ext
+(defcstruct vk-physical-device-sample-locations-properties-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:sample-location-sample-counts vk-sample-count-flags)
@@ -4166,22 +4087,22 @@ i don't know how to set up android in lisp
   (:sample-location-sub-pixel-bits :uint32)
   (:variable-sample-locations vk-bool-32))
 
-(def-struct-translator vk-physical-device-external-memory-host-properties-ext
+(defcstruct vk-physical-device-external-memory-host-properties-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:min-imported-host-pointer-alignment vk-device-size))
 
-(def-struct-translator vk-physical-device-multiview-per-view-attributes-properties-nvx
+(defcstruct vk-physical-device-multiview-per-view-attributes-properties-nvx
   (:type VkStructureType)
   (:next (:pointer :void))
   (:per-view-position-all-components vk-bool-32))
 
-(def-struct-translator vk-physical-device-point-clipping-properties
+(defcstruct vk-physical-device-point-clipping-properties
   (:type VkStructureType)
   (:next (:pointer :void))
   (:point-clipping-behavior VkPointClippingBehavior))
 
-(def-struct-translator vk-physical-device-subgroup-properties
+(defcstruct vk-physical-device-subgroup-properties
   (:type VkStructureType)
   (:next (:pointer :void))
   (:subgroup-size :uint32)
@@ -4189,7 +4110,7 @@ i don't know how to set up android in lisp
   (:supported-operations vk-subgroup-feature-flags)
   (:quad-operations-in-all-stages vk-bool-32))
 
-(def-struct-translator vk-physical-device-subgroup-size-control-properties-ext
+(defcstruct vk-physical-device-subgroup-size-control-properties-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:min-subgroup-size :uint32)
@@ -4197,7 +4118,7 @@ i don't know how to set up android in lisp
   (:max-compute-workgroup-subgroups :uint32)
   (:required-subgroup-size-stages vk-shader-stage-flags))
 
-(def-struct-translator vk-physical-device-blend-operation-advanced-properties-ext
+(defcstruct vk-physical-device-blend-operation-advanced-properties-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:advanced-blend-max-color-attachments :uint32)
@@ -4207,29 +4128,29 @@ i don't know how to set up android in lisp
   (:advanced-blend-correlated-overlap vk-bool-32)
   (:advanced-blend-all-operations vk-bool-32))
 
-(def-struct-translator vk-physical-device-vertex-attribute-divisor-properties-ext
+(defcstruct vk-physical-device-vertex-attribute-divisor-properties-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:max-vertex-attrib-divisor :uint32))
 
-(def-struct-translator vk-physical-device-sampler-filter-minmax-properties
+(defcstruct vk-physical-device-sampler-filter-minmax-properties
   (:type VkStructureType)
   (:next (:pointer :void))
   (:filter-minmax-single-component-formats vk-bool-32)
   (:filter-minmax-image-component-mapping vk-bool-32))
 
-(def-struct-translator vk-physical-device-protected-memory-properties
+(defcstruct vk-physical-device-protected-memory-properties
   (:type VkStructureType)
   (:next (:pointer :void))
   (:protected-no-fault vk-bool-32))
 
-(def-struct-translator vk-physical-device-maintenance3-properties
+(defcstruct vk-physical-device-maintenance3-properties
   (:type VkStructureType)
   (:next (:pointer :void))
   (:max-per-set-descriptors :uint32)
   (:max-memory-allocation-size vk-device-size))
 
-(def-struct-translator vk-physical-device-mesh-shader-properties-nv
+(defcstruct vk-physical-device-mesh-shader-properties-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:max-draw-mesh-tasks-count :uint32)
@@ -4246,7 +4167,7 @@ i don't know how to set up android in lisp
   (:mesh-output-per-vertex-granularity :uint32)
   (:mesh-output-per-primitive-granularity :uint32))
 
-(def-struct-translator vk-physical-device-descriptor-indexing-properties
+(defcstruct vk-physical-device-descriptor-indexing-properties
   (:type VkStructureType)
   (:next (:pointer :void))
   (:max-update-after-bind-descriptors-in-all-pools :uint32)
@@ -4273,7 +4194,7 @@ i don't know how to set up android in lisp
   (:max-descriptor-set-update-after-bind-storage-images :uint32)
   (:max-descriptor-set-update-after-bind-input-attachments :uint32))
 
-(def-struct-translator vk-physical-device-inline-uniform-block-properties-ext
+(defcstruct vk-physical-device-inline-uniform-block-properties-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:max-inline-uniform-block-size :uint32)
@@ -4282,7 +4203,7 @@ i don't know how to set up android in lisp
   (:max-descriptor-set-inline-uniform-blocks :uint32)
   (:max-descriptor-set-update-after-bind-inline-uniformq-blocks :uint32))
 
-(def-struct-translator vk-physical-device-conservative-rasterization-properties-ext
+(defcstruct vk-physical-device-conservative-rasterization-properties-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:primitive-overestimation-size :float)
@@ -4295,14 +4216,14 @@ i don't know how to set up android in lisp
   (:fully-covered-fragment-shader-input-variable vk-bool-32)
   (:conservative-rasterization-post-depth-coverage vk-bool-32))
 
-(def-struct-translator vk-physical-device-fragment-density-map-properties-ext
+(defcstruct vk-physical-device-fragment-density-map-properties-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:min-fragment-density-texel-size (:struct vk-extent-2d))
   (:max-fragment-density-texel-size (:struct vk-extent-2d))
   (:fragment-density-invocations vk-bool-32))
 
-(def-struct-translator vk-physical-device-fragment-density-map2-properties-ext
+(defcstruct vk-physical-device-fragment-density-map2-properties-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:subsampled-loads vk-bool-32)
@@ -4310,7 +4231,7 @@ i don't know how to set up android in lisp
   (:max-subsampled-array-layers :uint32)
   (:max-descriptor-set-subsampled-samplers :uint32))
 
-(def-struct-translator vk-physical-device-shader-core-properties-amd
+(defcstruct vk-physical-device-shader-core-properties-amd
   (:type VkStructureType)
   (:next (:pointer :void))
   (:shader-engine-count :uint32)
@@ -4328,13 +4249,13 @@ i don't know how to set up android in lisp
   (:max-vgpr-allocation :uint32)
   (:vgpr-allocation-granularity :uint32))
 
-(def-struct-translator vk-physical-device-shader-core-properties2-amd
+(defcstruct vk-physical-device-shader-core-properties2-amd
   (:type VkStructureType)
   (:next (:pointer :void))
   (:shader-core-features vk-shader-core-properties-flags-amd)
   (:active-compute-unit-count :uint32))
 
-(def-struct-translator vk-physical-device-depth-stencil-resolve-properties
+(defcstruct vk-physical-device-depth-stencil-resolve-properties
   (:type VkStructureType)
   (:next (:pointer :void))
   (:supported-depth-resolve-modes vk-reslove-mode-flags)
@@ -4342,19 +4263,19 @@ i don't know how to set up android in lisp
   (:independent-resolve-none vk-bool-32)
   (:independent-resolve vk-bool-32))
 
-(def-struct-translator vk-physical-device-performance-query-properties-khr
+(defcstruct vk-physical-device-performance-query-properties-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:allow-command-buffer-query-copies vk-bool-32))
 
-(def-struct-translator vk-physical-device-shading-rate-image-properties-nv
+(defcstruct vk-physical-device-shading-rate-image-properties-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:shading-rate-texel-size (:struct vk-extent-2d))
   (:shading-rate-palette-size :uint32)
   (:shading-rate-max-coarse-samples :uint32))
 
-(def-struct-translator vk-physical-device-transform-feedback-properties-ext
+(defcstruct vk-physical-device-transform-feedback-properties-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:max-transform-feedback-streams :uint32)
@@ -4368,7 +4289,7 @@ i don't know how to set up android in lisp
   (:transform-feedback-rasterization-stream-select vk-bool-32)
   (:transform-feedback-draw vk-bool-32))
 
-(def-struct-translator vk-physical-device-ray-tracing-properties-nv
+(defcstruct vk-physical-device-ray-tracing-properties-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:shader-group-handle-size :uint32)
@@ -4380,7 +4301,7 @@ i don't know how to set up android in lisp
   (:max-triangle-count :uint64)
   (:max-descriptor-set-acceleration-structures :uint32))
 
-(def-struct-translator vk-physical-device-ray-tracing-properties-khr
+(defcstruct vk-physical-device-ray-tracing-properties-khr
   (:type VkStructureType)
   (:next (:pointer :void))
   (:shader-group-handle-size :uint32)
@@ -4393,18 +4314,18 @@ i don't know how to set up android in lisp
   (:max-descriptor-set-acceleration-structures :uint32)
   (:shader-group-handle-capture-replay-size :uint32))
 
-(def-struct-translator vk-physical-device-cooperative-matrix-properties-nv
+(defcstruct vk-physical-device-cooperative-matrix-properties-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:cooperative-matrix-supported-stages vk-shader-stage-flags))
 
-(def-struct-translator vk-physical-device-shader-sm-builtins-properties-nv
+(defcstruct vk-physical-device-shader-sm-builtins-properties-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:shader-sm-count :uint32)
   (:shader-warps-persm :uint32))
 
-(def-struct-translator vk-physical-device-texel-buffer-alignment-properties-ext
+(defcstruct vk-physical-device-texel-buffer-alignment-properties-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:storage-texel-buffer-offset-alignment-bytes vk-device-size)
@@ -4412,23 +4333,23 @@ i don't know how to set up android in lisp
   (:uniform-texel-buffer-offset-alignment-bytes vk-device-size)
   (:uniform-texel-buffer-offset-single-texel-alignment vk-bool-32))
 
-(def-struct-translator vk-physical-device-timeline-semaphore-properties
+(defcstruct vk-physical-device-timeline-semaphore-properties
   (:type VkStructureType)
   (:next (:pointer :void))
   (:max-timeline-semaphore-value-difference :uint64))
 
-(def-struct-translator vk-physical-device-line-rasterization-properties-ext
+(defcstruct vk-physical-device-line-rasterization-properties-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:line-sub-pixel-precision-bits :uint32))
 
-(def-struct-translator vk-physical-device-robustness2-properties-ext
+(defcstruct vk-physical-device-robustness2-properties-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:robust-storage-buffer-access-size-alignment vk-device-size)
   (:robust-uniform-buffer-access-size-alignment vk-device-size))
 
-(def-struct-translator vk-physical-device-device-generated-commands-properties-nv
+(defcstruct vk-physical-device-device-generated-commands-properties-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:max-graphics-shader-group-count :uint32)
@@ -4441,45 +4362,45 @@ i don't know how to set up android in lisp
   (:min-sequences-index-buffer-offset-alignment :uint32)
   (:min-indirect-commands-buffer-offset-alignment :uint32))
 
-(def-struct-translator vk-multisample-properties-ext
+(defcstruct vk-multisample-properties-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:max-sample-location-grid-size (:struct vk-extent-2d)))
 
-(def-struct-translator vk-physical-device-custom-border-color-properties-ext 
+(defcstruct vk-physical-device-custom-border-color-properties-ext 
   (:type VkStructureType)
   (:next (:pointer :void))
   (:max-custom-border-color-samplers :uint32))
 
-(def-struct-translator vk-format-properties
+(defcstruct vk-format-properties
   (:linear-tiling-features vk-format-feature-flags)
   (:optimal-tiling-features vk-format-feature-flags)
   (:buffer-features vk-format-feature-flags))
 
-(def-struct-translator vk-format-properties2
+(defcstruct vk-format-properties2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:format-properties (:struct vk-format-properties)))
 
-(def-struct-translator vk-drm-format-modifier-properties-ext
+(defcstruct vk-drm-format-modifier-properties-ext
   (:drm-format-modifier :uint64)
   (:drm-format-modifier-plane-count :uint32)
   (:drm-format-modifier-tiling-features vk-format-feature-flags))
 
-(def-struct-translator vk-drm-format-modifier-properties-list-ext
+(defcstruct vk-drm-format-modifier-properties-list-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:drm-format-modifier-count :uint32)
   (:drm-format-modifier-properties (:pointer (:struct vk-drm-format-modifier-properties-ext))))
 
-(def-struct-translator vk-image-format-properties
+(defcstruct vk-image-format-properties
   (:max-extent (:struct vk-extent-3d))
   (:max-mip-levels :uint32)
   (:max-array-layers :uint32)
   (:sample-count vk-sample-count-flags)
   (:max-resource-size vk-device-size))
 
-(def-struct-translator vk-external-image-format-properties-nv
+(defcstruct vk-external-image-format-properties-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:image-format-properties (:struct vk-image-format-properties))
@@ -4487,7 +4408,7 @@ i don't know how to set up android in lisp
   (:export-from-imported-handle-types vk-external-memory-handle-type-flags)
   (:compatible-handle-types vk-external-memory-handle-type-flags))
 
-(def-struct-translator vk-physical-device-image-format-info2 
+(defcstruct vk-physical-device-image-format-info2 
   (:type VkStructureType)
   (:next (:pointer :void))
   (:foramt VkFormat)
@@ -4496,32 +4417,32 @@ i don't know how to set up android in lisp
   (:usage vk-image-usage-flags)
   (:flags vk-image-create-flags))
 
-(def-struct-translator vk-image-format-properties2
+(defcstruct vk-image-format-properties2
   (:type VkStructureType)
   (:next (:pointer :void))
   (:image-format-properties (:struct vk-image-format-properties)))
 
-(def-struct-translator vk-texture-lod-gather-format-properties-amd
+(defcstruct vk-texture-lod-gather-format-properties-amd
   (:type VkStructureType)
   (:next (:pointer :void))
   (:supports-texture-gather-lod-bias-amd vk-bool-32))
 
-(def-struct-translator vk-physical-device-external-image-format-info 
+(defcstruct vk-physical-device-external-image-format-info 
   (:type VkStructureType)
   (:next (:pointer :void))
   (:handle-type VkExternalMemoryHandleTypeFlagBits))
 
-(def-struct-translator vk-external-memory-properties
+(defcstruct vk-external-memory-properties
   (:external-memory-features vk-external-memory-feature-flags)
   (:export-from-imported-handle-types vk-external-memory-handle-type-flags)
   (:compatible-handle-types vk-external-memory-handle-type-flags))
 
-(def-struct-translator vk-external-image-format-properties
+(defcstruct vk-external-image-format-properties
   (:type VkStructureType)
   (:next (:pointer :void))
   (:external-memory-properties (:struct vk-external-memory-properties)))
 
-(def-struct-translator vk-physical-device-image-drm-format-modifier-info-ext
+(defcstruct vk-physical-device-image-drm-format-modifier-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:drm-format-modifier :uint64)
@@ -4529,71 +4450,71 @@ i don't know how to set up android in lisp
   (:queue-family-index-count :uint32)
   (:queue-family-indices (:pointer :uint32)))
 
-(def-struct-translator vk-sampler-ycbcr-conversion-image-format-properties
+(defcstruct vk-sampler-ycbcr-conversion-image-format-properties
   (:type VkStructureType)
   (:next (:pointer :void))
   (:combined-image-sampler-descriptor-count :uint32))
 
-(def-struct-translator vk-android-hardware-buffer-usage-android
+(defcstruct vk-android-hardware-buffer-usage-android
   (:type VkStructureType)
   (:next (:pointer :void))
   (:android-hardware-buffer-usage :uint64))
 
-(def-struct-translator vk-physical-device-image-view-image-format-info-ext
+(defcstruct vk-physical-device-image-view-image-format-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:image-view-type VkImageViewType))
 
-(def-struct-translator vk-filter-cubic-image-view-image-format-properties-ext
+(defcstruct vk-filter-cubic-image-view-image-format-properties-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:filter-cubic vk-bool-32)
   (:filter-cubic-minmax vk-bool-32))
 
-(def-struct-translator vk-physical-device-external-buffer-info
+(defcstruct vk-physical-device-external-buffer-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-buffer-create-flags)
   (:usage vk-buffer-usage-flags)
   (:handle-type VkExternalMemoryHandleTypeFlagBits))
 
-(def-struct-translator vk-external-buffer-properties
+(defcstruct vk-external-buffer-properties
   (:type VkStructureType)
   (:next (:pointer :void))
   (:external-memory-properties (:struct vk-external-memory-properties)))
 
-(def-struct-translator vk-physical-device-external-semaphore-info
+(defcstruct vk-physical-device-external-semaphore-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:handle-type VkExternalSemaphoreHandleTypeFlagBits))
 
-(def-struct-translator vk-external-semaphore-properties
+(defcstruct vk-external-semaphore-properties
   (:type VkStructureType)
   (:next (:pointer :void))
   (:export-from-imported-handle-types vk-external-semaphore-handle-type-flags)
   (:compatible-handle-types vk-external-semaphore-handle-type-flags)
   (:external-semaphore-features vk-external-semaphore-feature-flags))
 
-(def-struct-translator vk-physical-device-external-fence-info
+(defcstruct vk-physical-device-external-fence-info
   (:type VkStructureType)
   (:next (:pointer :void))
   (:handle-type VkExternalFenceHandleTypeFlagBits))
 
-(def-struct-translator vk-external-fence-properties
+(defcstruct vk-external-fence-properties
   (:type VkStructureType)
   (:next (:pointer :void))
   (:export-from-imported-handle-types vk-external-fence-handle-type-flags)
   (:compatible-handle-types vk-external-fence-handle-type-flags)
   (:external-fence-features vk-external-fence-feature-flags))
 
-(def-struct-translator vk-debug-utils-object-name-info-ext
+(defcstruct vk-debug-utils-object-name-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:object-type VkObjectType)
   (:object-handle :uint64)
   (:object-name (:pointer :char)))
 
-(def-struct-translator vk-debug-utils-object-tag-info-ext
+(defcstruct vk-debug-utils-object-tag-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:object-type VkObjectType)
@@ -4602,13 +4523,13 @@ i don't know how to set up android in lisp
   (:tag-size size-t)
   (:tag (:pointer :void)))
 
-(def-struct-translator vk-debug-utils-label-ext
+(defcstruct vk-debug-utils-label-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:label-name :string)
   (:color :float :count 4))
 
-(def-struct-translator vk-debug-utils-messenger-create-info-ext
+(defcstruct vk-debug-utils-messenger-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-debug-utils-messenger-create-flags-ext)
@@ -4617,7 +4538,7 @@ i don't know how to set up android in lisp
   (:pfn-user-callback pfn-vk-debug-utils-messenger-callback-ext)
   (:user-data (:pointer :void)))
 
-(def-struct-translator vk-debug-utils-messenger-callback-data-ext
+(defcstruct vk-debug-utils-messenger-callback-data-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-debug-utils-messenger-callback-data-flags-ext)
@@ -4631,14 +4552,14 @@ i don't know how to set up android in lisp
   (:object-count :uint32)
   (:objects (:pointer (:struct vk-debug-utils-object-name-info-ext))))
 
-(def-struct-translator vk-debug-marker-object-name-info-ext
+(defcstruct vk-debug-marker-object-name-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:object-type VkDebugReportObjectTypeEXT)
   (:object :uint64)
   (:object-name :string))
 
-(def-struct-translator vk-debug-marker-object-tag-info-ext
+(defcstruct vk-debug-marker-object-tag-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:object-type VkDebugReportObjectTypeEXT)
@@ -4647,26 +4568,26 @@ i don't know how to set up android in lisp
   (:tag-size size-t)
   (:tag (:pointer :void)))
 
-(def-struct-translator vk-debug-marker-marker-info-ext
+(defcstruct vk-debug-marker-marker-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:mark-name :string)
   (:color :float :count 4))
 
-(def-struct-translator vk-debug-report-callback-create-info-ext
+(defcstruct vk-debug-report-callback-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-debug-report-flags-ext)
   (:pfn-callback pfn-vk-debug-report-callback-ext)
   (:user-data (:pointer :void)))
 
-(def-struct-translator vk-checkpoint-data-nv
+(defcstruct vk-checkpoint-data-nv
   (:type VkStructureType)
   (:next (:pointer :void))
   (:stage VkPipelineStageFlagBits)
   (:checkpoint-marker (:pointer :void)))
 
-(def-struct-translator vk-physical-device-tool-properties-ext
+(defcstruct vk-physical-device-tool-properties-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:name :char :count 256)
@@ -4674,4 +4595,3 @@ i don't know how to set up android in lisp
   (:purpose vk-tool-purpose-flags-ext)
   (:description :char :count 256)
   (:layers :char :count 256))
-|#
