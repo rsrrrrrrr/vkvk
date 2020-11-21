@@ -2,7 +2,7 @@
   :version "0.1.0"
   :author ""
   :license ""
-  :depends-on (:cffi)
+  :depends-on (:cffi :alexandria)
   :serial t
   :components ((:file "src/package")
 	       (:file "src/enum")
@@ -10,12 +10,12 @@
 	       (:file "src/function")
 	       (:file "src/struct")
 	       (:file "src/convert")
-	       (:file "src/instance/instance")
-	       (:file "src/gpu/gpu")
-	       (:file "src/device/device")
-	       (:file "src/surface/surface")
-	       (:file "src/pipeline/pipeline")
-	       (:file "src/cmd/cmd")
-	       (:file "src/memory/memory")
-	       (:file "src/resource/resource")))
+	       (:file "src/instance")
+	       (:file "src/gpu")
+	       (:file "src/device")
+	       (:file "src/surface")
+	       (:file "src/pipeline")
+	       (:file "src/cmd")
+	       (:file "src/memory")
+	       (:file "src/resource")))
 
