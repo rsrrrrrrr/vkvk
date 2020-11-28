@@ -9,12 +9,12 @@
 
 (use-foreign-library libvulkan)
 
-(defparameter *allocated-string* nil)
+(defparameter *allocated-obj* nil)
 
-(defun free-strings ()
-  (dolist (obj *allocated-string*)
+(defun free-objs ()
+  (dolist (obj *allocated-obj*)
     (foreign-string-free obj))
-  (setf *allocated-string* nil))
+  (setf *allocated-obj* nil))
 
 (defun obj->list (objs type num)
   (let ((count (1- (mem-ref num :uint32))))
@@ -27,30 +27,37 @@
 
 (defun process-write-pointer (struct-name ptr slot-name pointer-type val parse-by bind-name)
   "this function is used to fill the pointer type"
-  (cond ((eql pointer-type :char)    ;;process string
+  (cond ((eql pointer-type :void)    ;;process void pointer
+	 (setf (foreign-slot-value ptr struct-name slot-name) val))
+	((eql pointer-type :char)    ;;process string
 	 (unless (null val)
 	   (let ((foreign-string (foreign-string-alloc val)))
 	     (push foreign-string val)
 	     (setf (foreign-slot-value ptr struct-name slot-name) foreign-string))))
 	((and (consp pointer-type)
-	      (eql pointer-type '(:pointer :char)))   ;;process string pointer
+	      (equal pointer-type '(:pointer :char)))   ;;process string pointer
 	 (unless (null val)
-	   (let ((len (length val))
-		 (str-list (foreign-alloc pointer-type)))
-	     (push str-list *allocated-string*)
-	     (dotimes (i (1- len))
+	   (let* ((len (length val))
+		  (str-list (foreign-alloc pointer-type :count len)))
+	     (push str-list *allocated-obj*)
+	     (dotimes (i len)
 	       (setf (mem-aref str-list pointer-type i)
-		     (foreign-string-alloc (nth i val)))
-	       (push (mem-aref str-list pointer-type i) *allocated-string*))
+		     (foreign-string-alloc (nth i val))))
 	     (setf (foreign-slot-value ptr struct-name slot-name) str-list))))
 	((and bind-name parse-by)
-	 (let ((num (foreign-slot-value struct-name bind-name :uint32))) ;;get count
-	   (dotimes (i (1- num))
-	     (setf (mem-aref (foreign-slot-value ptr struct-name slot-name) parse-by i)
-		   (nth i val)))))
+	 (progn
+	   (let* ((num (foreign-slot-value struct-name bind-name :uint32)) ;;get count
+		  (sub-obj (foreign-alloc parse-by :count num)))           ;;alloc sub obj
+	     (dotimes (i num)
+	       (setf (mem-aref sub-obj parse-by i) (nth i val)))
+	     (setf (foreign-slot-value ptr struct-name slot-name) sub-obj)
+	     (push sub-obj *allocated-obj*))))
 	(parse-by                               ;;process struct pointer
-	 (setf (mem-ref (foreign-slot-value ptr struct-name slot-name) parse-by)
-	       val))))
+	 (progn
+	   (let ((sub-obj (foreign-alloc parse-by)))
+	     (setf (mem-ref sub-obj parse-by) val
+		   (foreign-slot-value ptr struct-name slot-name) sub-obj)
+	     (push sub-obj *allocated-obj*))))))
 
 (defun process-write-count (struct-name ptr slot-name type val parse-by count &aux (len (length val)))
   (unless (> len count)
@@ -68,7 +75,7 @@
   #'(lambda (member val &aux
 			  (slot-name (first member))
 			  (type (second member))
-			  (parse-by (getf member :parse))
+			  (parse-by (getf member :parser))
 			  (bind-name (getf member :bind))
 			  (count (getf member :count)))
       (cond ((and (consp type)
@@ -83,20 +90,28 @@
 	    (t (setf (foreign-slot-value ptr struct-name slot-name) val)))))
 
 (defun process-read-pointer (struct-name ptr slot-name pointer-type parse-by bind-name)
-  (cond ((eql pointer-type :char) (foreign-string-to-lisp ptr))
+  (cond ((eql pointer-type :void)
+	 (foreign-slot-value ptr struct-name slot-name))
+	((eql pointer-type :char)
+	 (foreign-string-to-lisp (foreign-slot-value ptr struct-name slot-name)))
 	((and (consp pointer-type)
-	      (eql pointer-type '(:pointer :char))
+	      (equal pointer-type '(:pointer :char))
 	      bind-name)
-	 (let ((count (foreign-slot-value ptr struct-name bind-name)))  ;;get count
-	   (loop for i upto (1- count)
-		 collect (mem-aref (foreign-slot-value ptr struct-name slot-name) pointer-type i))))
+	 (let ((count (foreign-slot-value ptr struct-name bind-name))   ;;get count
+	       (strs (foreign-slot-value ptr struct-name slot-name)))
+	   (loop for i upto (1- count)		 
+		 collect (foreign-string-to-lisp (mem-aref strs pointer-type i)))))
 	((and (consp pointer-type)
 	      (eql (first pointer-type) :struct)
 	      parse-by
 	      bind-name)
 	 (let ((count (foreign-slot-value ptr struct-name bind-name)))  ;;get count
 	   (loop for i upto (1- count)
-		 collect (mem-aref (foreign-slot-value ptr struct-name slot-name) parse-by i))))))
+		 collect (mem-aref (foreign-slot-value ptr struct-name slot-name) parse-by i))))
+	((and (consp pointer-type)
+	      (eql (first pointer-type) :struct)
+	      parse-by)
+	 (mem-aref (foreign-slot-value ptr struct-name slot-name) parse-by))))
 
 (defun process-read-count (struct-name ptr slot-name type parse-by count)
   (cond ((eql type :char) (foreign-string-to-lisp ptr))
@@ -114,12 +129,12 @@
 		 collect (mem-ref p type))))))
 
 (defun read-closure (struct-name ptr)
-  #'(lambda (member val &aux
-			  (slot-name (first member))
-			  (type (second member))
-			  (parse-by (getf member :parse))
-			  (bind-name (getf member :bind))
-			  (count (getf member :count)))
+  #'(lambda (member &aux
+		      (slot-name (first member))
+		      (type (second member))
+		      (parse-by (getf member :parser))
+		      (bind-name (getf member :bind))
+		      (count (getf member :count)))
       (list slot-name
 	    (cond ((and (consp type)
 			(eql (first type) :pointer))
@@ -129,7 +144,7 @@
 			(eql (first type) :struct)
 			parse-by)
 		   (mem-ref (foreign-slot-pointer ptr struct-name slot-name) parse-by))
-		  (t (foreign-slot-value ptr struct-name slot-name) val)))))
+		  (t (foreign-slot-value ptr struct-name slot-name))))))
 
 (defmacro defvkobj (struct-name (type-name parse-name) &body members)
   `(progn
@@ -143,6 +158,3 @@
      (defmethod translate-from-foreign (ptr (type ,type-name))
        (let ((fun (read-closure '(:struct ,struct-name) ptr)))
 	 (apply #'append (mapcar fun ',members))))))
-
-
-

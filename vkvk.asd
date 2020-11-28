@@ -7,6 +7,7 @@
   :components ((:file "src/package")
 	       (:file "src/enum")
 	       (:file "src/foreign-type")
-	       	       (:file "src/struct")
-	       (:file "src/function")))
+	       (:file "src/struct")
+	       (:file "src/function")
+	       (:file "src/translator")))
 

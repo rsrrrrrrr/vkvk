@@ -33,9 +33,9 @@
 (defcstruct vk-application-info
   (:type VkStructureType)
   (:next (:pointer :void))
-  (:app-name :string)
+  (:app-name (:pointer :char))
   (:app-version :uint32)
-  (:engine-name :string)
+  (:engine-name (:pointer :char))
   (:engine-version :uint32)
   (:api-version :uint32))
 
@@ -45,9 +45,9 @@
   (:flags (vk-instance-create-flags))
   (:info (:pointer (:struct vk-application-info)))
   (:layer-count :uint32)
-  (:layers (:pointer :string))
+  (:layers (:pointer (:pointer :char)))
   (:extension-count :uint32)
-  (:extensions (:pointer :string)))
+  (:extensions (:pointer (:pointer :char))))
 
 (defcstruct vk-validation-flag-ext
   (:type VkStructureType)
@@ -410,9 +410,9 @@
   (:queue-create-info-count :uint32)
   (:queue-create-infos (:pointer (:struct vk-device-queue-create-info)))
   (:layer-count :uint32)
-  (:layers (:pointer :string))
+  (:layers (:pointer (:pointer :char)))
   (:extension-count :uint32)
-  (:extensions (:pointer :string))
+  (:extensions (:pointer (:pointer :char)))
   (:enable-features (:pointer (:struct vk-physical-device-features))))
 
 (defcstruct vk-device-group-device-create-info
@@ -1041,7 +1041,7 @@
   (:flags vk-pipeline-stage-flags)
   (:stage VkShaderStageflagbits)
   (:module vk-shader-module)
-  (:name :string)
+  (:name (:pointer :char))
   (:specialization-info (:pointer (:struct vk-specialization-info))))
 
 (defcstruct vk-compute-pipeline-create-info
@@ -2683,7 +2683,7 @@ i don't know how to set up android in lisp
   (:value64 :uint64)
   (:value-float :float)
   (:value-bool vk-bool-32)
-  (:value-string :string))
+  (:value-string (:pointer :char)))
 
 (defcstruct vk-performance-value-intel
   (:type VkPerformanceValueTypeINTEL)
@@ -3137,7 +3137,7 @@ i don't know how to set up android in lisp
 
 (defcstruct vk-display-properties-khr
   (:display vk-display-khr)
-  (:display-name :string)
+  (:display-name (:pointer :char))
   (:physical-dimensions (:struct vk-extent-2d))
   (:physical-resolution (:struct vk-extent-2d))
   (:supported-transforms vk-surface-transform-flags-khr)
@@ -4526,7 +4526,7 @@ i don't know how to set up android in lisp
 (defcstruct vk-debug-utils-label-ext
   (:type VkStructureType)
   (:next (:pointer :void))
-  (:label-name :string)
+  (:label-name (:pointer :char))
   (:color :float :count 4))
 
 (defcstruct vk-debug-utils-messenger-create-info-ext
@@ -4542,9 +4542,9 @@ i don't know how to set up android in lisp
   (:type VkStructureType)
   (:next (:pointer :void))
   (:flags vk-debug-utils-messenger-callback-data-flags-ext)
-  (:message-id-name :string)
+  (:message-id-name (:pointer :char))
   (:message-id-number :int32)
-  (:message :string)
+  (:message (:pointer :char))
   (:queue-label-count :uint32)
   (:queue-labels (:pointer (:struct vk-debug-utils-label-ext)))
   (:cmd-buf-label-count :uint32)
@@ -4557,7 +4557,7 @@ i don't know how to set up android in lisp
   (:next (:pointer :void))
   (:object-type VkDebugReportObjectTypeEXT)
   (:object :uint64)
-  (:object-name :string))
+  (:object-name (:pointer :char)))
 
 (defcstruct vk-debug-marker-object-tag-info-ext
   (:type VkStructureType)
@@ -4571,7 +4571,7 @@ i don't know how to set up android in lisp
 (defcstruct vk-debug-marker-marker-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
-  (:mark-name :string)
+  (:mark-name (:pointer :char))
   (:color :float :count 4))
 
 (defcstruct vk-debug-report-callback-create-info-ext
