@@ -1455,7 +1455,7 @@
   (quert-pool vk-query-pool)
   (query :uint32))
 
-(defcfun ("vkCmdCopyQueryPoolResults" vkCmdCopyQueryPoolResults  (command-buffer vk-command-buffer)
+(defcfun ("vkCmdCopyQueryPoolResults" vkCmdCopyQueryPoolResults) :void
   (query-pool vk-query-pool)
   (first-query :uint32)
   (query-count :uint32)
