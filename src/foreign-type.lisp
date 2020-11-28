@@ -55,6 +55,7 @@
 (defctype vk-private-date-slot-ext vk-non-dispatch-handle)
 (defctype vk-debug-utils-messenger-ext vk-non-dispatch-handle)
 (defctype vk-debug-report-callback-ext vk-non-dispatch-handle)
+(defctype vk-descriptor-set vk-non-dispatch-handle)
 
 (defctype vk-device-size :uint64)
 (defctype vk-device-address :uint64)

@@ -1219,7 +1219,7 @@
   (command-buffer vk-command-buffer)
   (blend-constants :float :count 4))
 
-(defcfun ("vkCmdSetDepthBounds" cmd-set-depth-bounds) :void
+(defcfun ("vkCmdSetDepthBounds" vkCmdSetDepthBounds) :void
   (command-buffer vk-command-buffer)
   (min :float)
   (max :float))

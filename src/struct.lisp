@@ -1263,7 +1263,7 @@
   (:type VkStructureType)
   (:next (:pointer :void))
   (:name :char :count 256)
-  (:descripton :char :count 256)
+  (:description :char :count 256)
   (:format VkPipelineExecutableStatisticFormatKHR)
   (:value (:union vk-pipeline-executable-statistic-value-khr)))
 
@@ -2754,9 +2754,9 @@ i don't know how to set up android in lisp
 
 (defcstruct vk-image-blit
   (:src-subresource (:struct vk-image-subresource-layers))
-  (:src-offsets (:struct vk-offset-3d) :count 2)
+  (:src-offset (:struct vk-offset-3d) :count 2)
   (:dst-subresource (:struct vk-image-subresource-layers))
-  (:dst-offsets (:struct vk-offset-3d) :count 2))
+  (:dst-offset (:struct vk-offset-3d) :count 2))
 
 (defcstruct vk-image-resloved
   (:src-subresource (:struct vk-image-subresource-layers))

@@ -12,6 +12,7 @@
 (defparameter *allocated-obj* nil)
 
 (defun free-objs ()
+  "every time you alloc a vulkan object you shoud free it"
   (dolist (obj *allocated-obj*)
     (foreign-string-free obj))
   (setf *allocated-obj* nil))
@@ -25,10 +26,23 @@
   (loop for i upto num
 	collect (mem-aref objs type i)))
 
+(defun set-normol-pointer (objs val type count)
+  (if (zerop count)
+      (setf objs (null-pointer))
+      (dotimes (i count)
+	(setf (mem-aref val type i)
+	      (nth i val)))))
+
+(defun vk-getf (lst key)
+  (let ((val (getf lst key)))
+    (if (null val)
+	(error "there was no member ~a in ~a" key lst)
+	val)))
+
 (defun process-write-pointer (struct-name ptr slot-name pointer-type val parse-by bind-name)
   "this function is used to fill the pointer type"
   (cond ((eql pointer-type :void)    ;;process void pointer
-	 (setf (foreign-slot-value ptr struct-name slot-name) val))
+	 (setf (foreign-slot-value ptr struct-name slot-name) (if (null val) (null-pointer) val)))
 	((eql pointer-type :char)    ;;process string
 	 (unless (null val)
 	   (let ((foreign-string (foreign-string-alloc val)))
@@ -45,19 +59,22 @@
 		     (foreign-string-alloc (nth i val))))
 	     (setf (foreign-slot-value ptr struct-name slot-name) str-list))))
 	((and bind-name parse-by)
-	 (progn
-	   (let* ((num (foreign-slot-value struct-name bind-name :uint32)) ;;get count
-		  (sub-obj (foreign-alloc parse-by :count num)))           ;;alloc sub obj
-	     (dotimes (i num)
-	       (setf (mem-aref sub-obj parse-by i) (nth i val)))
-	     (setf (foreign-slot-value ptr struct-name slot-name) sub-obj)
-	     (push sub-obj *allocated-obj*))))
+	 (let* ((num (foreign-slot-value struct-name bind-name :uint32)) ;;get count
+		(sub-obj (foreign-alloc parse-by :count num)))           ;;alloc sub obj
+	   (dotimes (i num)
+	     (setf (mem-aref sub-obj parse-by i) (nth i val)))
+	   (setf (foreign-slot-value ptr struct-name slot-name) sub-obj)
+	   (push sub-obj *allocated-obj*)))
 	(parse-by                               ;;process struct pointer
-	 (progn
-	   (let ((sub-obj (foreign-alloc parse-by)))
-	     (setf (mem-ref sub-obj parse-by) val
-		   (foreign-slot-value ptr struct-name slot-name) sub-obj)
-	     (push sub-obj *allocated-obj*))))))
+	 (let ((sub-obj (foreign-alloc parse-by)))
+	   (setf (mem-ref sub-obj parse-by) val
+		 (foreign-slot-value ptr struct-name slot-name) sub-obj)
+	   (push sub-obj *allocated-obj*)))
+	(t
+	 (let ((pointer-obj (foreign-alloc pointer-type)))
+	   (push pointer-obj *allocated-obj*)
+	   (setf (mem-ref (foreign-slot-value ptr struct-name slot-name) pointer-type)
+		 pointer-obj)))))  ;;process none-dispatch-handle
 
 (defun process-write-count (struct-name ptr slot-name type val parse-by count &aux (len (length val)))
   (unless (> len count)
@@ -111,7 +128,8 @@
 	((and (consp pointer-type)
 	      (eql (first pointer-type) :struct)
 	      parse-by)
-	 (mem-aref (foreign-slot-value ptr struct-name slot-name) parse-by))))
+	 (mem-aref (foreign-slot-value ptr struct-name slot-name) parse-by))
+	(t (mem-ref (foreign-slot-value ptr struct-name slot-name) pointer-type)))) 
 
 (defun process-read-count (struct-name ptr slot-name type parse-by count)
   (cond ((eql type :char) (foreign-string-to-lisp ptr))
@@ -146,7 +164,7 @@
 		   (mem-ref (foreign-slot-pointer ptr struct-name slot-name) parse-by))
 		  (t (foreign-slot-value ptr struct-name slot-name))))))
 
-(defmacro defvkobj (struct-name (type-name parse-name) &body members)
+(defmacro defvkstruct (struct-name (type-name parse-name) &body members)
   `(progn
      (define-foreign-type ,type-name ()
        ()
@@ -157,4 +175,17 @@
 	 (mapcar fun ',members val)))
      (defmethod translate-from-foreign (ptr (type ,type-name))
        (let ((fun (read-closure '(:struct ,struct-name) ptr)))
+	 (apply #'append (mapcar fun ',members))))))
+
+(defmacro defvkunion (union-name (type-name parse-name) &body members)
+  `(progn
+     (define-foreign-type ,type-name ()
+       ()
+       (:actual-type :union ,union-name)
+       (:simple-parser ,parse-name))
+     (defmethod translate-into-foreign-memory (val (type ,type-name) ptr)
+       (let ((fun (write-closure '(:union ,union-name) ptr)))
+	 (mapcar fun ',members val)))
+     (defmethod translate-from-foreign (ptr (type ,type-name))
+       (let ((fun (read-closure '(:union ,union-name) ptr)))
 	 (apply #'append (mapcar fun ',members))))))

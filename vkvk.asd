@@ -9,5 +9,6 @@
 	       (:file "src/foreign-type")
 	       (:file "src/struct")
 	       (:file "src/function")
-	       (:file "src/translator")))
+	       (:file "src/translator")
+	       (:file "src/cmd")))
 
