@@ -45,7 +45,7 @@
   "function bind vkCmdSetLineWidth"
   (vkCmdSetLineWidth cmd width))
 
-(defun cmd-set-depth-bounds (cmd constents clamp slope)
+(defun cmd-set-depth-bias (cmd constents clamp slope)
   "function bind vkCmdSetDepthBias"
   (vkCmdSetDepthBias cmd constents clamp slope))
 
