@@ -9,6 +9,8 @@
 
 (use-foreign-library libvulkan)
 
+(defconstant +vk-true+ 1)
+(defconstant +vk-false+ 0)
 (defparameter *allocated-obj* nil)
 
 (defun free-objs ()
