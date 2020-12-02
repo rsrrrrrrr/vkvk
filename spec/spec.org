@@ -43,6 +43,14 @@ for lisp code
     ;;no need to set extensions count it will be the length of extension
     :extensions (list "ccc" "ddd"))) 
 #+end_src
+*** instnace 
+create-instnace 
+/create-info/ ;;create by make-instnace-create-info
+/allocator/   ;;optional
+
+destroy-instnace
+/instance/    ;;create by function create-instnace
+/allocator/   ;;optioinal argument
 *** structure make api
 *make-vulkan-version*
 /major 1/ 
@@ -52,5 +60,4 @@ for lisp code
 *make-offset-2d*
 /:x 0/
 /:y 0/
-
 
