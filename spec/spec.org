@@ -44,20 +44,191 @@ for lisp code
     :extensions (list "ccc" "ddd"))) 
 #+end_src
 *** instnace 
-create-instnace 
-/create-info/ ;;create by make-instnace-create-info
-/allocator/   ;;optional
+function-name: *create-instnace*
+| args        | desc                                | property |
+| create-info | create by make-instnace-create-info | must     |
+| allocator   | as default (null-pointer)           | optional |
 
-destroy-instnace
-/instance/    ;;create by function create-instnace
-/allocator/   ;;optioinal argument
+function-name: *destroy-instnace*
+| args      | desc                                 | property |
+| instnace  | vkinstnace create by create-instnace | must     |
+| allocator | as default (null-pointer)            | optional |
 *** structure make api
-*make-vulkan-version*
-/major 1/ 
-/minor 2/
-/patch 0/
+function-name: *make-vulkan-version*
+| args  | desc  | property | default value |
+| major | major | optional | 1             |
+| minor | minor | optional | 2             |
+| patch | patch | optional | 0             |
 
-*make-offset-2d*
-/:x 0/
-/:y 0/
 
+function-name: *make-offset-2d*
+| args | desc     | property | default value |
+| x    | offset-x | optional | 0             |
+| y    | offset-y | optional | 0             |
+
+function-name: *make-offset-3d*
+| args | desc     | property | default value |
+| x    | offset-x | optional | 0             |
+| y    | offset-y | optional | 0             |
+| z    | offset-z | optional | 0             |
+
+function-name: *make-extent-2d*
+| args   | desc          | property | default value |
+| width  | extent-width  | optional | 0             |
+| heitht | extent-height | optional | 0             |
+
+function-name: *make-extent-3d*
+| args   | desc          | property | default value |
+| width  | extent-width  | optional | 0             |
+| heitht | extent-height | optional | 0             |
+| depth  | extent-depth  | optional | 0             |
+
+function-name: *make-rect-2d*
+| args   | desc        | property | default value    |
+| offset | rect-offset | optional | (make-offset-2d) |
+| extent | rect-extent | optional | (make-extent-2d) |
+
+function-name: *make-application-info*
+| args           | desc           | property | default value               |
+| next           | next           | optional | null-pointer                |
+| app-name       | app-name       | optional | "vk-test"                   |
+| app-version    | app-version    | optional | (make-vulkan-version 0 0 0) |
+| engine-name    | engine-name    | optional | "vk-test"                   |
+| engine-version | engine-version | optional | (make-vulkan-version 0 0 0) |
+| api-version    | api-version    | optional | (make-vulkan-version 1 2 0) |
+
+function-name: *make-instance-create-info*
+| args       | desc                      | property | default value           |
+| next       | next                      | optional | null-pointer            |
+| flags      | flags                     | optional | 0                       |
+| app-info   | app-info                  | optional | (make-application-info) |
+| layers     | layer tou want to use     | optional | nil                     |
+| extensions | extension you want to use | optional | nil                     |
+
+function-name: *make-validation-flag-ext*
+| args   | desc                            | property | default value |
+| next   | next                            | optional | null-pointer  |
+| checks | pointer of VkValidationcheckext | optional | nil           |
+
+
+function-name: *make-physical-device-limits*
+| args                                                  | desc    | property | default value |
+| max-image-dimension1-d                                | no desc | optional |             0 |
+| max-image-dimension2-d                                | no desc | optional |             0 |
+| max-image-dimension3-d                                | no desc | optional |             0 |
+| max-image-dimension-cube                              | no desc | optional |             0 |
+| max-image-array-layers                                | no desc | optional |             0 |
+| max-texel-buffer-elements                             | no desc | optional |             0 |
+| max-uniform-buffer-range                              | no desc | optional |             0 |
+| max-storage-buffer-range                              | no desc | optional |             0 |
+| max-push-constants-size                               | no desc | optional |             0 |
+| max-memory-allocation-count                           | no desc | optional |             0 |
+| max-sampler-allocation-count                          | no desc | optional |             0 |
+| buffer-image-granularity                              | no desc | optional |             0 |
+| sparse-address-space-size                             | no desc | optional |             0 |
+| max-bound-descriptor-sets                             | no desc | optional |             0 |
+| max-per-stage-descriptor-samplers                     | no desc | optional |             0 |
+| max-per-stage-descriptor-uniform-buffers              | no desc | optional |             0 |
+| max-per-stage-descriptor-storage-buffers              | no desc | optional |             0 |
+| max-per-stage-descriptor-sampled-images               | no desc | optional |             0 |
+| max-per-stage-descriptor-storage-images               | no desc | optional |             0 |
+| max-per-stage-descriptor-input-attachments            | no desc | optional |             0 |
+| max-per-stage-resources                               | no desc | optional |             0 |
+| max-descriptor-set-samplers                           | no desc | optional |             0 |
+| max-descriptor-set-uniform-buffers                    | no desc | optional |             0 |
+| max-descriptor-set-uniform-buffers-dynamic            | no desc | optional |             0 |
+| max-descriptor-set-storage-buffers                    | no desc | optional |             0 |
+| max-descriptor-set-storage-buffers-dynamic            | no desc | optional |             0 |
+| max-descriptor-set-sampled-images                     | no desc | optional |             0 |
+| max-descriptor-set-storage-images                     | no desc | optional |             0 |
+| max-descriptor-set-input-attachments                  | no desc | optional |             0 |
+| max-vertex-input-attributes                           | no desc | optional |             0 |
+| max-vertex-input-bindings                             | no desc | optional |             0 |
+| max-vertex-input-attribute-offset                     | no desc | optional |             0 |
+| max-vertex-input-binding-stride                       | no desc | optional |             0 |
+| max-vertex-output-components                          | no desc | optional |             0 |
+| max-tessellation-generation-level                     | no desc | optional |             0 |
+| max-tessellation-patch-size                           | no desc | optional |             0 |
+| max-tessellation-control-per-vertex-input-components  | no desc | optional |             0 |
+| max-tessellation-control-per-vertex-output-components | no desc | optional |             0 |
+| max-tessellation-control-per-patch-output-components  | no desc | optional |             0 |
+| max-tessellation-control-total-output-components      | no desc | optional |             0 |
+| max-tessellation-evaluation-input-components          | no desc | optional |             0 |
+| max-tessellation-evaluation-output-components         | no desc | optional |             0 |
+| max-geometry-shader-invocations                       | no desc | optional |             0 |
+| max-geometry-input-components                         | no desc | optional |             0 |
+| max-geometry-output-components                        | no desc | optional |             0 |
+| max-geometry-output-vertices                          | no desc | optional |             0 |
+| max-geometry-total-output-components                  | no desc | optional |             0 |
+| max-fragment-input-components                         | no desc | optional |             0 |
+| max-fragment-output-attachments                       | no desc | optional |             0 |
+| max-fragment-dual-src-attachments                     | no desc | optional |             0 |
+| max-fragment-combined-output-resources                | no desc | optional |             0 |
+| max-compute-shared-memory-size                        | no desc | optional |             0 |
+| max-compute-work-group-count                          | no desc | optional |           nil |
+| max-compute-work-group-invocations                    | no desc | optional |             0 |
+| max-compute-work-group-size                           | no desc | optional |           nil |
+| sub-pixel-precision-bits                              | no desc | optional |             0 |
+| sub-texel-precision-bits                              | no desc | optional |             0 |
+| mipmap-precision-bits                                 | no desc | optional |             0 |
+| max-draw-indexed-index-value                          | no desc | optional |             0 |
+| max-draw-indirect-count                               | no desc | optional |             0 |
+| max-sampler-lod-bias                                  | no desc | optional |           0.0 |
+| max-sampler-anisotropy                                | no desc | optional |           0.0 |
+| max-viewports                                         | no desc | optional |             0 |
+| max-viewport-dimensions                               | no desc | optional |           nil |
+| viewport-bounds-range                                 | no desc | optional |           nil |
+| viewport-sub-pixel-bits                               | no desc | optional |             0 |
+| min-memory-map-alignment                              | no desc | optional |             0 |
+| min-texel-buffer-offset-alignment                     | no desc | optional |             0 |
+| min-uniform-buffer-offset-alignment                   | no desc | optional |             0 |
+| min-storage-buffer-offset-alignment                   | no desc | optional |             0 |
+| min-texel-offset                                      | no desc | optional |             0 |
+| max-texel-offset                                      | no desc | optional |             0 |
+| min-texel-gather-offset                               | no desc | optional |             0 |
+| max-texel-gather-offset                               | no desc | optional |             0 |
+| min-interpolation-offset                              | no desc | optional |           0.0 |
+| max-interpolation-offset                              | no desc | optional |           0.0 |
+| sub-pixel-interpolation-offset-bits                   | no desc | optional |             0 |
+| max-framebuffer-width                                 | no desc | optional |             0 |
+| max-framebuffer-height                                | no desc | optional |             0 |
+| max-framebuffer-layers                                | no desc | optional |             0 |
+| framebuffer-color-sample-counts                       | no desc | optional |             0 |
+| framebuffer-depth-sample-counts                       | no desc | optional |             0 |
+| framebuffer-stencil-sample-counts                     | no desc | optional |             0 |
+| framebuffer-no-attachments-sample-counts              | no desc | optional |             0 |
+| max-color-attachments                                 | no desc | optional |             0 |
+| sampled-image-color-sample-counts                     | no desc | optional |             0 |
+| sampled-image-integer-sample-counts                   | no desc | optional |             0 |
+| sampled-image-depth-sample-counts                     | no desc | optional |             0 |
+| sampled-image-stencil-sample-counts                   | no desc | optional |             0 |
+| storage-image-sample-counts                           | no desc | optional |             0 |
+| max-sample-mask-words                                 | no desc | optional |             0 |
+| timestamp-compute-and-graphics                        | no desc | optional |         false |
+| timestamp-period                                      | no desc | optional |             0 |
+| max-clip-distances                                    | no desc | optional |             0 |
+| max-cull-distances                                    | no desc | optional |             0 |
+| max-combined-clip-and-cull-distances                  | no desc | optional |             0 |
+| discrete-queue-priorities                             | no desc | optional |             0 |
+| point-size-range                                      | no desc | optional |           nil |
+| line-width-range                                      | no desc | optional |           nil |
+| point-size-granularity                                | no desc | optional |           0.0 |
+| line-width-granularity                                | no desc | optional |           0.0 |
+| strict-lines                                          | no desc | optional |         false |
+| standard-sample-locations                             | no desc | optional |         false |
+| optimal-buffer-copy-offset-alignment                  | no desc | optional |             0 |
+| optimal-buffer-copy-row-pitch-alignment               | no desc | optional |             0 |
+| non-coherent-atom-size                                | no desc | optional |             0 |
+
+function-name: *make-validation-features-ext*
+| args             | desc                                  | property | default value |
+| next             | next                                  | optional | null-pointer  |
+| enable-features  | list of VkValidationFeatureEnableEXT  | optional | nil           |
+| disable-features | list of VkValidationFeatureDisableEXT | optional | nil           |
+
+function-name: *make-conformance-version*
+| args     | desc     | property | default value |
+| major    | major    | must     |               |
+| minor    | minor    | must     |               |
+| submitor | submitor | must     |               |
+| patch    | patch    | must     |               |

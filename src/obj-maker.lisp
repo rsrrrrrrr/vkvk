@@ -40,7 +40,8 @@
 		       (offset (make-offset-2d))
 		       (extent (make-extent-2d)))
   (cons 'rect-2d
-	(list offset extent)))
+	(list (get-obj offset)
+	      (get-obj extent))))
 
 (defun make-application-info (&key
 				(next (null-pointer))
