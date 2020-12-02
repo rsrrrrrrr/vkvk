@@ -5,7 +5,7 @@
 (defcfun ("vkCreateInstance" vkCreateInstance) VkResult
   (info (:pointer (:struct vk-instance-create-info)))
   (allocator (:pointer (:struct vk-allocation-callback)))
-  (position vk-instance))
+  (instance vk-instance))
 
 (defcfun ("vkDestroyInstance" vkDestroyInstance) :void
   (instance vk-instance)

@@ -225,7 +225,10 @@
   `(satisfies check-struct-type))
 
 (defun check-result (val)
-  `(typep ,val (foreign-type VkResult)))
+  (if (and `(typep ,val (foreign-type VkResult))
+	   (eql val :SUCCESS))
+      t
+      (error "error: ~a~%" val)))
 (deftype vk-result ()
   `(satisfies check-result))
 

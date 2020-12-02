@@ -1,7 +1,7 @@
 (in-package :vkvk)
 
 ;;intern
-(defun get-sub-obj (obj type)
+(defun get-obj (obj type)
   (unless (eql type (first obj))
     (error "struct type check error"))
   (rest obj))
@@ -65,7 +65,7 @@
 				  &aux (type :structure-type-instance-create-info))
   (cons 'instance-create-info
 	(list type next flags
-	      (get-sub-obj app-info 'application-info)
+	      (get-obj app-info 'application-info)
 	      (length layers) layers
 	      (length extensions) extensions)))
 

@@ -11,5 +11,5 @@
 	       (:file "src/function")
 	       (:file "src/translator")
 	       (:file "src/obj-maker")
-	       (:file "src/cmd")))
+	       (:file "src/wrapper")))
 
