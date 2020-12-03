@@ -53,6 +53,17 @@ function-name: *destroy-instnace*
 | args      | desc                                 | property |
 | instnace  | vkinstnace create by create-instnace | must     |
 | allocator | as default (null-pointer)            | optional |
+*** device
+function-name: *create-device*
+| args            | desc                  | property | default value |
+| physical-device | gpu                   | must     |               |
+| create-info     | vk-device-create-info | must     |               |
+| allocator       | allocator             | default  | null-pointer  |
+
+function-name: *destroy-device*
+| args      | desc      | property | default value |
+| device    | device    | must     |               |
+| allocator | allocator | optional | null-pointer  |
 *** structure make api
 function-name: *make-vulkan-version*
 | args  | desc  | property | default value |
@@ -232,3 +243,79 @@ function-name: *make-conformance-version*
 | minor    | minor    | must     |               |
 | submitor | submitor | must     |               |
 | patch    | patch    | must     |               |
+
+function-name: *make-device-queue-create-info*
+| args               | desc               | property | default value |
+| next               | next               | default  |  null-pointer |
+| flags              | flags              | default  |             0 |
+| queue-family-index | queue-family-index | default  |             0 |
+| queue-count        | queue-count        | default  |             0 |
+| queue-properties   | queue-properties   | default  |           0.0 |
+
+function-name: *make-physical-device-features*
+| args                                         | desc    | property | default value |
+| robust-buffer-access                         | no desc | default  | false         |
+| full-draw-index-uint32                       | no desc | default  | false         |
+| image-cube-array                             | no desc | default  | false         |
+| independent-blend                            | no desc | default  | false         |
+| geometry-shader                              | no desc | default  | false         |
+| tessellation-shader                          | no desc | default  | false         |
+| sample-rate-shading                          | no desc | default  | false         |
+| dual-src-blend                               | no desc | default  | false         |
+| logic-op                                     | no desc | default  | false         |
+| multi-draw-indirect                          | no desc | default  | false         |
+| draw-indirect-first-instance                 | no desc | default  | false         |
+| depth-clamp                                  | no desc | default  | false         |
+| depth-bias-clamp                             | no desc | default  | false         |
+| fill-mode-non-solid                          | no desc | default  | false         |
+| depth-bounds                                 | no desc | default  | false         |
+| wide-lines                                   | no desc | default  | false         |
+| large-points                                 | no desc | default  | false         |
+| alpha-to-one                                 | no desc | default  | false         |
+| multi-viewport                               | no desc | default  | false         |
+| sampler-anisotropy                           | no desc | default  | false         |
+| texture-compression-etc2                     | no desc | default  | false         |
+| texture-compression-astc-ldr                 | no desc | default  | false         |
+| texture-compression-bc                       | no desc | default  | false         |
+| occlusion-query-precise                      | no desc | default  | false         |
+| pipeline-statistics-query                    | no desc | default  | false         |
+| vertex-pipeline-stores-and-atomics           | no desc | default  | false         |
+| fragment-stores-and-atomics                  | no desc | default  | false         |
+| shader-tessellation-and-geometry-point-size  | no desc | default  | false         |
+| shader-image-gather-extended                 | no desc | default  | false         |
+| shader-storage-image-extended-formats        | no desc | default  | false         |
+| shader-storage-image-multisample             | no desc | default  | false         |
+| shader-storage-image-read-without-format     | no desc | default  | false         |
+| shader-storage-image-write-without-format    | no desc | default  | false         |
+| shader-uniform-buffer-array-dynamic-indexing | no desc | default  | false         |
+| shader-sampled-image-array-dynamic-indexing  | no desc | default  | false         |
+| shader-storage-buffer-array-dynamic-indexing | no desc | default  | false         |
+| shader-storage-image-array-dynamic-indexing  | no desc | default  | false         |
+| shader-clip-distance                         | no desc | default  | false         |
+| shader-cull-distance                         | no desc | default  | false         |
+| shader-float64                               | no desc | default  | false         |
+| shader-int64                                 | no desc | default  | false         |
+| shader-int16                                 | no desc | default  | false         |
+| shader-resource-residency                    | no desc | default  | false         |
+| shader-resource-min-lod                      | no desc | default  | false         |
+| sparse-binding                               | no desc | default  | false         |
+| sparse-residency-buffer                      | no desc | default  | false         |
+| sparse-residency-image2-d                    | no desc | default  | false         |
+| sparse-residency-image3-d                    | no desc | default  | false         |
+| sparse-residency2-samples                    | no desc | default  | false         |
+| sparse-residency4-samples                    | no desc | default  | false         |
+| sparse-residency8-samples                    | no desc | default  | false         |
+| sparse-residency16-samples                   | no desc | default  | false         |
+| sparse-residency-aliased                     | no desc | default  | false         |
+| variable-multisample-rate                    | no desc | default  | false         |
+| inherited-queries                            | no desc | default  | false         |
+
+function-name: *make-device-create-info*
+| args               | desc                                     | property | default value                   |
+| next               | next                                     | default  | null-pointer                    |
+| flags              | flags                                    | default  | 0                               |
+| queue-create-infos | list of device-queue-create-info         | must     |                                 |
+| layers             | layers you want to use                   | default  | nil                             |
+| extensions         | extension tou want to use                | default  | nil                             |
+| enable-features    | physical device features you want to use | default  | (make-physical-device-features) |
+
