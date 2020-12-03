@@ -1,5 +1,7 @@
 (in-package :vkvk)
 
+(export '(create-instance destroy-instance))
+
 (defun check-ret (val)
   (when (not (eql :SUCCESS val))
     (error "error: ~a~%" val)))
@@ -16,4 +18,10 @@
 
 (defun destroy-instance (instance &optional (allocator (null-pointer)))
   (vkDestroyInstance instance allocator))
-
+#|
+(defun create-device (physical-device create-info &optional (allocator (null-pointer)))
+  (with-foreign-objects ((info )
+			 (device 'vk-device))))
+|#
+(defun destroy-device (device &optional (allocator (null-pointer)))
+  (vkDestroyDevice device allocator))

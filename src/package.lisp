@@ -61,7 +61,7 @@
 		     (foreign-string-alloc (nth i val))))
 	     (setf (foreign-slot-value ptr struct-name slot-name) str-list))))
 	((and bind-name parse-by)
-	 (let* ((num (foreign-slot-value struct-name bind-name :uint32)) ;;get count
+	 (let* ((num (foreign-slot-value ptr struct-name bind-name)) ;;get count
 		(sub-obj (foreign-alloc parse-by :count num)))           ;;alloc sub obj
 	   (dotimes (i num)
 	     (setf (mem-aref sub-obj parse-by i) (nth i val)))
@@ -118,15 +118,19 @@
 	      bind-name)
 	 (let ((count (foreign-slot-value ptr struct-name bind-name))   ;;get count
 	       (strs (foreign-slot-value ptr struct-name slot-name)))
-	   (loop for i upto (1- count)		 
-		 collect (foreign-string-to-lisp (mem-aref strs pointer-type i)))))
+	   (if (zerop count)
+	       (null-pointer)
+	       (loop for i upto (1- count)		 
+		     collect (foreign-string-to-lisp (mem-aref strs pointer-type i))))))
 	((and (consp pointer-type)
 	      (eql (first pointer-type) :struct)
 	      parse-by
 	      bind-name)
 	 (let ((count (foreign-slot-value ptr struct-name bind-name)))  ;;get count
-	   (loop for i upto (1- count)
-		 collect (mem-aref (foreign-slot-value ptr struct-name slot-name) parse-by i))))
+	   (if (zerop count)
+	       (null-pointer)
+	       (loop for i upto (1- count)
+		     collect (mem-aref (foreign-slot-value ptr struct-name slot-name) parse-by i)))))
 	((and (consp pointer-type)
 	      (eql (first pointer-type) :struct)
 	      parse-by)

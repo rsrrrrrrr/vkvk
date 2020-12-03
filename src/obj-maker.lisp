@@ -6,6 +6,11 @@
     (error "struct type check error"))
   (rest obj))
 
+(defun get-objs (objs type)
+  (mapcar #'(lambda (obj)
+	      (get-obj obj type))
+	  objs))
+
 (defun get-pointer-obj (obj type)
   (unless (and (consp obj)
 	       (every #'(lambda (x)
@@ -40,8 +45,8 @@
 		       (offset (make-offset-2d))
 		       (extent (make-extent-2d)))
   (cons 'rect-2d
-	(list (get-obj offset)
-	      (get-obj extent))))
+	(list (get-obj offset 'offset-2d)
+	      (get-obj extent 'extent-2d))))
 
 (defun make-application-info (&key
 				(next (null-pointer))
@@ -63,12 +68,161 @@
 				    (app-info (make-application-info))
 				    (layers nil)
 				    (extensions nil)
-				  &aux (type :structure-type-instance-create-info))
+				  &aux
+				    (type :structure-type-instance-create-info)
+				    (layer-count (length layers))
+				    (extension-count (length extensions)))
   (cons 'instance-create-info
 	(list type next flags
 	      (get-obj app-info 'application-info)
-	      (length layers) layers
-	      (length extensions) extensions)))
+	      layer-count layers
+	      extension-count extensions)))
+
+(defun make-device-queue-create-info (&key
+					(next (null-pointer))
+					(flags 0)
+					(queue-family-index 0)
+					(queue-count 0)
+					(queue-properties 0.0)
+				      &aux (type :structure-type-device-queue-create-info))
+  (cons 'device-queue-create-info
+	(list type next flags
+	      queue-family-index
+	      queue-count
+	      queue-properties)))
+
+(defun make-physical-device-features (&key
+					(robust-buffer-access +vk-false+)
+					(full-draw-index-uint32 +vk-false+)
+					(image-cube-array +vk-false+)
+					(independent-blend +vk-false+)
+					(geometry-shader +vk-false+)
+					(tessellation-shader +vk-false+)
+					(sample-rate-shading +vk-false+)
+					(dual-src-blend +vk-false+)
+					(logic-op +vk-false+)
+					(multi-draw-indirect +vk-false+)
+					(draw-indirect-first-instance +vk-false+)
+					(depth-clamp +vk-false+)
+					(depth-bias-clamp +vk-false+)
+					(fill-mode-non-solid +vk-false+)
+					(depth-bounds +vk-false+)
+					(wide-lines +vk-false+)
+					(large-points +vk-false+)
+					(alpha-to-one +vk-false+)
+					(multi-viewport +vk-false+)
+					(sampler-anisotropy +vk-false+)
+					(texture-compression-etc2 +vk-false+)
+					(texture-compression-astc-ldr +vk-false+)
+					(texture-compression-bc +vk-false+)
+					(occlusion-query-precise +vk-false+)
+					(pipeline-statistics-query +vk-false+)
+					(vertex-pipeline-stores-and-atomics +vk-false+)
+					(fragment-stores-and-atomics +vk-false+)
+					(shader-tessellation-and-geometry-point-size +vk-false+)
+					(shader-image-gather-extended +vk-false+)
+					(shader-storage-image-extended-formats +vk-false+)
+					(shader-storage-image-multisample +vk-false+)
+					(shader-storage-image-read-without-format +vk-false+)
+					(shader-storage-image-write-without-format +vk-false+)
+					(shader-uniform-buffer-array-dynamic-indexing +vk-false+)
+					(shader-sampled-image-array-dynamic-indexing +vk-false+)
+					(shader-storage-buffer-array-dynamic-indexing +vk-false+)
+					(shader-storage-image-array-dynamic-indexing +vk-false+)
+					(shader-clip-distance +vk-false+)
+					(shader-cull-distance +vk-false+)
+					(shader-float64 +vk-false+)
+					(shader-int64 +vk-false+)
+					(shader-int16 +vk-false+)
+					(shader-resource-residency +vk-false+)
+					(shader-resource-min-lod +vk-false+)
+					(sparse-binding +vk-false+)
+					(sparse-residency-buffer +vk-false+)
+					(sparse-residency-image2-d +vk-false+)
+					(sparse-residency-image3-d +vk-false+)
+					(sparse-residency2-samples +vk-false+)
+					(sparse-residency4-samples +vk-false+)
+					(sparse-residency8-samples +vk-false+)
+					(sparse-residency16-samples +vk-false+)
+					(sparse-residency-aliased +vk-false+)
+					(variable-multisample-rate +vk-false+)
+					(inherited-queries +vk-false+))
+  (cons 'physical-device-features
+	(list robust-buffer-access
+	      full-draw-index-uint32
+	      image-cube-array
+	      independent-blend
+	      geometry-shader
+	      tessellation-shader
+	      sample-rate-shading
+	      dual-src-blend
+	      logic-op
+	      multi-draw-indirect
+	      draw-indirect-first-instance
+	      depth-clamp
+	      depth-bias-clamp
+	      fill-mode-non-solid
+	      depth-bounds
+	      wide-lines
+	      large-points
+	      alpha-to-one
+	      multi-viewport
+	      sampler-anisotropy
+	      texture-compression-etc2
+	      texture-compression-astc-ldr
+	      texture-compression-bc
+	      occlusion-query-precise
+	      pipeline-statistics-query
+	      vertex-pipeline-stores-and-atomics
+	      fragment-stores-and-atomics
+	      shader-tessellation-and-geometry-point-size
+	      shader-image-gather-extended
+	      shader-storage-image-extended-formats
+	      shader-storage-image-multisample
+	      shader-storage-image-read-without-format
+	      shader-storage-image-write-without-format
+	      shader-uniform-buffer-array-dynamic-indexing
+	      shader-sampled-image-array-dynamic-indexing
+	      shader-storage-buffer-array-dynamic-indexing
+	      shader-storage-image-array-dynamic-indexing
+	      shader-clip-distance
+	      shader-cull-distance
+	      shader-float64
+	      shader-int64
+	      shader-int16
+	      shader-resource-residency
+	      shader-resource-min-lod
+	      sparse-binding
+	      sparse-residency-buffer
+	      sparse-residency-image2-d
+	      sparse-residency-image3-d
+	      sparse-residency2-samples
+	      sparse-residency4-samples
+	      sparse-residency8-samples
+	      sparse-residency16-samples
+	      sparse-residency-aliased
+	      variable-multisample-rate
+	      inherited-queries)))
+
+(defun make-device-create-info (&key
+				  (next (null-pointer))
+				  (flags 0)
+				  (queue-create-infos nil)
+				  (layers nil)
+				  (extensions nil)
+				  (enable-features (make-physical-device-features))
+				&aux
+				  (type :structure-type-device-create-info)
+				  (queue-create-info-count (length queue-create-infos))
+				  (layer-count (length layers))
+				  (extension-count (length extensions)))
+  (cons 'device-create-info
+	(list type next flags
+	      queue-create-info-count (get-objs queue-create-infos 'device-queue-create-info)
+	      layer-count layers
+	      extension-count extensions
+	      (get-obj enable-features 'physical-device-features))))
+
 
 (defun make-validation-flag-ext (&key
 				   (next (null-pointer))
@@ -384,82 +538,6 @@ vk-physical-device-vulkan-12-properties
   (:physical-devices vk-physical-device :count 32)
   (:subset-allocation vk-bool-32))
 
-(defun make-device-queue-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-device-queue-create-flags)
-  (:queue-family-index :uint32)
-  (:queue-count :uint32)
-  (:queue-properties (:pointer :float)))
-
-(defun make-physical-device-features
-  (:robust-buffer-access vk-bool-32)
-  (:full-draw-index-uint32 vk-bool-32)
-  (:image-cube-array vk-bool-32)
-  (:independent-blend vk-bool-32)
-  (:geometry-shader vk-bool-32)
-  (:tessellation-shader vk-bool-32)
-  (:sample-rate-shading vk-bool-32)
-  (:dual-src-blend vk-bool-32)
-  (:logic-op vk-bool-32)
-  (:multi-draw-indirect vk-bool-32)
-  (:draw-indirect-first-instance vk-bool-32)
-  (:depth-clamp vk-bool-32)
-  (:depth-bias-clamp vk-bool-32)
-  (:fill-mode-non-solid vk-bool-32)
-  (:depth-bounds vk-bool-32)
-  (:wide-lines vk-bool-32)
-  (:large-points vk-bool-32)
-  (:alpha-to-one vk-bool-32)
-  (:multi-viewport vk-bool-32)
-  (:sampler-anisotropy vk-bool-32)
-  (:texture-compression-e-t-c2 vk-bool-32)
-  (:texture-compression-a-s-t-c_-l-d-r vk-bool-32)
-  (:texture-compression-b-c vk-bool-32)
-  (:occlusion-query-precise vk-bool-32)
-  (:pipeline-statistics-query vk-bool-32)
-  (:vertex-pipeline-stores-and-atomics vk-bool-32)
-  (:fragment-stores-and-atomics vk-bool-32)
-  (:shader-tessellation-and-geometry-point-size vk-bool-32)
-  (:shader-image-gather-extended vk-bool-32)
-  (:shader-storage-image-extended-formats vk-bool-32)
-  (:shader-storage-image-multisample vk-bool-32)
-  (:shader-storage-image-read-without-format vk-bool-32)
-  (:shader-storage-image-write-without-format vk-bool-32)
-  (:shader-uniform-buffer-array-dynamic-indexing vk-bool-32)
-  (:shader-sampled-image-array-dynamic-indexing vk-bool-32)
-  (:shader-storage-buffer-array-dynamic-indexing vk-bool-32)
-  (:shader-storage-image-array-dynamic-indexing vk-bool-32)
-  (:shader-clip-distance vk-bool-32)
-  (:shader-cull-distance vk-bool-32)
-  (:shader-float64 vk-bool-32)
-  (:shader-int64 vk-bool-32)
-  (:shader-int16 vk-bool-32)
-  (:shader-resource-residency vk-bool-32)
-  (:shader-resource-min-lod vk-bool-32)
-  (:sparse-binding vk-bool-32)
-  (:sparse-residency-buffer vk-bool-32)
-  (:sparse-residency-image2-d vk-bool-32)
-  (:sparse-residency-image3-d vk-bool-32)
-  (:sparse-residency2-samples vk-bool-32)
-  (:sparse-residency4-samples vk-bool-32)
-  (:sparse-residency8-samples vk-bool-32)
-  (:sparse-residency16-samples vk-bool-32)
-  (:sparse-residency-aliased vk-bool-32)
-  (:variable-multisample-rate vk-bool-32)
-  (:inherited-queries vk-bool-32))
-
-(defun make-device-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-device-create-flags)
-  (:queue-create-info-count :uint32)
-  (:queue-create-infos (:pointer (:struct vk-device-queue-create-info)))
-  (:layer-count :uint32)
-  (:layers (:pointer (:pointer :char)))
-  (:extension-count :uint32)
-  (:extensions (:pointer (:pointer :char)))
-  (:enable-features (:pointer (:struct vk-physical-device-features))))
 
 (defun make-device-group-device-create-info
   (:type VkStructureType)
