@@ -223,6 +223,56 @@
 	      extension-count extensions
 	      (get-obj enable-features 'physical-device-features))))
 
+(defun make-fence-create-info (&key
+				 (next (null-pointer))
+				 (flags 0)
+			       &aux
+				 (type :structure-type-fence-create-info))
+  (cons 'fence-create-info
+	(list type next flags)))
+
+(defun make-semaphore-create-info (&key
+				     (next (null-pointer))
+				     (flags 0)
+				   &aux
+				     (type :structure-type-semaphore-create-info))
+  (cons 'semaphore-create-info
+	(list type next flags)))
+
+(defun make-event-create-info (&key
+				 (next (null-pointer))
+				 (flags 0)
+			       &aux
+				 (type :structure-type-event-create-info))
+  (cons 'event-create-info
+	(list type next flags)))
+
+(defun make-query-pool-create-info (&key
+				      (next (null-pointer))
+				      (flags 0)
+				      (query-type :query-type-pipeline-statistics)
+				      (query-count 0)
+				      (pipeline-statistics 0)
+				    &aux
+				      (type :structure-type-query-pool-create-info))
+  (cons 'query-pool-create-info
+	(list type next flags
+	      query-type query-count
+	      pipeline-statistics)))
+
+(defun make-buffer-create-info (&key
+				  (next (null-pointer))
+				  (flags 0)
+				  (size 0)
+				  (usage 0)
+				  (sharing-mode :sharing-mode-concurrent)
+				  (indices nil)
+				&aux
+				  (type :structure-type-buffer-create-info))
+  (cons 'buffer-create-info
+	(list type next flags
+	      size usage sharing-mode
+	      (length indices) (get-pointer-obj indices 'integer))))
 
 (defun make-validation-flag-ext (&key
 				   (next (null-pointer))
@@ -686,10 +736,7 @@ vk-physical-device-vulkan-12-properties
   (:next (:pointer :void))
   (:device-mask :uint32))
 
-(defun make-fence-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-fence-create-flags))
+
 
 (defun make-export-fence-create-info
   (:type VkStructureType)
@@ -815,10 +862,7 @@ vk-physical-device-vulkan-12-properties
   (:handle-type VkExternalSemaphoreHandleTypeFlagBits)
   (:fd :int))
 
-(defun make-event-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-event-create-flags))
+
 
 (defun make-memory-barrier
   (:type VkStructureType)
@@ -1678,15 +1722,7 @@ i don't know how to set up android in lisp
   (:next (:pointer :void))
   (:memory vk-device-memory))
 
-(defun make-buffer-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-buffer-create-flags)
-  (:size vk-device-size)
-  (:usage vk-buffer-usage-flags)
-  (:sharing-mode VkSharingMode)
-  (:queue-family-count :uint32)
-  (:queue-family-indices (:pointer :uint32)))
+
 
 (defun make-dedicated-allocation-buffer-create-info-nv
   (:type VkStructureType)
@@ -2768,13 +2804,7 @@ i don't know how to set up android in lisp
   (:next (:pointer :void))
   (:buffer vk-buffer))
 
-(defun make-query-pool-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-query-pool-create-flags)
-  (:query-type VkQueryType)
-  (:query-count :uint32)
-  (:pipeline-statistics vk-query-pipeline-statistic-flags))
+
 
 (defun make-query-pool-performance-create-info-khr
   (:type VkStructureType)

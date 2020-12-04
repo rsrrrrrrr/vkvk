@@ -30,3 +30,63 @@
 
 (defun destroy-device (device &optional (allocator (null-pointer)))
   (vkDestroyDevice device allocator))
+
+(defun create-fence (device create-info &optional (allocator (null-pointer)))
+  (with-foreign-objects ((p-info 'fence-create-info)
+			 (p-fence 'vk-fence))
+    (setf (mem-ref p-info 'fence-create-info)
+	  (get-obj create-info 'fence-create-info))
+    (check-ret (vkCreateFence device p-info allocator p-fence))
+    (free-objs)
+    (mem-ref p-fence 'vk-fence)))
+
+(defun destroy-fence (device fence &optional (allocator (null-pointer)))
+  (vkDestroyFence device fence allocator))
+
+(defun cerate-semaphore (device create-info &optional (allocator (null-pointer)))
+  (with-foreign-objects ((p-info 'semaphore-create-info)
+			 (p-semaphore 'vk-semaphore))
+    (setf (mem-ref p-info 'semaphore-create-info)
+	  (get-obj create-info 'semaphore-create-info))
+    (check-ret (vkCreateSemaphore device p-info allocator p-semaphore))
+    (free-objs)
+    (mem-ref p-semaphore 'vk-semaphore)))
+
+(defun destroy-semaphore (device semaphore &optional (allocator (null-pointer)))
+  (vkDestroySemaphore device semaphore allocator))
+
+(defun create-event (device create-info &optional (allocator (null-pointer)))
+  (with-foreign-objects ((p-info 'event-create-info)
+			 (p-event 'vk-event))
+    (setf (mem-ref p-info 'event-create-info)
+	  (get-obj create-info 'event-create-info))
+    (check-ret (vkCreateEvent device p-info allocator p-event))
+    (free-objs)
+    (mem-ref p-event 'vk-event)))
+
+(defun destroy-event (device event &optional (allocator (null-pointer)))
+  (vkDestroyEvent device event allocator))
+
+(defun create-query-pool (device create-info &optional (allocator (null-pointer)))
+  (with-foreign-objects ((p-info 'query-pool-create-info)
+			 (p-pool 'vk-query-pool))
+    (setf (mem-ref p-info 'query-pool-create-info)
+	  (get-obj create-info 'query-pool-create-info))
+    (check-ret (vkCreateQueryPool device p-info allocator p-pool))
+    (free-objs)
+    (mem-ref p-pool 'vk-query-pool)))
+
+(defun destroy-query-pool (device query-pool &optional (allocator (null-pointer)))
+  (vkDestroyQueryPool device query-pool allocator))
+
+(defun create-buffer (device create-info &optional (allocator (null-pointer)))
+  (with-foreign-objects ((p-info 'buffer-create-info)
+			 (p-buffer 'vk-buffer))
+    (setf (mem-ref p-info 'buffer-create-info)
+	  (get-obj create-info 'buffer-create-info))
+    (check-ret (vkCreateBuffer device p-info allocator p-buffer))
+    (free-objs)
+    (mem-ref p-buffer 'vk-buffer)))
+
+(defun destroy-buffer (device buffer &optional (allocator (null-pointer)))
+  (vkDestroyBuffer device buffer allocator))

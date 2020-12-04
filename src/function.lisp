@@ -73,7 +73,7 @@
 
 (defcfun ("vkDestroyBuffer" vkDestroyBuffer) :void
   (device vk-device)
-  (buffer vk-bool-32)
+  (buffer vk-buffer)
   (allocator (:pointer (:struct vk-allocation-callback))))
 
 (defcfun ("vkCreateBufferView" vkCreateBufferView) VkResult

@@ -295,3 +295,41 @@
   (:extension-count :uint32)
   (:extensions (:pointer (:pointer :char)) :bind :extension-count)
   (:enable-features (:pointer (:struct vk-physical-device-features)) :parser physical-device-features))
+
+(defvkstruct vk-fence-create-info
+    (s-fence-create-info fence-create-info)
+  (:type VkStructureType)
+  (:next (:pointer :void))
+  (:flags vk-fence-create-flags))
+
+(defvkstruct vk-semaphore-create-info
+    (s-semaphore-create-info semaphore-create-info)
+  (:type VkStructureType)
+  (:next (:pointer :void))
+  (:flags vk-semaphore-create-flags))
+
+(defvkstruct vk-event-create-info
+    (s-event-create-info event-create-info)
+  (:type VkStructureType)
+  (:next (:pointer :void))
+  (:flags vk-event-create-flags))
+
+(defvkstruct vk-query-pool-create-info
+    (s-query-pool-create-info query-pool-create-info)
+  (:type VkStructureType)
+  (:next (:pointer :void))
+  (:flags vk-query-pool-create-flags)
+  (:query-type VkQueryType)
+  (:query-count :uint32)
+  (:pipeline-statistics vk-query-pipeline-statistic-flags))
+
+(defvkstruct vk-buffer-create-info
+    (s-buffer-create-info buffer-create-info)
+  (:type VkStructureType)
+  (:next (:pointer :void))
+  (:flags vk-buffer-create-flags)
+  (:size vk-device-size)
+  (:usage vk-buffer-usage-flags)
+  (:sharing-mode VkSharingMode)
+  (:queue-family-count :uint32)
+  (:queue-family-indices (:pointer :uint32) :bind :queue-family-count))
