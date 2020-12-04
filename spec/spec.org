@@ -64,6 +64,66 @@ function-name: *destroy-device*
 | args      | desc      | property | default value |
 | device    | device    | must     |               |
 | allocator | allocator | optional | null-pointer  |
+*** fence
+function-name: *create-fence*
+| args        | desc                 | property | default value |
+| device      | logic device         | must     |               |
+| create-info | vk-fence-create-info | must     |               |
+| allocator   | allocator            | default  | null-pointer  |
+
+function-name: *destroy-fence*
+| args      | desc      | property | default value |
+| device    | device    | must     |               |
+| fence     | fence     | must     |               |
+| allocator | allocator | optional | null-pointer  |
+*** semaphore 
+function-name: *create-semaphore*
+| args        | desc                     | property | default value |
+| device      | logic device             | must     |               |
+| create-info | vk-semaphore-create-info | must     |               |
+| allocator   | allocator                | default  | null-pointer  |
+
+function-name: *destroy-semaphore*
+| args      | desc      | property | default value |
+| device    | device    | must     |               |
+| semaphore | semaphore | must     |               |
+| allocator | allocator | optional | null-pointer  |
+*** event
+function-name: *create-event*
+| args        | desc                 | property | default value |
+| device      | logic device         | must     |               |
+| create-info | vk-event-create-info | must     |               |
+| allocator   | allocator            | default  | null-pointer  |
+
+function-name: *destroy-event*
+| args      | desc      | property | default value |
+| device    | device    | must     |               |
+| event     | event     | must     |               |
+| allocator | allocator | optional | null-pointer  |
+*** query-pool
+function-name: *create-query-pool*
+| args        | desc                      | property | default value |
+| device      | logic device              | must     |               |
+| create-info | vk-query-pool-create-info | must     |               |
+| allocator   | allocator                 | default  | null-pointer  |
+
+function-name: *destroy-query-pool*
+| args       | desc       | property | default value |
+| device     | device     | must     |               |
+| query-pool | query-pool | must     |               |
+| allocator  | allocator  | optional | null-pointer  |
+*** buffer 
+function-name: *create-buffer*
+| args        | desc                  | property | default value |
+| device      | logic device          | must     |               |
+| create-info | vk-buffer-create-info | must     |               |
+| allocator   | allocator             | default  | null-pointer  |
+
+function-name: *destroy-buffer*
+| args      | desc      | property | default value |
+| device    | device    | must     |               |
+| buffer    | buffer    | must     |               |
+| allocator | allocator | optional | null-pointer  |
 *** structure make api
 function-name: *make-vulkan-version*
 | args  | desc  | property | default value |
@@ -318,4 +378,36 @@ function-name: *make-device-create-info*
 | layers             | layers you want to use                   | default  | nil                             |
 | extensions         | extension tou want to use                | default  | nil                             |
 | enable-features    | physical device features you want to use | default  | (make-physical-device-features) |
+
+function-name: *make-fence-create-info*
+| args  | desc  | property | default value |
+| next  | next  | default  | null-pointer  |
+| flags | flags | default  | 0             |
+
+function-name: *make-semaphore-create-info*
+| args  | desc  | property | default value |
+| next  | next  | default  | null-pointer  |
+| flags | flags | default  | 0             |
+
+function-name: *make-event-create-info*
+| args  | desc  | property | default value |
+| next  | next  | default  | null-pointer  |
+| flags | flags | default  | 0             |
+
+function-name: *make-query-pool-create-info*
+| args                | desc                           | property | default value                   |
+| next                | next                           | default  | null-pointer                    |
+| flags               | flags                          | default  | 0                               |
+| query-type          | query pool type                | default  | :query-type-pipeline-statistics |
+| query-count         | how many query you want to use | default  | 0                               |
+| pipeline-statistics | pipeline-statistics            | default  | 0                               |
+
+function-name: *make-buffer-create-info*
+| args         | desc              | property | default value            |
+| next         | next              | default  | null-pointer             |
+| flags        | flags             | default  | 0                        |
+| size         | size              | default  | 0                        |
+| usage        | usage             | default  | 0                        |
+| sharing-mode | sharing mode      | default  | :sharing-mode-concurrent |
+| indices      | pointer of uint32 | default  | nil                      |
 
