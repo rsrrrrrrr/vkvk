@@ -90,3 +90,39 @@
 
 (defun destroy-buffer (device buffer &optional (allocator (null-pointer)))
   (vkDestroyBuffer device buffer allocator))
+
+(defun create-buffer-view (device create-info &optional (allocator (null-pointer)))
+  (with-foreign-objects ((p-info 'buffer-view-create-info)
+			 (p-buffer-view 'vk-buffer-view))
+    (setf (mem-ref p-info 'buffer-view-create-info)
+	  (get-obj create-info 'buffer-view-create-info))
+    (check-ret (vkCreateBufferView device p-info allocator p-buffer-view))
+    (free-objs)
+    (mem-ref p-buffer-view 'vk-buffer-view)))
+
+(defun destroy-buffer-view (device buffer-view &optional (allocator (null-pointer)))
+  (vkDestroyBufferView device buffer-view allocator))
+
+(defun create-image (device create-info &optional (allocator (null-pointer)))
+  (with-foreign-objects ((p-info 'image-create-info)
+			 (p-image 'vk-image))
+    (setf (mem-ref p-info 'image-create-info)
+	  (get-obj create-info 'image-create-info))
+    (check-ret (vkCreateImage device p-info allocator p-image))
+    (free-objs)
+    (mem-ref p-image 'vk-image)))
+
+(defun destroy-image (device image &optional (allocator (null-pointer)))
+  (vkDestroyImage device image allocator))
+
+(defun create-image-view (device create-info &optional (allocator (null-pointer)))
+  (with-foreign-objects ((p-info 'image-view-create-info)
+			 (p-image-view 'vk-image-view))
+    (setf (mem-ref p-info 'image-view-create-info)
+	  (get-obj create-info 'image-view-create-info))
+    (check-ret (vkCreateImageView device p-info allocator p-image-view))
+    (free-objs)
+    (mem-ref p-image-view 'vk-image-view)))
+
+(defun destroy-image-view (device image-view &optional (allocator (null-pointer)))
+  (vkDestroyImageView device image-view allocator))

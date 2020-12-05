@@ -12,12 +12,18 @@
 	  objs))
 
 (defun get-pointer-obj (obj type)
-  (unless (and (consp obj)
+  (if (or (null obj)
+	  (and (consp obj)
 	       (every #'(lambda (x)
 			  (typep x type))
-		      obj))
-    (error "the member in list is not type of ~a" type))
-  obj)
+		      obj)))
+      obj
+      (error "the member in list is not type of ~a" type)))
+
+(defun check-enum (obj type)
+  (if (typep obj type)
+      obj
+      (error "check type error ~a" obj)))
 ;;export
 (declaim (inline make-vulkan-version))
 (defun make-vulkan-version (&optional (major 1) (minor 2) (patch 0))
@@ -47,6 +53,19 @@
   (cons 'rect-2d
 	(list (get-obj offset 'offset-2d)
 	      (get-obj extent 'extent-2d))))
+
+(defun make-image-subresource-range (&key
+				       (aspect-mask :image-aspect-color-bit)
+				       (base-mip-level 0)
+				       (level-count 0)
+				       (base-array-layer 0)
+				       (layer-count 0))
+  (cons 'image-subresource-range
+	(list (check-enum aspect-mask 'VkImageAspectFlagBits)
+	      base-mip-level
+	      level-count
+	      base-array-layer
+	      layer-count)))
 
 (defun make-application-info (&key
 				(next (null-pointer))
@@ -273,6 +292,73 @@
 	(list type next flags
 	      size usage sharing-mode
 	      (length indices) (get-pointer-obj indices 'integer))))
+
+(defun make-buffer-view-create-info (buffer &key
+					      (next (null-pointer))
+					      (flags 0)
+					      (format :format-r8g8b8a8-sint)
+					      (offset 0)
+					      (range 0)
+				     &aux
+				       (type :structure-type-buffer-view-create-info))
+  (cons 'buffer-view-create-info
+	(list type next flags
+	      buffer
+	      format
+	      offset range)))
+
+(defun make-image-create-info (&key
+				 (next (null-pointer))
+				 (flags 0)
+				 (image-type :image-type-1d)
+				 (format :format-r8g8b8a8-sint)
+				 (extent (make-extent-3d))
+				 (mip-levels 0)
+				 (array-layers 0)
+				 (samples :sample-count-1-bit)
+				 (tiling :image-tiling-linear)
+				 (usage 0)
+				 (sharing-mode :sharing-mode-concurrent)
+				 (queue-family-indices nil)
+				 (initial-layout :image-layout-color-attachment-optimal)
+			       &aux
+				 (type :structure-type-image-create-info))
+  (cons 'image-create-info
+	(list type next flags
+	      image-type
+	      format
+	      (get-obj extent 'extent-3d)
+	      mip-levels
+	      array-layers
+	      samples
+	      tiling
+	      usage
+	      sharing-mode
+	      (length queue-family-indices) (get-pointer-obj queue-family-indices 'integer)
+	      initial-layout)))
+(defun make-component-mapping (&key
+				 (r :component-swizzle-identity)
+				 (g :component-swizzle-identity)
+				 (b :component-swizzle-identity)
+				 (a :component-swizzle-identity))
+  (cons 'component-mapping
+	(get-objs (list r g b a) 'vkcomponentswizzle)))
+
+(defun make-image-view-create-info (image &key
+					    (next (null-pointer))
+					    (flags 0)
+					    (view-type :image-view-type-1d)
+					    (format :format-r8g8b8a8-sint)
+					    (components (make-component-mapping))
+					    (range (make-image-subresource-range))
+				    &aux
+				      (type :structure-type-image-view-create-info))
+  (cons 'image-view-create-info
+	(list type next flags
+	      image
+	      view-type format
+	      (get-obj components 'component-mapping)
+	      (get-obj range 'image-subresource-range))))
 
 (defun make-validation-flag-ext (&key
 				   (next (null-pointer))
@@ -881,12 +967,7 @@ vk-physical-device-vulkan-12-properties
   (:offset vk-device-size)
   (:size vk-device-size))
 
-(defun make-image-subresource-range
-  (:aspect-mask VkImageAspectFlagBits)
-  (:base-mip-level :uint32)
-  (:level-count :uint32)
-  (:base-array-layer :uint32)
-  (:layer-count :uint32))
+
 
 (defun make-image-memory-barrier
   (:type VkStructureType)
@@ -1744,31 +1825,9 @@ i don't know how to set up android in lisp
   (:next (:pointer :void))
   (:device-address vk-device-address))
 
-(defun make-buffer-view-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-buffer-view-create-flags)
-  (:buffer vk-buffer)
-  (:format VkFormat)
-  (:offset vk-device-size)
-  (:range vk-device-size))
 
-(defun make-image-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-image-create-flags)
-  (:image-type VkImageType)
-  (:format VkFormat)
-  (:extent (:struct vk-extent-3d))
-  (:mip-levels :uint32)
-  (:array-layers :uint32)
-  (:samples VkSampleCountFlagBits)
-  (:tiling VkImageTiling)
-  (:usage vk-image-usage-flags)
-  (:sharing-mode VkSharingMode)
-  (:queue-family-index-count :uint32)
-  (:queue-family-indices (:pointer :uint32))
-  (:initial-layout VkImageLayout))
+
+
 
 (defun make-image-stencil-usage-create-info
   (:type VkStructureType)
@@ -1831,21 +1890,9 @@ i don't know how to set up android in lisp
   (:next (:pointer :void))
   (:drm-format-modifier :uint64))
 
-(defun make-component-mapping
-  (:r VkComponentSwizzle)
-  (:g VkComponentSwizzle)
-  (:b VkComponentSwizzle)
-  (:a VkComponentSwizzle))
 
-(defun make-image-view-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-image-view-create-flags)
-  (:image vk-image)
-  (:view-type VkImageViewtype)
-  (:format VkFormat)
-  (:components (:struct vk-component-mapping))
-  (:subresource-range (:struct vk-image-subresource-range)))
+
+
 
 (defun make-image-view-usage-create-info
   (:type VkStructureType)

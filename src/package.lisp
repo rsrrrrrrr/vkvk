@@ -43,40 +43,47 @@
 
 (defun process-write-pointer (struct-name ptr slot-name pointer-type val parse-by bind-name)
   "this function is used to fill the pointer type"
-  (cond ((eql pointer-type :void)    ;;process void pointer
-	 (setf (foreign-slot-value ptr struct-name slot-name) (if (null val) (null-pointer) val)))
-	((eql pointer-type :char)    ;;process string
-	 (unless (null val)
-	   (let ((foreign-string (foreign-string-alloc val)))
-	     (push foreign-string val)
-	     (setf (foreign-slot-value ptr struct-name slot-name) foreign-string))))
-	((and (consp pointer-type)
-	      (equal pointer-type '(:pointer :char)))   ;;process string pointer
-	 (unless (null val)
-	   (let* ((len (length val))
-		  (str-list (foreign-alloc pointer-type :count len)))
-	     (push str-list *allocated-obj*)
-	     (dotimes (i len)
-	       (setf (mem-aref str-list pointer-type i)
-		     (foreign-string-alloc (nth i val))))
-	     (setf (foreign-slot-value ptr struct-name slot-name) str-list))))
-	((and bind-name parse-by)
-	 (let* ((num (foreign-slot-value ptr struct-name bind-name)) ;;get count
-		(sub-obj (foreign-alloc parse-by :count num)))           ;;alloc sub obj
-	   (dotimes (i num)
-	     (setf (mem-aref sub-obj parse-by i) (nth i val)))
-	   (setf (foreign-slot-value ptr struct-name slot-name) sub-obj)
-	   (push sub-obj *allocated-obj*)))
-	(parse-by                               ;;process struct pointer
-	 (let ((sub-obj (foreign-alloc parse-by)))
-	   (setf (mem-ref sub-obj parse-by) val
-		 (foreign-slot-value ptr struct-name slot-name) sub-obj)
-	   (push sub-obj *allocated-obj*)))
-	(t
-	 (let ((pointer-obj (foreign-alloc pointer-type)))
-	   (push pointer-obj *allocated-obj*)
-	   (setf (mem-ref (foreign-slot-value ptr struct-name slot-name) pointer-type)
-		 pointer-obj)))))  ;;process none-dispatch-handle
+  (if (null val)
+      (setf (foreign-slot-value ptr struct-name slot-name) (null-pointer))
+      (cond ((eql pointer-type :void)    ;;process void pointer
+	     (setf (foreign-slot-value ptr struct-name slot-name) val))
+	    ((eql pointer-type :char)    ;;process string
+	     (let ((foreign-string (foreign-string-alloc val)))
+	       (push foreign-string val)
+	       (setf (foreign-slot-value ptr struct-name slot-name) foreign-string)))
+	    ((and (consp pointer-type)
+		  (equal pointer-type '(:pointer :char)))   ;;process string pointer
+	     (let* ((len (length val))
+		    (str-list (foreign-alloc pointer-type :count len)))
+	       (push str-list *allocated-obj*)
+	       (dotimes (i len)
+		 (setf (mem-aref str-list pointer-type i)
+		       (foreign-string-alloc (nth i val))))
+	       (setf (foreign-slot-value ptr struct-name slot-name) str-list)))
+	    ((and bind-name parse-by)
+	     (let* ((num (foreign-slot-value ptr struct-name bind-name)) ;;get count
+		    (sub-obj (foreign-alloc parse-by :count num)))           ;;alloc sub obj
+	       (dotimes (i num)
+		 (setf (mem-aref sub-obj parse-by i) (nth i val)))
+	       (setf (foreign-slot-value ptr struct-name slot-name) sub-obj)
+	       (push sub-obj *allocated-obj*)))
+	    (bind-name
+	     (let* ((num (foreign-slot-value ptr struct-name bind-name))
+		    (alloc (foreign-alloc pointer-type :count num)))
+	       (dotimes (i num)
+		 (setf (mem-aref alloc pointer-type i) (nth i val)))
+	       (setf (foreign-slot-value ptr struct-name slot-name) alloc)
+	       (push alloc *allocated-obj*)))
+	    (parse-by                               ;;process struct pointer
+	     (let ((sub-obj (foreign-alloc parse-by)))
+	       (setf (mem-ref sub-obj parse-by) val
+		     (foreign-slot-value ptr struct-name slot-name) sub-obj)
+	       (push sub-obj *allocated-obj*)))
+	    (t
+	     (let ((pointer-obj (foreign-alloc pointer-type)))
+	       (push pointer-obj *allocated-obj*)
+	       (setf (mem-ref (foreign-slot-value ptr struct-name slot-name) pointer-type)
+		     pointer-obj))))))  ;;process none-dispatch-handle
 
 (defun process-write-count (struct-name ptr slot-name type val parse-by count &aux (len (length val)))
   (unless (> len count)
@@ -135,6 +142,12 @@
 	      (eql (first pointer-type) :struct)
 	      parse-by)
 	 (mem-aref (foreign-slot-value ptr struct-name slot-name) parse-by))
+	(bind-name
+	 (let ((count (foreign-slot-value ptr struct-name bind-name)))
+	   (if (zerop count)
+	       (null-pointer)
+	       (loop for i upto (1- count)
+		     collect (mem-aref (foreign-slot-value ptr struct-name slot-name) pointer-type i)))))
 	(t (mem-ref (foreign-slot-value ptr struct-name slot-name) pointer-type)))) 
 
 (defun process-read-count (struct-name ptr slot-name type parse-by count)
