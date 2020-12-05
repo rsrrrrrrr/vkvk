@@ -39,9 +39,9 @@ for lisp code
 				     :engine-version (make-vulakn-version 0 0 0 ) 
 				     :api-version (make-vulakn-version 1 2 0))
     ;;no need to set layer count it will be the length of lauers
-    :layers (list "aaa" "bbb")   
+    :layers (list "layer" "you" "want" "use")   
     ;;no need to set extensions count it will be the length of extension
-    :extensions (list "ccc" "ddd"))) 
+    :extensions (list "extension" "you" "want" "use")   
 #+end_src
 *** instnace 
 function-name: *create-instnace*
@@ -138,10 +138,10 @@ function-name: *destroy-buffer*
 | allocator   | allocator   | optional | null-pointer  |
 *** image
 function-name: *create-image*
-| args        | desc           | property | default value |
-| device      | logic device   | must     |               |
-| create-info | vk-create-info | must     |               |
-| allocator   | allocator      | default  | null-pointer  |
+| args        | desc                 | property | default value |
+| device      | logic device         | must     |               |
+| create-info | vk-image-create-info | must     |               |
+| allocator   | allocator            | default  | null-pointer  |
 
 function-name: *destroy-image*
 | args      | desc      | property | default value |
@@ -160,6 +160,18 @@ function-name: *destroy-image*
 | device     | device     | must     |               |
 | image-view | image-view | must     |               |
 | allocator  | allocator  | optional | null-pointer  |
+*** shader-module
+function-name: *create-shader-module*
+| args        | desc                         | property | default value |
+| device      | logic device                 | must     |               |
+| create-info | vk-shader-module-create-info | must     |               |
+| allocator   | allocator                    | default  | null-pointer  |
+
+function-name: *destroy-shader-module*
+| args          | desc          | property | default value |
+| device        | device        | must     |               |
+| shader-module | shader-module | must     |               |
+| allocator     | allocator     | optional | null-pointer  |
 *** structure make api
 function-name: *make-vulkan-version*
 | args  | desc  | property | default value |
@@ -486,4 +498,10 @@ function-name: *make-image-view-create-info*
 | format     | format     | optional | :format-r8g8b8a8-sint          |
 | components | components | optional | (make-component-mapping)       |
 | range      | range      | optional | (make-image-subresource-range) |
+
+function-name: *make-shader-module-create-info*
+| args      | desc          | property | default value |
+| file-path | the .spv file | must     |               |
+| next      | next          | optional | null-pointer  |
+| flags     | flags         | optional | 0             |
 

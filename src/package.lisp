@@ -45,7 +45,7 @@
   "this function is used to fill the pointer type"
   (if (null val)
       (setf (foreign-slot-value ptr struct-name slot-name) (null-pointer))
-      (cond ((eql slot-name :code)
+      (cond ((eql slot-name :code)                       ;;special procee for shader module 
 	     (progn
 	       (push val *allocated-obj*)
 	       (setf (foreign-slot-value ptr struct-name slot-name)
