@@ -45,7 +45,12 @@
   "this function is used to fill the pointer type"
   (if (null val)
       (setf (foreign-slot-value ptr struct-name slot-name) (null-pointer))
-      (cond ((eql pointer-type :void)    ;;process void pointer
+      (cond ((eql slot-name :code)
+	     (progn
+	       (push val *allocated-obj*)
+	       (setf (foreign-slot-value ptr struct-name slot-name)
+		     val)))
+	    ((eql pointer-type :void)    ;;process void pointer
 	     (setf (foreign-slot-value ptr struct-name slot-name) val))
 	    ((eql pointer-type :char)    ;;process string
 	     (let ((foreign-string (foreign-string-alloc val)))

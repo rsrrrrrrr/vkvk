@@ -126,3 +126,16 @@
 
 (defun destroy-image-view (device image-view &optional (allocator (null-pointer)))
   (vkDestroyImageView device image-view allocator))
+
+(defun create-shader-module (device create-info &optional (allocator (null-pointer)))
+  (with-foreign-objects ((p-info 'shader-module-create-info)
+			 (p-module 'vk-shader-module))
+    (setf (mem-ref p-info 'shader-module-create-info)
+	  (get-obj create-info 'shader-module-create-info))
+    (check-ret (vkCreateShaderModule device p-info allocator p-module))
+    (free-objs)
+    (mem-ref p-module 'vk-shader-module)))
+
+
+(defun destroy-shader-module (device module &optional (allocator (null-pointer)))
+  (vkDestroyShaderModule device module allocator))

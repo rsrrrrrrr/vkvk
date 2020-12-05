@@ -379,3 +379,11 @@
   (:format VkFormat)
   (:components (:struct vk-component-mapping) :parser component-mapping)
   (:subresource-range (:struct vk-image-subresource-range) :parser image-subresource-range))
+
+(defvkstruct vk-shader-module-create-info
+    (s-shader-module-create-info shader-module-create-info)
+  (:type VkStructureType)
+  (:next (:pointer :void))
+  (:flags vk-module-create-flags)
+  (:code-size size-t)
+  (:code (:pointer :uint32)))

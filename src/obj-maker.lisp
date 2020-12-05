@@ -360,6 +360,21 @@
 	      (get-obj components 'component-mapping)
 	      (get-obj range 'image-subresource-range))))
 
+(defun make-shader-module-create-info (file-path &key
+						   (next (null-pointer))
+						   (flags 0)
+				       &aux
+					 (type :structure-type-shader-module-create-info))
+  (with-open-file (in file-path :element-type '(unsigned-byte 8))
+    (let ((size (file-length in))
+	  (ptr (foreign-alloc :pointer)))
+      (dotimes (i (1- size))
+	(setf (mem-ref (inc-pointer ptr i) :uint8)
+	      (read-byte in nil)))
+      (cons 'shader-module-create-info
+	    (list type next flags
+		  size ptr)))))
+
 (defun make-validation-flag-ext (&key
 				   (next (null-pointer))
 				   (checks nil)
@@ -1242,12 +1257,7 @@ vk-physical-device-vulkan-12-properties
   (:type VkStructureType)
   (:next (:pointer :void)))
 
-(defun make-shader-module-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-module-create-flags)
-  (:code-size size-t)
-  (:code (:pointer :uint32)))
+
 
 (defun make-shader-module-validation-cache-create-info-ext
   (:type VkStructureType)
