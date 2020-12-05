@@ -124,6 +124,42 @@ function-name: *destroy-buffer*
 | device    | device    | must     |               |
 | buffer    | buffer    | must     |               |
 | allocator | allocator | optional | null-pointer  |
+
+function-name: *create-buffer-view*
+| args        | desc                       | property | default value |
+| device      | device                     | must     |               |
+| create-info | vk-buffer-view-create-info | must     |               |
+| alloctor    | allocator                  | optional | null-pointer  |
+
+function-name: *destroy-buffer*
+| args        | desc        | property | default value |
+| device      | device      | must     |               |
+| buffer-view | buffer-view | must     |               |
+| allocator   | allocator   | optional | null-pointer  |
+*** image
+function-name: *create-image*
+| args        | desc           | property | default value |
+| device      | logic device   | must     |               |
+| create-info | vk-create-info | must     |               |
+| allocator   | allocator      | default  | null-pointer  |
+
+function-name: *destroy-image*
+| args      | desc      | property | default value |
+| device    | device    | must     |               |
+| image     | image     | must     |               |
+| allocator | allocator | optional | null-pointer  |
+
+function-name: *create-image-view*
+| args        | desc                      | property | default value |
+| device      | device                    | must     |               |
+| create-info | vk-image-view-create-info | must     |               |
+| alloctor    | allocator                 | optional | null-pointer  |
+
+function-name: *destroy-image*
+| args       | desc       | property | default value |
+| device     | device     | must     |               |
+| image-view | image-view | must     |               |
+| allocator  | allocator  | optional | null-pointer  |
 *** structure make api
 function-name: *make-vulkan-version*
 | args  | desc  | property | default value |
@@ -158,6 +194,14 @@ function-name: *make-rect-2d*
 | args   | desc        | property | default value    |
 | offset | rect-offset | optional | (make-offset-2d) |
 | extent | rect-extent | optional | (make-extent-2d) |
+
+function-name: *make-image-subresource-range*
+| args             | desc             | property |           default value |
+| aspect-mask      | aspect-mask      | optional | :image-aspect-color-bit |
+| base-mip-level   | base-mip-level   | optional |                       0 |
+| level-count      | level-count      | optional |                       0 |
+| base-array-layer | base-array-layer | optional |                       0 |
+| layer-count      | layer-count      | optional |                       0 |
 
 function-name: *make-application-info*
 | args           | desc           | property | default value               |
@@ -410,4 +454,36 @@ function-name: *make-buffer-create-info*
 | usage        | usage             | default  | 0                        |
 | sharing-mode | sharing mode      | default  | :sharing-mode-concurrent |
 | indices      | pointer of uint32 | default  | nil                      |
+
+function-name: *make-image-create-info*
+| args                 | desc           | property | default value                          |
+| next                 | next           | optional | null pointer                           |
+| flags                | flags          | optional | 0                                      |
+| image-type           | image-type     | optional | :image-type-1d                         |
+| format               | format         | optional | :format-r8g8b8a8-sint                  |
+| extent               | 3d extent      | optional | (make-extent-3d)                       |
+| mip-levels           | mip levels     | optional | 0                                      |
+| array-layers         | array layers   | optional | 0                                      |
+| samples              | samples        | optional | :sample-count-1-bit                    |
+| tiling               | tiling         | optional | :image-tiling-linear                   |
+| usage                | usage          | optional | 0                                      |
+| sharing-mode         | sharing mode   | optional | :sharing-mode-concurrent               |
+| queue-family-indices | list of uint32 | optional | nil                                    |
+| initial-layout       | initial layout | optional | :image-layout-color-attachment-optimal |
+
+function-name: *make-component-mapping*
+| args | desc | property | default value               |
+| r    | r    | optional | :component-swizzle-identity |
+| g    | g    | optional | :component-swizzle-identity |
+| b    | b    | optional | :component-swizzle-identity |
+| a    | a    | optional | :component-swizzle-identity |
+
+function-name: *make-image-view-create-info*
+| args       | desc       | property | default value                  |
+| next       | next       | optional | null pointer                   |
+| flags      | flags      | optional | 0                              |
+| view-type  | view-type  | optional | :image-view-type-1d            |
+| format     | format     | optional | :format-r8g8b8a8-sint          |
+| components | components | optional | (make-component-mapping)       |
+| range      | range      | optional | (make-image-subresource-range) |
 
