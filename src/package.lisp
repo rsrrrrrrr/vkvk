@@ -41,11 +41,14 @@
 	(error "there was no member ~a in ~a" key lst)
 	val)))
 
+(defparameter *no-need-check-key*
+  '(:code :init-data))
+
 (defun process-write-pointer (struct-name ptr slot-name pointer-type val parse-by bind-name)
   "this function is used to fill the pointer type"
   (if (null val)
       (setf (foreign-slot-value ptr struct-name slot-name) (null-pointer))
-      (cond ((eql slot-name :code)                       ;;special procee for shader module 
+      (cond ((member slot-name *no-need-check-key*)
 	     (progn
 	       (push val *allocated-obj*)
 	       (setf (foreign-slot-value ptr struct-name slot-name)

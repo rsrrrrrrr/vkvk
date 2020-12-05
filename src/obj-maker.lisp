@@ -375,6 +375,25 @@
 	    (list type next flags
 		  size ptr)))))
 
+(defun make-pipeline-cache-create-info ( &key
+					   (next (null-pointer))
+					   (flags 0)
+					   (file-path nil)
+					&aux
+					  (type :structure-type-pipeline-cache-create-info))
+  (if (null file-path)
+      (cons 'pipeline-cache-create-info
+	    (list type next flags 0 (null-pointer)))
+      (with-open-file (in file-path :element-type '(unsigned-byte 8))
+	(let ((size (file-length in))
+	      (ptr (foreign-alloc :pointer)))
+	  (dotimes (i (1- size))
+	    (setf (mem-ref (inc-pointer ptr i) :uint8)
+		  (read-byte in nil)))
+	  (cons 'pipeline-cache-create-info
+		(list type next flags
+		      size ptr))))))
+
 (defun make-validation-flag-ext (&key
 				   (next (null-pointer))
 				   (checks nil)
@@ -1480,12 +1499,7 @@ vk-physical-device-vulkan-12-properties
   (:pipeline-count :uint32)
   (:pipelines (:pointer vk-pipeline)))
 
-(defun make-pipeline-cache-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-pipeline-cache-create-flags)
-  (:initial-date-size size-t)
-  (:init-data (:pointer :void)))
+
 
 (defun make-pipeline-library-create-info-khr
   (:type VkStructureType)

@@ -4,7 +4,8 @@
 
 (defun check-ret (val)
   (when (not (eql :SUCCESS val))
-    (error "error: ~a~%" val)))
+    (error "error: ~a~%" val))
+  (free-objs))            ;;if success free the objs you make
 
 ;;export
 (defun create-instance (create-info &optional (allocator (null-pointer)))
@@ -13,7 +14,6 @@
     (setf (mem-ref p-info 'instance-create-info)
 	  (get-obj create-info 'instance-create-info))
     (check-ret (vkCreateInstance p-info allocator p-instance))
-    (free-objs)
     (mem-ref p-instance 'vk-instance)))
 
 (defun destroy-instance (instance &optional (allocator (null-pointer)))
@@ -25,7 +25,6 @@
     (setf (mem-ref p-info 'device-create-info)
 	  (get-obj create-info 'device-create-info))
     (check-ret (vkCreateDevice physical-device p-info allocator p-device))
-    (free-objs)
     (mem-ref p-device 'vk-device)))
 
 (defun destroy-device (device &optional (allocator (null-pointer)))
@@ -37,7 +36,6 @@
     (setf (mem-ref p-info 'fence-create-info)
 	  (get-obj create-info 'fence-create-info))
     (check-ret (vkCreateFence device p-info allocator p-fence))
-    (free-objs)
     (mem-ref p-fence 'vk-fence)))
 
 (defun destroy-fence (device fence &optional (allocator (null-pointer)))
@@ -49,7 +47,6 @@
     (setf (mem-ref p-info 'semaphore-create-info)
 	  (get-obj create-info 'semaphore-create-info))
     (check-ret (vkCreateSemaphore device p-info allocator p-semaphore))
-    (free-objs)
     (mem-ref p-semaphore 'vk-semaphore)))
 
 (defun destroy-semaphore (device semaphore &optional (allocator (null-pointer)))
@@ -61,7 +58,6 @@
     (setf (mem-ref p-info 'event-create-info)
 	  (get-obj create-info 'event-create-info))
     (check-ret (vkCreateEvent device p-info allocator p-event))
-    (free-objs)
     (mem-ref p-event 'vk-event)))
 
 (defun destroy-event (device event &optional (allocator (null-pointer)))
@@ -73,7 +69,6 @@
     (setf (mem-ref p-info 'query-pool-create-info)
 	  (get-obj create-info 'query-pool-create-info))
     (check-ret (vkCreateQueryPool device p-info allocator p-pool))
-    (free-objs)
     (mem-ref p-pool 'vk-query-pool)))
 
 (defun destroy-query-pool (device query-pool &optional (allocator (null-pointer)))
@@ -85,7 +80,6 @@
     (setf (mem-ref p-info 'buffer-create-info)
 	  (get-obj create-info 'buffer-create-info))
     (check-ret (vkCreateBuffer device p-info allocator p-buffer))
-    (free-objs)
     (mem-ref p-buffer 'vk-buffer)))
 
 (defun destroy-buffer (device buffer &optional (allocator (null-pointer)))
@@ -97,7 +91,6 @@
     (setf (mem-ref p-info 'buffer-view-create-info)
 	  (get-obj create-info 'buffer-view-create-info))
     (check-ret (vkCreateBufferView device p-info allocator p-buffer-view))
-    (free-objs)
     (mem-ref p-buffer-view 'vk-buffer-view)))
 
 (defun destroy-buffer-view (device buffer-view &optional (allocator (null-pointer)))
@@ -109,7 +102,6 @@
     (setf (mem-ref p-info 'image-create-info)
 	  (get-obj create-info 'image-create-info))
     (check-ret (vkCreateImage device p-info allocator p-image))
-    (free-objs)
     (mem-ref p-image 'vk-image)))
 
 (defun destroy-image (device image &optional (allocator (null-pointer)))
@@ -121,7 +113,6 @@
     (setf (mem-ref p-info 'image-view-create-info)
 	  (get-obj create-info 'image-view-create-info))
     (check-ret (vkCreateImageView device p-info allocator p-image-view))
-    (free-objs)
     (mem-ref p-image-view 'vk-image-view)))
 
 (defun destroy-image-view (device image-view &optional (allocator (null-pointer)))
@@ -133,9 +124,18 @@
     (setf (mem-ref p-info 'shader-module-create-info)
 	  (get-obj create-info 'shader-module-create-info))
     (check-ret (vkCreateShaderModule device p-info allocator p-module))
-    (free-objs)
     (mem-ref p-module 'vk-shader-module)))
-
 
 (defun destroy-shader-module (device module &optional (allocator (null-pointer)))
   (vkDestroyShaderModule device module allocator))
+
+(defun create-pipeline-cache (device create-info &optional (allocator (null-pointer)))
+  (with-foreign-objects ((p-info 'pipeline-cache-create-info)
+			 (p-cache 'vk-pipeline-cache))
+    (setf (mem-ref p-info 'pipeline-cache-create-info)
+	  (get-obj create-info 'pipeline-cache-create-info))
+    (check-ret (vkCreatePipelineCache device p-info allocator p-cache))    
+    (mem-ref p-cache 'vk-pipeline-cache)))
+
+(defun destroy-pipeline-cache (device pipeline-cache &optional (allocator (null-pointer)))
+  (vkDestroyPipelineCache device pipeline-cache allocator))

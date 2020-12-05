@@ -387,3 +387,11 @@
   (:flags vk-module-create-flags)
   (:code-size size-t)
   (:code (:pointer :uint32)))
+
+(defvkstruct vk-pipeline-cache-create-info
+    (s-pipeline-cache-create-info pipeline-cache-create-info)
+  (:type VkStructureType)
+  (:next (:pointer :void))
+  (:flags vk-pipeline-cache-create-flags)
+  (:initial-date-size size-t)
+  (:init-data (:pointer :void)))
