@@ -172,6 +172,19 @@ function-name: *destroy-shader-module*
 | device        | device        | must     |               |
 | shader-module | shader-module | must     |               |
 | allocator     | allocator     | optional | null-pointer  |
+*** pipeline
+function-name: *create-pipeline-cache*
+| args        | desc                          | property | default value |
+| device      | logic device                  | must     |               |
+| create-info | vk-pipeline-cache-create-info | must     |               |
+| allocator   | allocator                     | default  | null-pointer  |
+
+function-name: *destroy-pipeline-cache*
+| args           | desc           | property | default value |
+| device         | device         | must     |               |
+| pipeline-cache | pipeline-cache | must     |               |
+| allocator      | allocator      | optional | null-pointer  |
+
 *** structure make api
 function-name: *make-vulkan-version*
 | args  | desc  | property | default value |
@@ -505,3 +518,8 @@ function-name: *make-shader-module-create-info*
 | next      | next          | optional | null-pointer  |
 | flags     | flags         | optional | 0             |
 
+function-name: *make-pipeline-cache-create-info
+| args      | desc           | property | default value |
+| next      | next           | optional | null-pointer  |
+| flags     | flags          | optional | 0             |
+| file-path | nil as default | optional | nil           |
