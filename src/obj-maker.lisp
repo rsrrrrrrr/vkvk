@@ -2,16 +2,13 @@
 
 ;;intern
 (defun get-obj (obj type)
+  "for struct"
   (unless (eql type (first obj))
     (error "struct type check error"))
   (rest obj))
 
-(defun get-objs (objs type)
-  (mapcar #'(lambda (obj)
-	      (get-obj obj type))
-	  objs))
-
 (defun get-pointer-obj (obj type)
+  "for normal like enum or uint32 pointer"
   (if (or (null obj)
 	  (and (consp obj)
 	       (every #'(lambda (x)
@@ -21,9 +18,16 @@
       (error "the member in list is not type of ~a" type)))
 
 (defun check-enum (obj type)
+  "for one enum"
   (if (typep obj type)
       obj
       (error "check type error ~a" obj)))
+
+(defun get-objs (objs type)
+  "for struct list"
+  (mapcar #'(lambda (obj)
+	      (get-obj obj type))
+	  objs))
 ;;export
 (declaim (inline make-vulkan-version))
 (defun make-vulkan-version (&optional (major 1) (minor 2) (patch 0))
@@ -53,6 +57,18 @@
   (cons 'rect-2d
 	(list (get-obj offset 'offset-2d)
 	      (get-obj extent 'extent-2d))))
+
+(defun make-viewport (&key
+			(x 0.0)
+			(y 0.0)
+			(width 0.0)
+			(height 0.0)
+			(min 0.0)
+			(max 0.0))
+  (cons 'viewport
+	(list x y
+	      width height
+	      min max)))
 
 (defun make-image-subresource-range (&key
 				       (aspect-mask :image-aspect-color-bit)
@@ -336,13 +352,14 @@
 	      sharing-mode
 	      (length queue-family-indices) (get-pointer-obj queue-family-indices 'integer)
 	      initial-layout)))
+
 (defun make-component-mapping (&key
 				 (r :component-swizzle-identity)
 				 (g :component-swizzle-identity)
 				 (b :component-swizzle-identity)
 				 (a :component-swizzle-identity))
   (cons 'component-mapping
-	(get-objs (list r g b a) 'vkcomponentswizzle)))
+	(get-pointer-obj (list r g b a) 'vk-component-swizzle)))
 
 (defun make-image-view-create-info (image &key
 					    (next (null-pointer))
@@ -394,6 +411,278 @@
 		(list type next flags
 		      size ptr))))))
 
+;;for graphics pipeline
+(defun make-specialization-map-entry (&key
+					(id 0)
+					(offset 0)
+					(size 0))
+  (cons 'specialization-map-entry
+	(list id offset size)))
+
+(defun make-specialization-info (&key
+				   (entries nil)
+				   (file-path nil))
+  (if (null file-path)
+      (cons 'specialization-info
+	    (list (length entries) (get-objs entries 'specialization-map-entry)
+		  0 (null-pointer)))
+      (with-open-file (in file-path :element-type '(unsigned-byte 8))
+	(let ((size (file-length in))
+	      (ptr (foreign-alloc :pointer)))
+	  (dotimes (i (1- size))
+	    (setf (mem-ref (inc-pointer ptr i) :uint8)
+		  (read-byte in nil)))
+	  (cons 'specialization-info
+	    (list (length entries) (get-objs entries 'specialization-map-entry)
+		  size ptr))))))
+
+(defun make-pipeline-shader-stage-create-info (module &key
+							(next (null-pointer))
+							(flags 0)
+							(stage :shader-stage-all-graphics)
+							(name "main")
+							(specialization-info nil)
+					       &aux
+						 (type :structure-type-pipeline-shader-stage-create-info))
+  (cons 'pipeline-shader-stage-create-info
+	(list type next flags
+	      stage module name
+	      (get-obj specialization-info 'specialization-info))))
+
+(defun make-vertex-input-binding-description (&key
+						(binding 0)
+						(stride 0)
+						(rate :vertex-input-rate-instance))
+  (cons 'vertex-input-binding-description
+	(list binding stride (check-enum rate 'vk-vertex-input-rate))))
+
+(defun make-vertex-input-attribute-description (&key
+						  (location 0)
+						  (binding 0)
+						  (format :format-r8g8b8a8-sint)
+						  (offset 0))
+  (cons 'vertex-input-attribute-description
+	(list location binding (check-enum format 'vk-format) offset)))
+
+(defun make-pipeline-vertex-input-state-create-info (&key
+						       (next (null-pointer))
+						       (flags 0)
+						       (binding nil)
+						       (attribute nil)
+						     &aux
+						       (type :structure-type-pipeline-vertex-input-state-create-info))
+  (cons 'pipeline-vertex-input-state-create-info
+	(list type next flags
+	      (length binding) (get-objs binding 'vertex-input-binding-description)
+	      (length attribute) (get-objs attribute 'vertex-input-attribute-description))))
+
+(defun make-pipeline-input-assembly-state-create-info (&key
+							 (next (null-pointer))
+							 (flags 0)
+							 (topology :primitive-topology-line-list)
+							 (enable +vk-false+)
+						       &aux
+							 (type :structure-type-pipeline-input-assembly-state-create-info))
+  (cons 'pipeline-input-assembly-state-create-info
+	(list type next flags
+	      (check-enum topology 'vk-primitive-topology) enable)))
+
+(defun make-pipeline-tessellation-state-create-info (&key
+						       (next (null-pointer))
+						       (flags 0)
+						       (points 0)
+						     &aux
+						       (type :structure-type-pipeline-tessellation-state-create-info))
+  (cons 'pipeline-tessellation-state-create-info
+	(list type next flags
+	      points)))
+
+(defun make-pipeline-viewport-state-create-info (&key
+						   (next (null-pointer))
+						   (flags 0)
+						   (viewports (make-viewport))
+						   (scissors (make-rect-2d))
+						 &aux
+						   (type :structure-type-pipeline-viewport-state-create-info))
+  (cons 'pipeline-viewport-state-create-info
+	(list type next flags
+	      (length viewports) (get-objs viewports 'viewport)
+	      (length scissors) (get-objs scissors 'rect-2d))))
+
+(defun make-pipeline-rasterization-state-create-info (&key
+							(next (null-pointer))
+							(flags 0)
+							(depth-clamp-enable +vk-false+)
+							(rasterizer-discard-enable +vk-false+)
+							(polygon-mode :polygon-mode-point)
+							(cull-mode 0)
+							(front-face :front-face-clockwise)
+							(depth-bias-enable +vk-false+)
+							(depth-bias-constant-factor 0.0)
+							(depth-bias-clamp 0.0)
+							(depth-bias-slope-factor 0.0)
+							(line-width 0.0)
+						      &aux
+							(type :structure-type-pipeline-rasterization-state-create-info))
+  (cons 'pipeline-rasterization-state-create-info
+	(list type next flags
+	      depth-clamp-enable rasterizer-discard-enable
+	      (check-enum polygon-mode 'vk-polygon-mode)
+	      cull-mode
+	      (check-enum front-face 'vk-front-face)
+	      depth-bias-enable depth-bias-constant-factor depth-bias-clamp depth-bias-slope-factor
+	      line-width)))
+
+(defun make-pipeline-multisample-state-create-info (&key
+						      (next (null-pointer))
+						      (flags 0)
+						      (sample :sample-count-1-bit)
+						      (sample-shading-enable +vk-false+)
+						      (min-shading 0.0)
+						      (mask 0)
+						      (alpha-to-coverage-enable +vk-false+)
+						      (alpha-to-one-enable +vk-false+)
+						    &aux
+						      (type :structure-type-pipeline-multisample-state-create-info))
+  (cons 'pipeline-multisample-state-create-info
+	(list type next flags
+	      (check-enum sample 'vk-sample-count-flag-bits) sample-shading-enable
+	      min-shading mask
+	      alpha-to-coverage-enable alpha-to-one-enable)))
+
+(defun make-stencil-op-state (&key
+				(fail-op :stencil-op-zero)
+				(pass-op :stencil-op-zero)
+				(depth-fail-op :stencil-op-zero)
+				(compare-op :compare-op-equal)
+				(compare-mask 0)
+				(write-mask 0)
+				(references 0))
+  (cons 'stencil-op-state
+	(list fail-op pass-op depth-fail-op
+	      compare-op compare-mask
+	      write-mask references)))
+
+(defun make-pipeline-depth-stencil-state-create-info (&key
+							(next (null-pointer))
+							(flags 0)
+							(depth-test-enable +vk-false+)
+							(depth-write-enable +vk-false+)
+							(depth-compare-op :compare-op-equal)
+							(depth-bounds-test-enable +vk-false+)
+							(stencil-test-enable +vk-false+)
+							(front (make-stencil-op-state))
+							(back (make-stencil-op-state))
+							(min 0.0)
+							(max 0.0)
+						      &aux
+							(type :structure-type-pipeline-depth-stencil-state-create-info))
+  (cons 'pipeline-depth-stencil-state-create-info
+	(list type next flags
+	      depth-test-enable depth-write-enable depth-compare-op depth-bounds-test-enable
+	      stencil-test-enable
+	      (get-obj front 'stencil-op-state)
+	      (get-obj back 'stencil-op-state)
+	      min max)))
+
+(defun make-pipeline-color-blend-attachment-state (&key
+						     (blend-enable +vk-false+)
+						     (src-color-blend-factor :blend-factor-one)
+						     (dst-color-blend-factor :blend-factor-one)
+						     (color-blend-op :blend-op-add)
+						     (src-alpha-blend-factor :blend-factor-one)
+						     (dst-alpha-blend-factor :blend-factor-one)
+						     (alpha-blend-op :blend-op-add)
+						     (color-write-mask 0))
+  (cons 'pipeline-color-blend-attachment-state
+	(list blend-enable
+	      src-color-blend-factor
+	      dst-color-blend-factor
+	      color-blend-op
+	      src-alpha-blend-factor
+	      dst-alpha-blend-factor
+	      alpha-blend-op
+	      color-write-mask)))
+
+(defun make-pipeline-color-blend-state-create-info (&key
+						      (next (null-pointer))
+						      (flags 0)
+						      (enable +vk-false+)
+						      (logic-op :logic-op-and)
+						      (attachments nil)
+						      (blend-constants '(0.0 0.0 0.0 0.0))
+						    &aux
+						      (type :structure-type-pipeline-color-blend-state-create-info))
+  (cons 'pipeline-color-blend-state-create-info
+	(list type next flags
+	      enable logic-op
+	      (length attachments) (get-objs attachments 'pipeline-color-blend-attachment-state)
+	      (get-pointer-obj blend-constants 'float))))
+
+(defun make-pipeline-dynamic-state-create-info (&key
+						  (next (null-pointer))
+						  (flags 0)
+						  (states nil)
+						&aux
+						  (type :structure-type-pipeline-dynamic-state-create-info))
+  (cons 'pipeline-dynamic-state-create-info
+	(list type next flags
+	      (length states) (get-pointer-obj states 'dynamic-state))))
+
+(defun make-graphics-pipeline-create-info (&key
+					     (next (null-pointer))
+					     (flags 0)
+					     (stages nil)
+					     (vertex-state nil)
+					     (assembly-state nil)
+					     (tessellation-state nil)
+					     (viewport-state nil)
+					     (rasterization-state nil)
+					     (multisample-state nil)
+					     (depth-stencil-state nil)
+					     (color-blend-state nil)
+					     (dynamic-state nil)
+					     (layout (null-pointer))
+					     (render-pass (null-pointer))
+					     (sub-pass 0)
+					     (base-pipeline (null-pointer))
+					     (index 0)
+					   &aux
+					     (type :structure-type-graphics-pipeline-create-info))
+  (cons 'graphics-pipeline-create-info
+	(list type next flags
+	      (length stages) (get-objs stages 'pipeline-shader-stage-create-info)
+	      (get-obj vertex-state 'pipeline-vertex-input-state-create-info)
+	      (get-obj assembly-state 'pipeline-input-assembly-state-create-info)
+	      (get-obj tessellation-state 'pipeline-tessellation-state-create-info)
+	      (get-obj viewport-state 'pipeline-viewport-state-create-info)
+	      (get-obj rasterization-state 'pipeline-rasterization-state-create-info)
+	      (get-obj multisample-state 'pipeline-multisample-state-create-info)
+	      (get-obj depth-stencil-state 'pipeline-depth-stencil-state-create-info)
+	      (get-obj color-blend-state 'pipeline-color-blend-state-create-info)
+	      (get-obj dynamic-state 'pipeline-dynamic-state-create-info)
+	      layout
+	      render-pass
+	      sub-pass
+	      base-pipeline
+	      index)))
+;;end graphics pipeline
+
+(defun make-compute-pipeline-create-info (&key
+					    (next (null-pointer))
+					    (flags 0)
+					    (stages nil)
+					    (layout (null-pointer))
+					    (base-pipeline (null-pointer))
+					    (index (null-pointer))
+					  &aux
+					    (type :structure-type-compute-pipeline-create-info))
+  (cons 'compute-pipeline-create-info
+	(list type next flags
+	      (get-obj stages 'pipeline-shader-stage-create-info)
+	      layout
+	      base-pipeline index)))
+
 (defun make-validation-flag-ext (&key
 				   (next (null-pointer))
 				   (checks nil)
@@ -402,7 +691,6 @@
 	(list type
 	      next
 	      checks)))
-
 
 (defun make-physical-device-limits (&key
 				      (max-image-dimension1-d 0)
@@ -1302,186 +1590,40 @@ vk-physical-device-vulkan-12-properties
   (:initial-data-size size-t)
   (:initial-data (:pointer :void)))
 
-(defun make-specialization-map-entry
-  (:constant-id :uint32)
-  (:offset :uint32)
-  (:size size-t))
 
-(defun make-specialization-info
-  (:map-entry-count :uint32)
-  (:map-entrys (:pointer (:struct vk-specialization-map-entry)))
-  (:data-size size-t)
-  (:data (:pointer :void)))
 
-(defun make-pipeline-shader-stage-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-pipeline-stage-flags)
-  (:stage VkShaderStageflagbits)
-  (:module vk-shader-module)
-  (:name (:pointer :char))
-  (:specialization-info (:pointer (:struct vk-specialization-info))))
 
-(defun make-compute-pipeline-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-pipeline-create-flags)
-  (:stage (:struct vk-pipeline-shader-stage-create-info))
-  (:layout vk-pipeline-layout)
-  (:base-pipeline-handle vk-pipeline)
-  (:base-pipeline-index :uint32))
+
+
+
+
 
 (defun make-pipeline-shader-stage-required-subground-size-create-info-ext
   (:type VkStructureType)
   (:next (:pointer :void))
   (:required-subground-size :uint32))
 
-(defun make-vertex-input-binding-description
-  (:binding :uint32)
-  (:stride :uint32)
-  (:input-rate VkVertexInputRate))
 
-(defun make-vertex-input-attribute-description
-  (:location :uint32)
-  (:binding :uint32)
-  (:format VkFormat)
-  (:offset :uint32))
 
-(defun make-pipeline-vertex-input-state-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-pipeline-vertex-input-state-create-flags)
-  (:vertex-binding-description-count :uint32)
-  (:vertex-binding-description (:pointer (:struct vk-vertex-input-binding-description)))
-  (:vertex-attribute-description-count :uint32)
-  (:vertex-attribute-description (:pointer (:struct vk-vertex-input-attribute-description))))
 
-(defun make-pipeline-input-assembly-state-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-pipeline-input-assembly-state-create-flags)
-  (:topology VkPrimitiveTopology)
-  (:primitive-restart-enable vk-bool-32))
 
-(defun make-pipeline-tessellation-state-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-pipeline-tessellation-state-create-flags)
-  (:patch-control-points :uint32))
 
-(defun make-viewport
-  (:x :float)
-  (:y :float)
-  (:width :float)
-  (:height :float)
-  (:min-depth :float)
-  (:max-depth :float))
 
-(defun make-pipeline-viewport-state-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-pipeline-viewport-state-create-flags)
-  (:viewport-count :uint32)
-  (:viewports (:pointer (:struct vk-viewport)))
-  (:scissor-count :uint32)
-  (:scissprs (:pointer (:struct vk-rect-2d))))
 
-(defun make-pipeline-rasterization-state-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-pipeline-rasterization-state-create-flags)
-  (:depth-clamp-enable vk-bool-32)
-  (:rasterizer-discard-enable vk-bool-32)
-  (:polygon-mode VkPolygonMode)
-  (:cull-mode vk-cull-mode-flags)
-  (:front-face VkFrontface)
-  (:depth-bias-enable vk-bool-32)
-  (:depth-bias-constant-factor :float)
-  (:depth-bias-clamp :float)
-  (:depth-bias-slope-factor :float)
-  (:line-width :float))
 
-(defun make-pipeline-multisample-state-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-pipeline-multisample-state-create-flags)
-  (:rasterization-sample VkSampleCountFlagbits)
-  (:sample-shading-enable vk-bool-32)
-  (:min-sample-shading :float)
-  (:sample-mask (:pointer vk-sample-mask))
-  (:alpha-to-coverage-enable vk-bool-32)
-  (:alpha-to-one-enable vk-bool-32))
 
-(defun make-stencil-op-state
-  (:fail-op VkStencilop)
-  (:pass-op VkStencilop)
-  (:depth-fail-op VkStencilop)
-  (:compare-op VkCompareop)
-  (:compare-mask :uint32)
-  (:write-mask :uint32)
-  (:references :uint32))
 
-(defun make-pipeline-depth-stencil-state-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-pipeline-depth-stencil-state-create-flags)
-  (:depth-test-enable vk-bool-32)
-  (:depth-write-enable vk-bool-32)
-  (:depth-compare-op VkCompareop)
-  (:depth-bounds-test-enable vk-bool-32)
-  (:stencil-test-enable vk-bool-32)
-  (:front (:struct vk-stencil-op-state))
-  (:back (:struct vk-stencil-op-state))
-  (:min-depth-bounds :float)
-  (:max-depth-bounds :float))
 
-(defun make-pipeline-color-blend-attachment-state
-  (:blend-enable vk-bool-32)
-  (:src-color-blend-factor VkBlendFactor)
-  (:dst-color-blend-factor VkBlendFactor)
-  (:color-blend-op VkBlendop)
-  (:src-alpha-blend-factor VkBlendFactor)
-  (:dst-alpha-blend-factor VkBlendFactor)
-  (:alpha-blend-op VkBlendop)
-  (:color-write-mask vk-color-component-flags))
 
-(defun make-pipeline-color-blend-state-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-pipeline-color-blend-state-create-flags)
-  (:logic-op-enable vk-bool-32)
-  (:logic-op VkLogicop)
-  (:attachment-count :uint32)
-  (:attachments (:pointer (:struct vk-pipeline-color-blend-attachment-state)))
-  (:blend-constants :float :count 4))
 
-(defun make-pipeline-dynamic-state-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-pipeline-dynamic-state-create-flags)
-  (:dynamic-state-count :uint32)
-  (:dynamic-states (:pointer VkDynamicState)))
 
-(defun make-graphics-pipeline-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-pipeline-create-flags)
-  (:stage-count :uint32)
-  (:stages (:pointer (:struct vk-pipeline-shader-stage-create-info)))
-  (:vertex-input-state (:pointer (:struct vk-pipeline-vertex-input-state-create-info)))
-  (:input-assembly-state (:pointer (:struct vk-pipeline-input-assembly-state-create-info)))
-  (:tessellation-state (:pointer (:struct vk-pipeline-tessellation-state-create-info)))
-  (:viewport-state (:pointer (:struct vk-pipeline-viewport-state-create-info)))
-  (:rasterization-state (:pointer (:struct vk-pipeline-rasterization-state-create-info)))
-  (:multisample-state (:pointer (:struct vk-pipeline-multisample-state-create-info)))
-  (:depth-stencil-state (:pointer (:struct vk-pipeline-depth-stencil-state-create-info)))
-  (:color-blend-state (:pointer (:struct vk-pipeline-color-blend-state-create-info)))
-  (:dynamic-state (:pointer (:struct vk-pipeline-dynamic-state-create-info)))
-  (:layout vk-pipeline-layout)
-  (:render-pass vk-render-pass)
-  (:subpass :uint32)
-  (:base-pipeline-handle vk-pipeline)
-  (:base-pipeline-index :uint32))
+
+
+
+
+
+
+
 
 (defun make-graphics-shader-group-create-info-nv
   (:type VkStructureType)

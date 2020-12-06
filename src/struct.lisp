@@ -1106,7 +1106,7 @@
   (:viewport-count :uint32)
   (:viewports (:pointer (:struct vk-viewport)))
   (:scissor-count :uint32)
-  (:scissprs (:pointer (:struct vk-rect-2d))))
+  (:scissors (:pointer (:struct vk-rect-2d))))
 
 (defcstruct vk-pipeline-rasterization-state-create-info
   (:type VkStructureType)

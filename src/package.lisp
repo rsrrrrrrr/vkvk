@@ -42,7 +42,7 @@
 	val)))
 
 (defparameter *no-need-check-key*
-  '(:code :init-data))
+  '(:code :init-data :data))
 
 (defun process-write-pointer (struct-name ptr slot-name pointer-type val parse-by bind-name)
   "this function is used to fill the pointer type"
