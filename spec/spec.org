@@ -43,148 +43,6 @@ for lisp code
     ;;no need to set extensions count it will be the length of extension
     :extensions (list "extension" "you" "want" "use")   
 #+end_src
-*** instnace 
-function-name: *create-instnace*
-| args        | desc                                | property |
-| create-info | create by make-instnace-create-info | must     |
-| allocator   | as default (null-pointer)           | optional |
-
-function-name: *destroy-instnace*
-| args      | desc                                 | property |
-| instnace  | vkinstnace create by create-instnace | must     |
-| allocator | as default (null-pointer)            | optional |
-*** device
-function-name: *create-device*
-| args            | desc                  | property | default value |
-| physical-device | gpu                   | must     |               |
-| create-info     | vk-device-create-info | must     |               |
-| allocator       | allocator             | default  | null-pointer  |
-
-function-name: *destroy-device*
-| args      | desc      | property | default value |
-| device    | device    | must     |               |
-| allocator | allocator | optional | null-pointer  |
-*** fence
-function-name: *create-fence*
-| args        | desc                 | property | default value |
-| device      | logic device         | must     |               |
-| create-info | vk-fence-create-info | must     |               |
-| allocator   | allocator            | default  | null-pointer  |
-
-function-name: *destroy-fence*
-| args      | desc      | property | default value |
-| device    | device    | must     |               |
-| fence     | fence     | must     |               |
-| allocator | allocator | optional | null-pointer  |
-*** semaphore 
-function-name: *create-semaphore*
-| args        | desc                     | property | default value |
-| device      | logic device             | must     |               |
-| create-info | vk-semaphore-create-info | must     |               |
-| allocator   | allocator                | default  | null-pointer  |
-
-function-name: *destroy-semaphore*
-| args      | desc      | property | default value |
-| device    | device    | must     |               |
-| semaphore | semaphore | must     |               |
-| allocator | allocator | optional | null-pointer  |
-*** event
-function-name: *create-event*
-| args        | desc                 | property | default value |
-| device      | logic device         | must     |               |
-| create-info | vk-event-create-info | must     |               |
-| allocator   | allocator            | default  | null-pointer  |
-
-function-name: *destroy-event*
-| args      | desc      | property | default value |
-| device    | device    | must     |               |
-| event     | event     | must     |               |
-| allocator | allocator | optional | null-pointer  |
-*** query-pool
-function-name: *create-query-pool*
-| args        | desc                      | property | default value |
-| device      | logic device              | must     |               |
-| create-info | vk-query-pool-create-info | must     |               |
-| allocator   | allocator                 | default  | null-pointer  |
-
-function-name: *destroy-query-pool*
-| args       | desc       | property | default value |
-| device     | device     | must     |               |
-| query-pool | query-pool | must     |               |
-| allocator  | allocator  | optional | null-pointer  |
-*** buffer 
-function-name: *create-buffer*
-| args        | desc                  | property | default value |
-| device      | logic device          | must     |               |
-| create-info | vk-buffer-create-info | must     |               |
-| allocator   | allocator             | default  | null-pointer  |
-
-function-name: *destroy-buffer*
-| args      | desc      | property | default value |
-| device    | device    | must     |               |
-| buffer    | buffer    | must     |               |
-| allocator | allocator | optional | null-pointer  |
-
-function-name: *create-buffer-view*
-| args        | desc                       | property | default value |
-| device      | device                     | must     |               |
-| create-info | vk-buffer-view-create-info | must     |               |
-| alloctor    | allocator                  | optional | null-pointer  |
-
-function-name: *destroy-buffer*
-| args        | desc        | property | default value |
-| device      | device      | must     |               |
-| buffer-view | buffer-view | must     |               |
-| allocator   | allocator   | optional | null-pointer  |
-*** image
-function-name: *create-image*
-| args        | desc                 | property | default value |
-| device      | logic device         | must     |               |
-| create-info | vk-image-create-info | must     |               |
-| allocator   | allocator            | default  | null-pointer  |
-
-function-name: *destroy-image*
-| args      | desc      | property | default value |
-| device    | device    | must     |               |
-| image     | image     | must     |               |
-| allocator | allocator | optional | null-pointer  |
-
-function-name: *create-image-view*
-| args        | desc                      | property | default value |
-| device      | device                    | must     |               |
-| create-info | vk-image-view-create-info | must     |               |
-| alloctor    | allocator                 | optional | null-pointer  |
-
-function-name: *destroy-image*
-| args       | desc       | property | default value |
-| device     | device     | must     |               |
-| image-view | image-view | must     |               |
-| allocator  | allocator  | optional | null-pointer  |
-*** shader-module
-function-name: *create-shader-module*
-| args        | desc                         | property | default value |
-| device      | logic device                 | must     |               |
-| create-info | vk-shader-module-create-info | must     |               |
-| allocator   | allocator                    | default  | null-pointer  |
-
-function-name: *destroy-shader-module*
-| args          | desc          | property | default value |
-| device        | device        | must     |               |
-| shader-module | shader-module | must     |               |
-| allocator     | allocator     | optional | null-pointer  |
-*** pipeline
-function-name: *create-pipeline-cache*
-| args        | desc                          | property | default value |
-| device      | logic device                  | must     |               |
-| create-info | vk-pipeline-cache-create-info | must     |               |
-| allocator   | allocator                     | default  | null-pointer  |
-
-function-name: *destroy-pipeline-cache*
-| args           | desc           | property | default value |
-| device         | device         | must     |               |
-| pipeline-cache | pipeline-cache | must     |               |
-| allocator      | allocator      | optional | null-pointer  |
-
 *** structure make api
 function-name: *make-vulkan-version*
 | args  | desc  | property | default value |
@@ -219,6 +77,15 @@ function-name: *make-rect-2d*
 | args   | desc        | property | default value    |
 | offset | rect-offset | optional | (make-offset-2d) |
 | extent | rect-extent | optional | (make-extent-2d) |
+
+function-name: *make-viewport*
+| args   | desc      | property | default value |
+| x      | x         | optional |             0 |
+| y      | y         | optional |             0 |
+| width  | width     | optional |             0 |
+| height | height    | optional |             0 |
+| min    | depth min | optional |             0 |
+| max    | depth max | optional |             0 |
 
 function-name: *make-image-subresource-range*
 | args             | desc             | property |           default value |
@@ -523,3 +390,331 @@ function-name: *make-pipeline-cache-create-info
 | next      | next           | optional | null-pointer  |
 | flags     | flags          | optional | 0             |
 | file-path | nil as default | optional | nil           |
+
+function-name: *make-specialization-map-entry*
+| args   | desc        | property | default value |
+| id     | constant id | optional | 0             |
+| offset | offset      | optional | 0             |
+| size   | size        | optional | 0             |
+
+function-name: *make-specialization-info*
+| args      | desc                     | property | default value |
+| entries   | specialization-map-entry | optional | nil           |
+| file-path | use for size of data     | optional | nil           |
+
+function-name: *make-pipeline-shader-stage-create-info*
+| args                | desc                         | property | default value              |
+| module              | handle of vk-shader-module   | must     |                            |
+| next                | next                         | optional | null-pointer               |
+| flags               | flags                        | optional | 0                          |
+| stage               | VkShaderStageFlagBits        | optional | :shader-stage-all-graphics |
+| name                | the function of shader stage | optional | "main"                     |
+| specialization-info | list of specialization-info  | optional | nil                        |
+
+function-name: *make-vertex-input-binding-description*
+| args    | desc              | property |               default value |
+| binding | binding           | default  |                           0 |
+| stride  | stride            | default  |                           0 |
+| rate    | VkVertexInputRate | default  | :vertex-input-rate-instance |
+
+function-name: *make-vertex-input-attribute-description*
+| args     | desc     | property |         default value |
+| location | location | optional |                     0 |
+| binding  | binding  | optional |                     0 |
+| format   | format   | optional | :format-r8g8b8a8-sint |
+| offset   | offset   | optional |                     0 |
+
+function-name: *make-pipeline-vertex-input-state-create-info*
+| args      | desc                                       | property | default value |
+| next      | next                                       | optional | null-poiner   |
+| flags     | flags                                      | optional | 0             |
+| binding   | list of vertex-input-binding-description   | optional | nil           |
+| attribute | list of vertex-input-attribute-description | optional | nil           |
+function-name: *make-pipeline-input-assembly-state-create-info*
+| args     | desc                     | property | default value                 |
+| next     | next                     | default  | null-pointer                  |
+| flags    | flags                    | default  | 0                             |
+| topology | VkPrimitiveTopology      | default  | :primitive-topology-line-list |
+| enable   | primitive restart enable | default  | false                         |
+
+function-name: *make-pipeline-tessellation-state-create-info*
+| args   | desc                 | property | default value |
+| next   | next                 | default  | null-pointer  |
+| flags  | flags                | default  | 0             |
+| points | patch control points | default  | 0             |
+
+function-name: *make-pipeline-viewport-state-create-info*
+| args      | desc             | property | default value          |
+| next      | next             | default  | null-pointer           |
+| flags     | flags            | default  | 0                      |
+| viewports | list of viewport | default  | (list (make-viewport)) |
+| scissors  | list of rect-2d  | default  | (list (make-rect-2d))  |
+
+function-name: *make-pipeline-rasterization-state-create-info*
+| args                       | desc                       | property | default value         |
+| next                       | next                       | default  | null-pointer          |
+| flags                      | flags                      | default  | 0                     |
+| depth-clamp-enable         | depth clamp enable         | default  | false                 |
+| rasterizer-discard-enable  | rasterizer discard enable  | default  | false                 |
+| polygon-mode               | polygon mode               | default  | :polygon-mode-point   |
+| cull-mode                  | VkPolygonMode              | default  | 0                     |
+| front-face                 | VkFrontFace                | default  | :front-face-clockwise |
+| depth-bias-enable          | depth bias enable          | default  | false                 |
+| depth-bias-constant-factor | depth bias constant factor | default  | 0.0                   |
+| depth-bias-clamp           | depth bias clamp           | default  | 0.0                   |
+| depth-bias-slope-factor    | depth bias slope factor    | default  | 0.0                   |
+| line-width                 | line width                 | default  | 0.0                   |
+
+function-name: *make-pipeline-multisample-state-create-info*
+| args                     | desc                     | property | default value       |
+| next                     | next                     | default  | null-pointer        |
+| flags                    | flags                    | default  | 0                   |
+| sample                   | VkSampleCountFlagBits    | default  | :sample-count-1-bit |
+| sample-shading-enable    | sample shading enable    | default  | false               |
+| min-shading              | min sample shading       | default  | 0.0                 |
+| mask                     | sample mask              | default  | 0                   |
+| alpha-to-coverage-enable | alpha to coverage enable | default  | false               |
+| alpha-to-one-enable      | alpha to one enable      | default  | false               |
+
+function-name: *make-stencil-op-state*
+| args          | desc          | property | default value     |
+| fail-op       | fail op       | default  | :stencil-op-zero  |
+| pass-op       | pass op       | default  | :stencil-op-zero  |
+| depth-fail-op | depth fail op | default  | :stencil-op-zero  |
+| compare-op    | compare op    | default  | :compare-op-equal |
+| compare-mask  | compare mask  | default  | 0                 |
+| write-mask    | write mask    | default  | 0                 |
+| references    | references    | default  | 0                 |
+
+function-name: *make-pipeline-depth-stencil-state-create-info*
+| args                     | desc                     | property | default value           |
+| next                     | next                     | default  | null-pointer            |
+| flags                    | flags                    | default  | 0                       |
+| depth-test-enable        | depth test enable        | default  | false                   |
+| depth-write-enable       | depth write enable       | default  | false                   |
+| depth-compare-op         | VkCompareOp              | default  | :compare-op-equal       |
+| depth-bounds-test-enable | depth bounds test enable | default  | false                   |
+| stencil-test-enable      | stencil test enable      | default  | false                   |
+| front                    | stencil-op-state         | default  | (make-stencil-op-state) |
+| back                     | stencil-op-state         | default  | (make-stencil-op-state) |
+| min                      | min depth bounds         | default  | 0.0                     |
+| max                      | max depth bounds         | default  | 0.0                     |
+
+function-name: *make-pipeline-color-blend-attachment-state*
+| args                   | desc                   | property | default value     |
+| blend-enable           | blend enable           | optional | false             |
+| src-color-blend-factor | src color blend factor | optional | :blend-factor-one |
+| dst-color-blend-factor | dst color blend factor | optional | :blend-factor-one |
+| color-blend-op         | color blend op         | optional | :blend-op-add     |
+| src-alpha-blend-factor | src alpha blend factor | optional | :blend-factor-one |
+| dst-alpha-blend-factor | dst alpha blend factor | optional | :blend-factor-one |
+| alpha-blend-op         | alpha blend op         | optional | :blend-op-add     |
+| color-write-mask       | color write mask       | optional | 0                 |
+
+function-name: *make-pipeline-color-blend-state-create-info*
+| args            | desc                                          | property | default value      |
+| next            | next                                          | default  | null-pointer       |
+| flags           | flags                                         | default  | 0                  |
+| enable          | logic op enable                               | default  | false              |
+| logic-op        | logic op                                      | default  | :logic-op-and      |
+| attachments     | list of pipeline-color-blend-attachment-state | default  | nil                |
+| blend-constants | list of float                                 | default  | '(0.0 0.0 0.0 0.0) |
+
+function-name: *make-pipeline-dynamic-state-create-info*
+| args   | desc                   | property | default value |
+| next   | next                   | default  | null-pointer  |
+| flags  | flags                  | default  | 0             |
+| states | list of VkDynamicState | default  | nil           |
+
+function-name: *make-graphics-pipeline-create-info*
+| args                | desc                                              | property | default value |
+| next                | next                                              | default  | null-pointer  |
+| flags               | flags                                             | default  | 0             |
+| stages              | list of pipeline-shader-stage-create-info         | default  | nil           |
+| vertex-state        | list of pipeline-vertex-input-state-create-info   | default  | nil           |
+| assembly-state      | list of pipeline-input-assembly-state-create-info | default  | nil           |
+| tessellation-state  | list of pipeline-tessellation-state-create-info   | default  | nil           |
+| viewport-state      | list of pipeline-viewport-state-create-info       | default  | nil           |
+| rasterization-state | list of pipeline-rasterization-state-create-info  | default  | nil           |
+| multisample-state   | list of pipeline-multisample-state-create-info    | default  | nil           |
+| depth-stencil-state | list of pipeline-depth-stencil-state-create-info  | default  | nil           |
+| color-blend-state   | list of pipeline-color-blend-state-create-info    | default  | nil           |
+| dynamic-state       | list of pipeline-dynamic-state-create-info        | default  | nil           |
+| layout              | layout                                            | default  | null-pointer  |
+| render-pass         | render pass                                       | default  | null-pointer  |
+| sub-pass            | sub pass                                          | default  | 0             |
+| base-pipeline       | base pipeline                                     | default  | null-pointer  |
+| index               | base pipeline index                               | default  | 0             |
+
+function-name: *make-compute-pipeline-create-info*
+| args          | desc                              | property | default value |
+| next          | next                              | default  | null-pointer  |
+| flags         | flags                             | default  | 0             |
+| stages        | pipeline-shader-stage-create-info | default  | nil           |
+| layout        | layout                            | default  | null-pointer  |
+| base-pipeline | base pipeline                     | default  | null-pointer  |
+| index         | base pipeline index               | default  | 0             |
+
+* vulkan api
+*** instnace 
+function-name: *create-instnace*
+| args        | desc                                | property |
+| create-info | create by make-instnace-create-info | must     |
+| allocator   | as default (null-pointer)           | optional |
+
+function-name: *destroy-instnace*
+| args      | desc                                 | property |
+| instnace  | vkinstnace create by create-instnace | must     |
+| allocator | as default (null-pointer)            | optional |
+*** device
+function-name: *create-device*
+| args            | desc                  | property | default value |
+| physical-device | gpu                   | must     |               |
+| create-info     | vk-device-create-info | must     |               |
+| allocator       | allocator             | default  | null-pointer  |
+
+function-name: *destroy-device*
+| args      | desc      | property | default value |
+| device    | device    | must     |               |
+| allocator | allocator | optional | null-pointer  |
+*** fence
+function-name: *create-fence*
+| args        | desc                 | property | default value |
+| device      | logic device         | must     |               |
+| create-info | vk-fence-create-info | must     |               |
+| allocator   | allocator            | default  | null-pointer  |
+
+function-name: *destroy-fence*
+| args      | desc      | property | default value |
+| device    | device    | must     |               |
+| fence     | fence     | must     |               |
+| allocator | allocator | optional | null-pointer  |
+*** semaphore 
+function-name: *create-semaphore*
+| args        | desc                     | property | default value |
+| device      | logic device             | must     |               |
+| create-info | vk-semaphore-create-info | must     |               |
+| allocator   | allocator                | default  | null-pointer  |
+
+function-name: *destroy-semaphore*
+| args      | desc      | property | default value |
+| device    | device    | must     |               |
+| semaphore | semaphore | must     |               |
+| allocator | allocator | optional | null-pointer  |
+*** event
+function-name: *create-event*
+| args        | desc                 | property | default value |
+| device      | logic device         | must     |               |
+| create-info | vk-event-create-info | must     |               |
+| allocator   | allocator            | default  | null-pointer  |
+
+function-name: *destroy-event*
+| args      | desc      | property | default value |
+| device    | device    | must     |               |
+| event     | event     | must     |               |
+| allocator | allocator | optional | null-pointer  |
+*** query-pool
+function-name: *create-query-pool*
+| args        | desc                      | property | default value |
+| device      | logic device              | must     |               |
+| create-info | vk-query-pool-create-info | must     |               |
+| allocator   | allocator                 | default  | null-pointer  |
+
+function-name: *destroy-query-pool*
+| args       | desc       | property | default value |
+| device     | device     | must     |               |
+| query-pool | query-pool | must     |               |
+| allocator  | allocator  | optional | null-pointer  |
+*** buffer 
+function-name: *create-buffer*
+| args        | desc                  | property | default value |
+| device      | logic device          | must     |               |
+| create-info | vk-buffer-create-info | must     |               |
+| allocator   | allocator             | default  | null-pointer  |
+
+function-name: *destroy-buffer*
+| args      | desc      | property | default value |
+| device    | device    | must     |               |
+| buffer    | buffer    | must     |               |
+| allocator | allocator | optional | null-pointer  |
+
+function-name: *create-buffer-view*
+| args        | desc                       | property | default value |
+| device      | device                     | must     |               |
+| create-info | vk-buffer-view-create-info | must     |               |
+| alloctor    | allocator                  | optional | null-pointer  |
+
+function-name: *destroy-buffer*
+| args        | desc        | property | default value |
+| device      | device      | must     |               |
+| buffer-view | buffer-view | must     |               |
+| allocator   | allocator   | optional | null-pointer  |
+*** image
+function-name: *create-image*
+| args        | desc                 | property | default value |
+| device      | logic device         | must     |               |
+| create-info | vk-image-create-info | must     |               |
+| allocator   | allocator            | default  | null-pointer  |
+
+function-name: *destroy-image*
+| args      | desc      | property | default value |
+| device    | device    | must     |               |
+| image     | image     | must     |               |
+| allocator | allocator | optional | null-pointer  |
+
+function-name: *create-image-view*
+| args        | desc                      | property | default value |
+| device      | device                    | must     |               |
+| create-info | vk-image-view-create-info | must     |               |
+| alloctor    | allocator                 | optional | null-pointer  |
+
+function-name: *destroy-image*
+| args       | desc       | property | default value |
+| device     | device     | must     |               |
+| image-view | image-view | must     |               |
+| allocator  | allocator  | optional | null-pointer  |
+*** shader-module
+function-name: *create-shader-module*
+| args        | desc                         | property | default value |
+| device      | logic device                 | must     |               |
+| create-info | vk-shader-module-create-info | must     |               |
+| allocator   | allocator                    | default  | null-pointer  |
+
+function-name: *destroy-shader-module*
+| args          | desc          | property | default value |
+| device        | device        | must     |               |
+| shader-module | shader-module | must     |               |
+| allocator     | allocator     | optional | null-pointer  |
+*** pipeline
+function-name: *create-pipeline-cache*
+| args        | desc                          | property | default value |
+| device      | logic device                  | must     |               |
+| create-info | vk-pipeline-cache-create-info | must     |               |
+| allocator   | allocator                     | default  | null-pointer  |
+
+function-name: *destroy-pipeline-cache*
+| args           | desc           | property | default value |
+| device         | device         | must     |               |
+| pipeline-cache | pipeline-cache | must     |               |
+| allocator      | allocator      | optional | null-pointer  |
+
+function-name: *create-graphics-pipeline*
+| args        | desc                                     | property | default value |
+| device      | logic device                             | must     |               |
+| create-info | list of vk-graphics-pipeline-create-info | must     |               |
+| cache       | vk-pipeline-cache                        | default  | null-pointer  |
+| allocator   | allocator                                | default  | null-pointer  |
+
+function-name: *create-compute-pipelines*
+| args        | desc                                    | property | default value |
+| device      | logic device                            | must     |               |
+| create-info | list of vk-compute-pipeline-create-info | must     |               |
+| cache       | vk-pipeline-cache                       | default  | null-pointer  |
+| allocator   | allocator                               | default  | null-pointer  |
+
+function-name: *destroy-pipeline*
+| args      | desc      | property | default value |
+| device    | device    | must     |               |
+| pipeline  | pipeline  | must     |               |
+| allocator | allocator | optional | null-pointer  |
+

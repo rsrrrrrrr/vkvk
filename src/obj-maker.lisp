@@ -500,8 +500,8 @@
 (defun make-pipeline-viewport-state-create-info (&key
 						   (next (null-pointer))
 						   (flags 0)
-						   (viewports (make-viewport))
-						   (scissors (make-rect-2d))
+						   (viewports (list (make-viewport)))
+						   (scissors (list (make-rect-2d)))
 						 &aux
 						   (type :structure-type-pipeline-viewport-state-create-info))
   (cons 'pipeline-viewport-state-create-info
@@ -627,7 +627,7 @@
 						  (type :structure-type-pipeline-dynamic-state-create-info))
   (cons 'pipeline-dynamic-state-create-info
 	(list type next flags
-	      (length states) (get-pointer-obj states 'dynamic-state))))
+	      (length states) (get-pointer-obj states 'vk-dynamic-state))))
 
 (defun make-graphics-pipeline-create-info (&key
 					     (next (null-pointer))
