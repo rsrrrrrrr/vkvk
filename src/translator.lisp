@@ -616,3 +616,16 @@
   (:layout vk-pipeline-layout)
   (:base-pipeline-handle vk-pipeline)
   (:base-pipeline-index :uint32))
+
+(defvkstruct vk-framebuffer-create-info
+    (s-framebuffer-create-info framebuffer-create-info)
+  (:type VkStructureType)
+  (:next (:pointer :void))
+  (:flags vk-framebuffer-create-flags)
+  (:render-pass vk-render-pass)
+  (:attachment-count :uint32)
+  (:attachments (:pointer vk-image-view)
+   :bind :attachment-count)
+  (:width :uint32)
+  (:height :uint32)
+  (:layers :uint32))

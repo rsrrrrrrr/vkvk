@@ -172,3 +172,14 @@
 
 (defun destroy-pipeline (device pipeline &optional (allocator (null-pointer)))
   (vkDestroyPipeline device pipeline allocator))
+
+(defun create-framebuffer (device create-info &optional (allocator (null-pointer)))
+  (with-foreign-objects ((p-info 'framebuffer-create-info)
+			 (p-framebuffer 'vk-framebuffer))
+    (setf (mem-ref p-info 'framebuffer-create-info)
+	  (get-obj create-info 'framebuffer-create-info))
+    (check-ret (vkCreateFramebuffer device p-info allocator p-framebuffer))
+    (mem-ref p-framebuffer 'vk-framebuffer)))
+
+(defun destroy-framebuffer (device framebuffer &optional (allocator (null-pointer)))
+  (vkDestroyFramebuffer device framebuffer allocator))

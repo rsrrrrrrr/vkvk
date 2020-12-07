@@ -555,6 +555,15 @@ function-name: *make-compute-pipeline-create-info*
 | base-pipeline | base pipeline                     | default  | null-pointer  |
 | index         | base pipeline index               | default  | 0             |
 
+function-name: *make-framebuffer-create-info*
+| args        | desc                  | property | default value |
+| render-pass | render-pass           | must     |               |
+| next        | next                  | default  |  null-pointer |
+| flags       | flags                 | default  |             0 |
+| attachments | list of vk-image-view | default  |           nil |
+| width       | width                 | default  |             0 |
+| height      | heigt                 | default  |             0 |
+| layers      | layers                | default  |             0 |
 * vulkan api
 *** instnace 
 function-name: *create-instnace*
@@ -718,3 +727,15 @@ function-name: *destroy-pipeline*
 | pipeline  | pipeline  | must     |               |
 | allocator | allocator | optional | null-pointer  |
 
+*** framebuffer 
+function-name: *create-framebuffer*
+| args        | desc                       | property | default value |
+| device      | logic device               | must     |               |
+| create-info | vk-framebuffer-create-info | must     |               |
+| allocator   | allocator                  | default  | null-pointer  |
+
+function-name: *destroy-framebuffer*
+| args        | desc        | property | default value |
+| device      | device      | must     |               |
+| framebuffer | framebuffer | must     |               |
+| allocator   | allocator   | optional | null-pointer  |

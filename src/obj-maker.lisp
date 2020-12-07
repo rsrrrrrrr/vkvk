@@ -668,6 +668,21 @@
 	      index)))
 ;;end graphics pipeline
 
+(defun make-framebuffer-create-info (render-pass &key
+						   (next (null-pointer))
+						   (flags 0)
+						   (attachments nil)
+						   (width  0)
+						   (height 0)
+						   (layers 0)
+				     &aux
+				       (type :structure-type-framebuffer-create-info))
+  (cons 'framebuffer-create-info
+	(list type next flags
+	      render-pass
+	      (length attachments) attachments    ;;vk-image-view
+	      width height layers)))
+
 (defun make-compute-pipeline-create-info (&key
 					    (next (null-pointer))
 					    (flags 0)
@@ -1459,16 +1474,7 @@ vk-physical-device-vulkan-12-properties
   (:next (:pointer :void))
   (:stencil-layout VkImageLayout))
 
-(defun make-framebuffer-create-info
-  (:type VkStructureType)
-  (:next (:pointer :void))
-  (:flags vk-framebuffer-create-flags)
-  (:render-pass vk-render-pass)
-  (:attachment-count :uint32)
-  (:attachments (:pointer vk-image-view))
-  (:width :uint32)
-  (:height :uint32)
-  (:layers :uint32))
+
 
 (defun make-framebuffer-attachment-image-info
   (:type VkStructureType)
