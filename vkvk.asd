@@ -1,15 +1,9 @@
 (defsystem "vkvk"
   :version "0.1.0"
-  :author ""
+  :author "yjc18915568435@gmail.com"
   :license ""
-  :depends-on (:cffi :alexandria)
+  :depends-on (:cffi)
   :serial t
   :components ((:file "src/package")
-	       (:file "src/enum")
-	       (:file "src/foreign-type")
-	       (:file "src/struct")
-	       (:file "src/function")
-	       (:file "src/translator")
-	       (:file "src/obj-maker")
-	       (:file "src/wrapper")))
+	       (:file "src/vulkan-loader")))
 
